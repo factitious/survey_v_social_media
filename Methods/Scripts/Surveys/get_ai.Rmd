@@ -1,0 +1,215 @@
+---
+title: "Axios-Ipsos data"
+output: html_notebook
+---
+
+```{r setup, message=FALSE}
+rm(list = ls())
+library(readxl)
+library(tidyverse)
+library(data.table)
+library(glue)
+library(lubridate)
+
+rootDir <- '/Volumes/Survey_Social_Media_Compare'
+knitr::opts_knit$set(echo = FALSE, message = FALSE, include = FALSE, results = FALSE)
+
+```
+
+
+# Axios/Ipsos Poll
+
+* Between 2 and 4 interviews/month (n ~= 1000)
+* Contains questions on **employment + vaccination**.
+* Data/topline/methods available through SEAN: https://covid-19.parc.us.com/client/index.html#/search ![](https://i.imgur.com/3UXNsax.png) or at [IPSOS](https://www.ipsos.com/sites/default/files/ct/news/documents/2021-05/topline-Axios-Ipsos-Coronavirus-Index-W46.pdf)
+
+## Periods
+
+| Start Date | End Date   | A/I Week | Period |
+|------------|------------|----------|--------|
+| 23.10.2020 | 26.10.2020 | W29      | P1     |
+| 13.11.2020 | 16.11.2020 | W30      | P2     |
+| 20.11.2020 | 23.11.2020 | W31      | P2     |
+| 04.12.2020 | 07.12.2020 | W32      | P3     |
+| 11.12.2020 | 14.12.2020 | W33      | P4     |
+| 18.12.2020 | 21.12.2020 | W34      | P4     |
+| 08.01.2021 | 11.01.2021 | W35      | P5     |
+| 22.01.2021 | 25.01.2021 | W36      | P6     |
+| 29.01.2021 | 01.02.2021 | W37      | P6     |
+| 05.02.2021 | 08.02.2021 | W38      | P7     |
+| 19.02.2021 | 22.02.2021 | W39      | P8     |
+| 28.02.2021 | 01.03.2021 | W40      | P8     |
+| 05.03.2021 | 08.03.2021 | W41      | P9     |
+| 19.03.2021 | 22.03.2021 | W42      | P10    |
+| 02.04.2021 | 05.04.2021 | W43      | P11    |
+| 16.04.2021 | 19.04.2021 | W44      | P11    |
+| 07.05.2021 | 10.05.2021 | W45      | P12    |
+| 21.05.2021 | 24.05.2021 | W46      | P12    |
+
+## HPS + A/I Periods
+
+| Period | A_I_start_date | A_I_end_date | A_I_week | HPS_start_date | HPS_end_date | HPS_Week |
+|--------|----------------|--------------|----------|----------------|--------------|----------|
+| P1     | 23.10.2020     | 26.10.2020   | W29      | 28.10.2020     | 09.11.2020   | W18      |
+| P2     | 13.11.2020     | 16.11.2020   | W30      | 11.11.2020     | 23.11.2020   | W19      |
+| P2     | 20.11.2020     | 23.11.2020   | W31      | 11.11.2020     | 23.11.2020   | W19      |
+| P3     | 04.12.2020     | 07.12.2020   | W32      | 25.11.2020     | 07.12.2020   | W20      |
+| P4     | 11.12.2020     | 14.12.2020   | W33      | 09.12.2020     | 21.12.2020   | W21      |
+| P4     | 18.12.2020     | 21.12.2020   | W34      | 09.12.2020     | 21.12.2020   | W21      |
+| P5     | 08.01.2021     | 11.01.2021   | W35      | 06.01.2021     | 18.01.2021   | W22      |
+| P6     | 22.01.2021     | 25.01.2021   | W36      | 20.01.2021     | 01.02.2021   | W23      |
+| P6     | 29.01.2021     | 01.02.2021   | W37      | 20.01.2021     | 01.02.2021   | W23      |
+| P7     | 05.02.2021     | 08.02.2021   | W38      | 03.02.2021     | 15.02.2021   | W24      |
+| P8     | 19.02.2021     | 22.02.2021   | W39      | 17.02.2021     | 01.03.2021   | W25      |
+| P8     | 28.02.2021     | 01.03.2021   | W40      | 17.02.2021     | 01.03.2021   | W25      |
+| P9     | 05.03.2021     | 08.03.2021   | W41      | 03.03.2021     | 15.03.2021   | W26      |
+| P10    | 19.03.2021     | 22.03.2021   | W42      | 17.03.2021     | 29.03.2021   | W27      |
+| P11    | 02.04.2021     | 05.04.2021   | W43      | 14.04.2021     | 26.04.2021   | W28      |
+| P11    | 16.04.2021     | 19.04.2021   | W44      | 14.04.2021     | 26.04.2021   | W28      |
+| P12    | 07.05.2021     | 10.05.2021   | W45      | 28.04.2021     | 10.05.2021   | W29      |
+| P13    | 21.05.2021     | 24.05.2021   | W46      |                |              | W30      |
+
+
+```{r}
+s_periods_fname <- "Methods/Scripts/Surveys/table_details/surveyPeriods.xlsx"
+
+surveyPeriods <- read_excel(file.path(rootDir, s_periods_fname), 
+    sheet = "AI+HPS", 
+    col_types = c("text", 
+        "date", 
+        "date", 
+        "text", 
+        "date", 
+        "date", 
+        "text",
+        "text",
+        "text"))
+
+# Get month and day of each period end (this is how files are named)
+ai_dates <- paste0(month(surveyPeriods$A_I_end_date,label = TRUE, abbr = FALSE), " " ,day(surveyPeriods$A_I_end_date))
+
+ai_periods <- data.frame(Period = surveyPeriods$Period, 
+                         Date = ai_dates)
+
+ai_periods
+```
+
+# Getting data tables (aggregate).
+
+Data downloaded manually from SEAN. There doesn't seem to be a straightforward way to do this programmatically.
+Both employment and vaccination are in the same file, but under different sheets.
+
+For employment we need sheet *PPEMPLOY* (or *PPWORK*).
+For vaccination we need *Q73*.
+
+
+Q73: "How likely, if at all, are you to get the first generation COVID-19 vaccine, as soon as it's available?"
+
+
+```{r}
+# Where is the data? (i.e. excel files)
+data_path <- file.path(rootDir,"Methods/Data/Surveys/Axios-Ipsos")
+
+# List all files
+ai_files <- list.files(data_path)
+ai_files
+```
+
+
+
+```{r}
+getEmp <- function(dir_path, file){
+  
+  fpath <- file.path(dir_path, file)
+
+  
+  try(df <- read_excel(fpath,
+                   sheet = "PPEMPLOY", 
+                   skip = 9, 
+                   n_max = 19), silent = TRUE)
+  
+  try(df <- read_excel(fpath,
+                   sheet = "PPWORK", 
+                   skip = 9, 
+                   n_max = 19), silent = TRUE)
+  return(df)
+    
+}
+
+cleanEmp <- function(df){
+  
+}
+
+getVacc <- function(dir_path, file){
+  
+  fpath <- file.path(dir_path, file)
+  print(fpath)
+  tab_names <- excel_sheets(fpath)
+  
+  if ("Q73" %in% tab_names){
+  
+    df <- read_excel(fpath,
+                   sheet = "Q73",
+                   skip = 9,
+                   n_max = 34)
+  
+  }
+  
+  return(df)
+}
+
+cleanVacc <- function(df){
+  
+  
+}
+
+getAllSheets <- function(dir_path, ai_files, ai_periods, table){
+  
+  # Which periods are unique
+  unique_periods <- ai_periods$Period[!ai_periods$Period %in% ai_periods$Period[duplicated(ai_periods$Period)]]
+  
+  for (file in ai_files){
+    
+    date <- str_match(file, pattern = " .*\\d")
+    date <- str_replace(date, " ", "")
+    
+    period <- ai_periods$Period[ai_periods$Date == date]
+    
+    # Determine name of file.
+    if (period %in% unique_periods){
+        df_name <- paste0(period,"_", table)
+    } else {
+        df_name <- paste0(period, "_", table, "_",1)
+        if (exists(df_name)){
+          df_name <- paste0(period, "_", table, "_",2)
+        }
+    }
+    
+    # Get the right sheet
+    if (table == "emp"){
+          df <- getEmp(dir_path, file)
+          # Clean df here
+    }
+    
+    if (table == "vacc"){
+      
+          df <- getVacc(dir_path, file)
+          # Clean df here
+    }
+    
+    assign(df_name, df, envir = parent.frame())
+    
+  }
+  
+}
+
+```
+
+
+```{r}
+getAllSheets(data_path, ai_files, ai_periods, "emp")
+getAllSheets(data_path, ai_files, ai_periods, "vacc")
+```
+
+
+
