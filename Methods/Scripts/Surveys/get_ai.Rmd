@@ -102,7 +102,6 @@ Both employment and vaccination are in the same file, but under different sheets
 For employment we need sheet *PPEMPLOY* (or *PPWORK*).
 For vaccination we need *Q73*.
 
-
 Q73: "How likely, if at all, are you to get the first generation COVID-19 vaccine, as soon as it's available?"
 
 
@@ -153,6 +152,10 @@ getVacc <- function(dir_path, file){
                    skip = 9,
                    n_max = 34)
   
+  }
+  
+  else{
+    print(file)
   }
   
   return(df)
