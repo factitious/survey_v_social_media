@@ -5,14 +5,14 @@ output: html_notebook
 
 ```{r setup, message=FALSE}
 rm(list = ls())
-library(readxl)
-library(tidyverse)
-library(data.table)
-library(glue)
-library(lubridate)
-
-rootDir <- '/Volumes/Survey_Social_Media_Compare'
-knitr::opts_knit$set(echo = FALSE, message = FALSE, include = FALSE, results = FALSE)
+# library(readxl)
+# library(tidyverse)
+# library(data.table)
+# library(glue)
+# library(lubridate)
+# 
+# rootDir <- '/Volumes/Survey_Social_Media_Compare'
+# knitr::opts_knit$set(echo = FALSE, message = FALSE, include = FALSE, results = FALSE)
 
 ```
 
@@ -71,27 +71,27 @@ knitr::opts_knit$set(echo = FALSE, message = FALSE, include = FALSE, results = F
 
 
 ```{r}
-s_periods_fname <- "Methods/Scripts/Surveys/table_details/surveyPeriods.xlsx"
-
-surveyPeriods <- read_excel(file.path(rootDir, s_periods_fname), 
-    sheet = "AI+HPS", 
-    col_types = c("text", 
-        "date", 
-        "date", 
-        "text", 
-        "date", 
-        "date", 
-        "text",
-        "text",
-        "text"))
-
-# Get month and day of each period end (this is how files are named)
-ai_dates <- paste0(month(surveyPeriods$A_I_end_date,label = TRUE, abbr = FALSE), " " ,day(surveyPeriods$A_I_end_date))
-
-ai_periods <- data.frame(Period = surveyPeriods$Period, 
-                         Date = ai_dates)
-
-ai_periods
+# s_periods_fname <- "Methods/Scripts/Surveys/table_details/surveyPeriods.xlsx"
+# 
+# surveyPeriods <- read_excel(file.path(rootDir, s_periods_fname), 
+#     sheet = "AI+HPS", 
+#     col_types = c("text", 
+#         "date", 
+#         "date", 
+#         "text", 
+#         "date", 
+#         "date", 
+#         "text",
+#         "text",
+#         "text"))
+# 
+# # Get month and day of each period end (this is how files are named)
+# ai_dates <- paste0(month(surveyPeriods$A_I_end_date,label = TRUE, abbr = FALSE), " " ,day(surveyPeriods$A_I_end_date))
+# 
+# ai_periods <- data.frame(Period = surveyPeriods$Period, 
+#                          Date = ai_dates)
+# 
+# ai_periods
 ```
 
 # Getting data tables (aggregate).
@@ -106,13 +106,19 @@ Q73: "How likely, if at all, are you to get the first generation COVID-19 vaccin
 
 
 ```{r}
-# Where is the data? (i.e. excel files)
-data_path <- file.path(rootDir,"Methods/Data/Surveys/Axios-Ipsos")
-
-# List all files
-ai_files <- list.files(data_path)
-ai_files
+# # Where is the data? (i.e. excel files)
+# data_path <- file.path(rootDir,"Methods/Data/Surveys/Axios-Ipsos")
+# 
+# # List all files
+# ai_files <- list.files(data_path)
+# ai_files
 ```
+
+
+```{r}
+str(P1_emp)
+```
+
 
 
 
@@ -125,12 +131,12 @@ getEmp <- function(dir_path, file){
   try(df <- read_excel(fpath,
                    sheet = "PPEMPLOY", 
                    skip = 9, 
-                   n_max = 19), silent = TRUE)
+                   n_max = 12), silent = TRUE)
   
   try(df <- read_excel(fpath,
                    sheet = "PPWORK", 
                    skip = 9, 
-                   n_max = 19), silent = TRUE)
+                   n_max = 24), silent = TRUE)
   return(df)
     
 }
@@ -210,9 +216,214 @@ getAllSheets <- function(dir_path, ai_files, ai_periods, table){
 
 
 ```{r}
-getAllSheets(data_path, ai_files, ai_periods, "emp")
-getAllSheets(data_path, ai_files, ai_periods, "vacc")
+# getAllSheets(data_path, ai_files, ai_periods, "emp")
+# getAllSheets(data_path, ai_files, ai_periods, "vacc")
+```
+
+```{r, warning=FALSE}
+rm(list = ls())
+source("gettingAI.R", local = knitr::knit_global())
 ```
 
 
+```{r}
+names(empData)
+```
+
+```{r}
+empData['P1_emp_1']
+```
+
+
+
+```{r}
+vaccData['P2_vacc_2']
+```
+
+```{r}
+names(vaccData)
+```
+
+```{r}
+empData2 <- empData[order(names(empData))]
+```
+
+
+
+```{r}
+test <- empData2[['P2_emp_1']]
+test2 <- empData2[['P12_emp_1']]
+
+test <- test %>% 
+  filter(!is.na(...1))
+
+test2 <- test2 %>% 
+  filter(!is.na(...1))
+
+colnames(test) == colnames(test2)
+
+test2 %>% 
+  select(ifelse(colnames(.) != colnames(test2), 0, 1))
+
+```
+
+```{r}
+df <- empData[['P2_emp_1']]
+
+      df <- df %>% 
+        filter(!is.na(...1)) %>% # Remove rows where the first col is na 
+        rename(Status = ...1,
+               Total = ...2) %>% # Rename columns
+        select(!(contains("Yes") | contains("No"))) %>%  # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
+        mutate(across(!contains("status"),as.double)) 
+      
+      cNames <- df$Status
+      df$Status <- NULL
+      
+      # Transpose the df for calculations (working with rows is an absolute pain in R)
+      cDF <- as.data.frame(t(as.matrix(df)))
+      colnames(cDF) <- cNames
+      
+      cDF <- cDF %>% 
+        mutate(Working = `Working - self-employed` + `Working - as a paid employee`,
+               `Not working` = `Not working - on temporary layoff from a job` + 
+                               `Not working - looking for work` +
+                               `Not working - retired` +
+                               `Not working - disabled` +
+                                `Not working - other`) %>% 
+        select(Working, `Not working`) %>% 
+        mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
+        select(unemployed)
+      
+      cDF$Status <- rownames(cDF)
+      cDF <- spread(cDF, Status, unemployed)
+      
+      
+
+# cDF
+```
+
+
+
+
+```{r}
+df <- empData[['P9_emp_1']]
+
+
+      df <- df %>% 
+        filter(!is.na(...1)) %>% # Remove rows where the first col is na 
+        rename(Status = ...1,
+               Total = ...2) %>% # Rename columns
+        select(!(contains("Yes") | contains("No"))) %>%  # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
+        mutate(across(!contains("status"),as.double)) 
+      
+      cNames <- df$Status
+      df$Status <- NULL
+      
+      # Transpose the df for calculations (working with rows is an absolute pain in R)
+      cDF <- as.data.frame(t(as.matrix(df)))
+      colnames(cDF) <- cNames
+      
+      if (period > 8){
+      
+      cDF <- cDF %>% 
+        mutate(Working = `Working full-time` + `Working part-time`) %>% 
+        select(Working, `Not working`) %>% 
+        mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
+        select(unemployed)
+      
+      }
+      
+      cDF$Status <- rownames(cDF)
+      cDF <- spread(cDF, Status, unemployed)
+
+
+
+cDF
+```
+
+```{r}
+
+df <- empData[['P9_emp_1']]
+
+      df <- df %>% 
+        filter(!is.na(...1)) %>% # Remove rows where the first col is na 
+        rename(Status = ...1,
+               Total = ...2) %>% # Rename columns
+        select(!(contains("Yes") | contains("No"))) %>% # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
+        mutate(across(!contains("status"),as.double)) 
+      
+      # Sum of working
+      w_sum <- cumsum(df[3:5, -1])[2,]
+      w_sum$Status <- 'Working'
+      
+      df <- rbind(df, w_sum)
+      
+      df <- df %>% 
+        filter(Status != 'Working full-time' & Status != 'Working part-time')
+      
+df <- df[c(1,2,4,3),]      
+df
+```
+
+
+
+```{r}
+as.data.frame(nw_sums)
+```
+
+```{r}
+# See if can transfer to gettingAI.
+
+cleanEmp_v2 <- function(df, period){
+  #' Clean employment dataframe (for one A/I week).
+  #' NB: Reporting changes after period 8 (i.e. March 1st); 
+  #'     'Not working' becomes a single category, whereas before it was 5 (temp layoff, looking, retired, disabled)
+  #'     Since we don't the more granular information starting March, it makes sense to combine them for when they are available.
+
+  df <- df %>% 
+    filter(!is.na(...1)) %>% # Remove rows where the first col is na 
+    rename(Status = ...1,
+           Total = ...2) %>% # Rename columns
+    select(!(contains("Yes") | contains("No"))) %>%  # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
+    mutate(across(!contains("Status"),as.double)) 
+  
+  cNames <- df$Status
+  df$Status <- NULL
+  
+  # Transpose the df for calculations (working with rows is an absolute pain in R)
+  cDF <- as.data.frame(t(as.matrix(df)))
+  colnames(cDF) <- cNames
+  
+  
+  if (period < 9){
+    
+    cDF <- cDF %>% 
+      mutate(Working = `Working - self-employed` + `Working - as a paid employee`,
+             `Not working` = `Not working - on temporary layoff from a job` + 
+               `Not working - looking for work` +
+               `Not working - retired` +
+               `Not working - disabled` +
+               `Not working - other`) %>% 
+      select(Working, `Not working`) %>% 
+      mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
+      select(unemployed)
+    
+  } else{
+    
+    cDF <- cDF %>% 
+      mutate(Working = `Working full-time` + `Working part-time`) %>% 
+      select(Working, `Not working`) %>% 
+      mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
+      select(unemployed)
+    
+  } 
+  
+  cDF$Status <- rownames(cDF)
+  cDF <- spread(cDF, Status, unemployed)
+  
+  return(cDF)
+  
+}
+```
 

@@ -52,7 +52,7 @@ For employment we need tables 1 and 2 under *Employment Tables*. (e.g. https://w
 For vaccination (starting 06.01.21) we need table 5 under *Health Tables* (e.g. https://www.census.gov/data/tables/2021/demo/hhp/hhp22.html)
 
 ```{r, getFiles, echo = FALSE, include=FALSE}
-data_path <- '/Users/munchausend/GoogleDrive/MSc/Dissertation/Methods/Data/HPS/'
+data_path <- '/Users/munchausend/GoogleDrive/MSc/Dissertation/Methods/Data/HPS/Raw'
 
 first_week <- 18
 last_week <- 28
