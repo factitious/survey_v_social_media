@@ -1,0 +1,316 @@
+---
+title: "Survey data"
+output: html_notebook
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)
+```
+
+# Periods
+
+| Period | A_I_start_date | A_I_end_date | A_I_week | HPS_start_date | HPS_end_date | HPS_Week | HPS Topic |
+|--------|----------------|--------------|----------|----------------|--------------|----------|-----------|
+| P1     | 23.10.2020     | 26.10.2020   | W29*      | 28.10.2020     | 09.11.2020   | W18      |     E    |
+| P2     | 13.11.2020     | 16.11.2020   | W30      | 11.11.2020     | 23.11.2020   | W19      |     E    |
+| P2     | 20.11.2020     | 23.11.2020   | W31      | 11.11.2020     | 23.11.2020   | W19      |     E    |
+| P3     | 04.12.2020     | 07.12.2020   | W32      | 25.11.2020     | 07.12.2020   | W20      |     E    |
+| P4     | 11.12.2020     | 14.12.2020   | W33      | 09.12.2020     | 21.12.2020   | W21      |     E    |
+| P4     | 18.12.2020     | 21.12.2020   | W34      | 09.12.2020     | 21.12.2020   | W21      |     E    |
+| P5     | 08.01.2021     | 11.01.2021   | W35      | 06.01.2021     | 18.01.2021   | W22      |    E,V   |
+| P6     | 22.01.2021     | 25.01.2021   | W36      | 20.01.2021     | 01.02.2021   | W23      |    E,V   |
+| P6     | 29.01.2021     | 01.02.2021   | W37      | 20.01.2021     | 01.02.2021   | W23      |    E,V   |
+| P7     | 05.02.2021     | 08.02.2021   | W38      | 03.02.2021     | 15.02.2021   | W24      |    E,V   |
+| P8     | 19.02.2021     | 22.02.2021   | W39      | 17.02.2021     | 01.03.2021   | W25      |    E,V   |
+| P8     | 28.02.2021     | 01.03.2021   | W40      | 17.02.2021     | 01.03.2021   | W25      |    E,V   |
+| P9     | 05.03.2021     | 08.03.2021   | W41      | 03.03.2021     | 15.03.2021   | W26      |    E,V   |
+| P10    | 19.03.2021     | 22.03.2021   | W42      | 17.03.2021     | 29.03.2021   | W27      |    E,V   |
+| P11    | 02.04.2021     | 05.04.2021   | W43      | 14.04.2021     | 26.04.2021   | W28      |    E,V   |
+| P11    | 16.04.2021     | 19.04.2021   | W44      | 14.04.2021     | 26.04.2021   | W28      |    E,V   |
+| P12    | 07.05.2021     | 10.05.2021   | W45      | 28.04.2021     | 10.05.2021   | W29      |    E,V   |
+| P13    | 21.05.2021     | 24.05.2021   | W46      |                |              | W30      |    E,V   |
+
+\*W29: Not vaccination data in A/I 
+
+E: Employment
+
+V: Vaccination 
+
+W: Two-week period
+
+
+# Axios/Ipsos Poll
+
+* Between 2 and 4 interviews/month (n ~= 1000)
+* Contains questions on **employment + vaccination**.
+* Data/topline/methods available through SEAN: https://covid-19.parc.us.com/client/index.html#/search ![](https://i.imgur.com/3UXNsax.png) or at [IPSOS](https://www.ipsos.com/sites/default/files/ct/news/documents/2021-05/topline-Axios-Ipsos-Coronavirus-Index-W46.pdf)
+
+
+## Getting data tables.
+
+Data downloaded manually from SEAN. There doesn't seem to be a straightforward way to do this programmatically.
+Both employment and vaccination are in the same file, but under different sheets.
+
+For employment we need sheet *PPEMPLOY* (or *PPWORK*).
+For vaccination we need sheet *Q73* ("How likely, if at all, are you to get the first generation COVID-19 vaccine, as soon as it's available?")
+
+```{r}
+rm(list = ls()) 
+
+# Run the script to get datasets (i.e. relevant sheets from the "weekly" A/I data) 
+# source("gettingAI.R", local = knitr::knit_global())
+
+# If this was previously run, the data can be loaded using
+load('/Volumes/Survey_Social_Media_Compare/Methods/Data/Surveys/Axios-Ipsos/Proc/AI_data.RData')
+```
+
+## Cleaning data tables.
+
+```{r}
+# Run the script to clean the datasets
+# source("cleaningAI.R", local = knitr::knit_global())
+
+# If this was previously run, the data can be loaded using
+load('/Volumes/Survey_Social_Media_Compare/Methods/Data/Surveys/Axios-Ipsos/Proc/clean_AI_data.RData')
+```
+
+
+### Employment
+
+**Employment (P1 - 8)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/AI/AI_emp_P7.png)
+
+```{r}
+empData[['P1_emp_1']]
+```
+
+```{r}
+cleanEmpData[['P1_emp_1']]
+```
+
+<br>
+<br>
+
+**Employment (P9+)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/AI/AI_emp_P9.png)
+
+```{r}
+empData[['P11_emp_1']]
+```
+
+```{r}
+cleanEmpData[['P11_emp_1']]
+```
+
+### Vaccination
+
+**Vaccination (P1 - 6)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/AI/AI_vacc_P5.png)
+
+```{r}
+vaccData[['P2_vacc_1']]
+```
+
+```{r}
+cleanVaccData[['P2_vacc_1']]
+```
+
+<br>
+<br>
+
+**Vaccination (P6+)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/AI/AI_vacc_P7.png)
+
+```{r}
+vaccData[['P6_vacc_1']]
+```
+
+```{r}
+cleanVaccData[['P6_vacc_1']]
+```
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+# Household Pulse Survey (HPS; US Census)
+
+* Experimental survey designed to quickly and efficiently deploy data collected on how people’s lives have been impacted by the coronavirus pandemic.
+* Two-week data collection period in phases 3 and 3.1 which are the ones we're interested in (with a ~2 week data release lag). **Still called weeks, e.g. W18 for 28.10 - 09.11.20, in line with previous phases**
+* Data collection for the current phase (3.1) began on **April 14, 2021**, with a first data release on **May 5, 2021** (next release ~ **May 19th, 2021**). 
+* Online questionnaires: **n** varies, e.g. 59,000 for the 14.04 - 28.04 period of Phase 3.1; between ~58,000 and ~78,000 in Phase 3. 
+* Data collection for previous phase (*3*) began on October 28, 2020 and ended March 29, 2021.
+* The questions we are interested in should be identical (or sufficiently similar) in the two phases.
+* Data and more info [here](https://www.census.gov/programs-surveys/household-pulse-survey/data.html#phase3.1) and [here](https://www2.census.gov/programs-surveys/demo/technical-documentation/hhp/Phase3-1_Source_and_Accuracy_Week_28.pdf).
+* Contains questions on **employment + vaccination**.
+
+## Getting data tables.
+
+For employment we need tables 1 and 2 under *Employment Tables*. (e.g. https://www.census.gov/data/tables/2020/demo/hhp/hhp18.html)
+
+For vaccination (starting 06.01.21) we need table 5 under *Health Tables* (e.g. https://www.census.gov/data/tables/2021/demo/hhp/hhp22.html)
+
+```{r message=TRUE, warning=TRUE, include=FALSE}
+# Run the script to get datasets 
+# source("gettingHPS.R", local = knitr::knit_global())
+
+# If this was previously run, the data can be loaded using
+load('/Volumes/Survey_Social_Media_Compare/Methods/Data/Surveys/HPS/Proc/HPS_data.RData')
+```
+
+## Cleaning tables.
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# Run the script to clean the datasets
+# source("cleaningHPS.R", local = knitr::knit_global())
+
+# If this was previously run, the data can be loaded using
+load('/Volumes/Survey_Social_Media_Compare/Methods/Data/Surveys/HPS/Proc/clean_HPS_data.RData')
+```
+
+### Employment1
+
+Employment Status and Sector of Employment, by Select Characteristics: United States
+
+**Phase 3:** "Have you, or has anyone in your household experienced a loss of employment income since March 13, 2020? "
+
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/HPS/HPS_emp1_P10.png) 
+
+```{r}
+hps_emp1Data[['P1_emp1']]
+```
+
+
+```{r}
+hps_cleanEmp1[['P1_emp1']]
+```
+
+<br>
+<br>
+
+**Phase 3.1 (current):** "Have you, or has anyone in your household experienced a loss of employment income in the last 4 weeks?"
+
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/HPS/HPS_emp1_P11.png)
+
+
+```{r}
+hps_emp1Data[['P11_emp1']]
+```
+
+
+```{r}
+hps_cleanEmp1[['P11_emp1']]
+```
+
+
+
+### Employment2
+
+"In the last 7 days, did you do ANY work for either pay or profit? Select only one answer." [YES | NO]
+
+**Phase 3 (P1 - P10)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/HPS/HPS_emp2_P10.png)
+
+```{r}
+hps_emp2Data[['P1_emp2']]
+```
+
+
+```{r}
+hps_cleanEmp2[['P1_emp2']]
+```
+
+**Phase 3.1 (P11)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/HPS/HPS_emp2_P11.png)
+
+
+```{r}
+hps_emp2Data[['P11_emp2']]
+```
+
+
+```{r}
+hps_cleanEmp2[['P11_emp2']]
+```
+
+
+
+### Vaccination
+
+**Phase 3 (P1 - P10)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/HPS/HPS_vacc_P10.png) 
+
+**Question:** "Have you received a COVID-19 vaccine?"
+  
+  * YES: "Did you receive (or do you plan to receive) all required doses?" 
+  * NO: "Once a  vaccine to prevent COVID-19 is available to you, would you…" [Definitely get | Probably get | Probably NOT | Definitely NOT]
+
+**New features:**
+
+* ...1 -> demog : Demographics 
+* ...2 -> total : Total (respondends Yes/No/DNR)
+* Yes...3 -> yes_total : Total *YES* responses
+* Yes...4 -> yes_all : Received or plan to receive all required doses 
+* Yes...5 -> yes_some : Have not received/do not plan to receive all required doses
+* Yes...6 -> yes_nr : Did not report (*YES* but did not report whether they will get all doses)
+* No...7 -> no_total : Total *NO* responses
+* No...8 -> no_def_will : Will definitely get a vaccine (But have not received any doses yet)
+* No...9 -> no_prob_will: Will probably get a vaccine (~)
+* No...10 -> no_prob_not : Will probably not get a vaccine
+* No...11 -> no_def_not : Will definitely not get a vaccine
+* No...12 -> no_nr : Did not report (*NO* but did not report whether they will or not)
+* Did not report -> total_nr : Did not report *YES* or *NO*
+
+```{r}
+hps_vaccData[['P5_vacc']]
+```
+
+```{r}
+hps_cleanVacc[['P5_vacc']]
+```
+
+**Phase 3.1 (P11+)**
+![](/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/HPS/HPS_vacc_P11.png)
+  
+**Question:** "Have you received a COVID-19 vaccine?"
+
+  * YES: "Did you receive (or do you plan to receive) all required doses?" 
+  * NO: "Once a  vaccine to prevent COVID-19 is available to you, would you…" [Definitely get | Probably get | Unsure about getting the vaccine | Probably NOT | Definitely NOT]    
+
+**New features:**
+
+* ...1 -> demog : Demographics 
+* ...2 -> total : Total (respondends Yes/No/DNR)
+* Yes...3 -> yes_total : Total *YES* responses
+* Yes...4 -> yes_all : Received or plan to receive all required doses 
+* Yes...5 -> yes_some : Have not received/do not plan to receive all required doses
+* Yes...6 -> yes_nr : Did not report (*YES* but did not report whether they will get all doses)
+* No...7 -> no_total : Total *NO* responses
+* No...8 -> no_def_will : Will definitely get a vaccine (But have not received any doses yet)
+* No...9 -> no_prob_will: Will probably get a vaccine (~)
+* No...10 -> no_unsure : Unsure about getting a vaccine/
+* No...11 -> no_prob_not : Will probably not get a vaccine
+* No...12 -> no_def_not : Will definitely not get a vaccine
+* No...13 -> no_nr : Did not report (*NO* but did not report whether they will or not)
+* Did not report -> total_nr : Did not report *YES* or *NO*
+
+
+
+```{r}
+hps_vaccData[['P11_vacc']]
+```
+
+```{r}
+hps_cleanVacc[['P11_vacc']]
+```
+
+### Notes:
+
+Each table has a standard error table associated with it. The details of how these were derived can be found in the *Technical documentation* available for each week in part, e.g. [Week 28](https://www2.census.gov/programs-surveys/demo/technical-documentation/hhp/Phase3-1_Source_and_Accuracy_Week_28.pdf).
+
+The structure should be identical in most cases, so the same functions could be used to get these. Unsure at this point how we'd be using these so will not get them just yet.
+

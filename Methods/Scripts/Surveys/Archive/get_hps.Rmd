@@ -127,10 +127,6 @@ getFiles(url_emp2, dest_emp2, vars_emp2)
 
 # Cleaning tables
 
-Tips here: https://www.sophieheloisebennett.com/posts/excel-sheet-cleaning/
-
-
-## Employment
 
 ### Employment1
 

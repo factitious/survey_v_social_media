@@ -4,6 +4,7 @@
 # Clear env
 rm(list = ls())
 
+
 # Load packages
 library(readxl)
 library(tidyverse)
@@ -69,62 +70,6 @@ getEmp <- function(dir_path, file){
   
 }
 
-cleanEmp <- function(df, period){
-  #' Clean employment dataframe (for one A/I week).
-  #' NB: Reporting changes after period 8 (i.e. March 1st); 
-  #'     'Not working' becomes a single category, whereas before it was 5 (temp layoff, looking, retired, disabled)
-  #'     Since we don't the more granular information starting March, it makes sense to combine them for when they are available.
-  
-  # Remove "*" characters from the data.
-  df[] <- lapply(df, gsub, pattern = '\\*', replacement = '')
-  
-  df <- df %>% 
-    filter(!is.na(...1)) %>% # Remove rows where the first col is na 
-    rename(Status = ...1,
-           Total = ...2) %>% # Rename columns
-    select(!(contains("Yes") | contains("No"))) %>%  # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
-    mutate(across(!contains("Status"),as.double)) 
-  
-  cNames <- df$Status
-  df$Status <- NULL
-  
-  # Transpose the df for calculations (working with rows is an absolute pain in R)
-  cDF <- as.data.frame(t(as.matrix(df)))
-  colnames(cDF) <- cNames
-  
-  
-  if (period < 9){
-    
-    cDF <- cDF %>% 
-      mutate(Working = `Working - self-employed` + `Working - as a paid employee`,
-             `Not working` = `Not working - on temporary layoff from a job` + 
-               `Not working - looking for work` +
-               `Not working - retired` +
-               `Not working - disabled` +
-               `Not working - other`) %>% 
-      select(Working, `Not working`) %>% 
-      mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
-      select(unemployed)
-    
-  } else{
-    
-    cDF <- cDF %>% 
-      mutate(Working = `Working full-time` + `Working part-time`) %>% 
-      select(Working, `Not working`) %>% 
-      mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
-      select(unemployed)
-    
-  } 
-  
-  cDF <- cDF %>% 
-    add_column(Status = rownames(cDF), .before = 1)
-  
-  rownames(cDF) <- NULL
-  
-  return(cDF)
-  
-}
-
 
 # Getting vaccination data
 getVacc <- function(dir_path, file){
@@ -149,39 +94,12 @@ getVacc <- function(dir_path, file){
     
   } else {
     df <- NULL
-    print(glue("No sheet Q73 for {file}"))
+    print(glue("No sheet Q73 (i.e. vaccination data) for {file}"))
   }
   
   return(df)
 }
 
-
-
-cleanVacc <- function(df, period){
-  #' Clean vaccination dataframe
-  
-   
-  df[] <- lapply(df, gsub, pattern='\\*', replacement='')
-  
-  df <- df %>% 
-    filter(!is.na(...1)) %>% 
-    rename(Status = ...1,
-           Total = ...2) %>% 
-    select(!(contains(c("Yes", "No")))) %>% 
-    mutate(across(!contains('status'), as.double))
-  
-  cNames <- df$Status
-  df$Status <- NULL
-  cDF <- as.data.frame(t(as.matrix(df)))
-  colnames(cDF) <- cNames
-  cDF <- cDF %>% 
-    select(!contains(c("Mentions", "Skipped", "Top", "Base", "(net)")))
-  
-  return(cDF)
-  
-  
-  
-}
 
 getAllSheets <- function(dir_path, ai_files, ai_periods, table){
   #' 
@@ -195,10 +113,7 @@ getAllSheets <- function(dir_path, ai_files, ai_periods, table){
   dfNames <- character(length(ai_files))
   
   # Initialize empty list for holding variables.
-  dataList <- vector("list", length(ai_periods$Period))#list() 
-  
-  # Which periods are unique
-  unique_periods <- ai_periods$Period[!ai_periods$Period %in% ai_periods$Period[duplicated(ai_periods$Period)]]
+  dataList <- vector("list", length = length(ai_periods$Period)) #list() 
   
   # File number
   fileNum <- 0
@@ -210,14 +125,15 @@ getAllSheets <- function(dir_path, ai_files, ai_periods, table){
     date <- str_match(file, pattern = " .*\\d")
     date <- str_replace(date, " ", "")
     
-    period <- ai_periods$Period[ai_periods$Date == date]
+    period <- as.numeric(str_extract(ai_periods$Period[ai_periods$Date == date], pattern = '\\d+'))
     
     # Determine name of file (based on period and whether the A/I week is unique within that period).
-    
-    temp_name <- paste0(period, "_", table, "_",1)
+    temp_name <- glue("P{period}_{table}_1")
+      
+      paste0(period, "_", table, "_",1)
     
     if (temp_name %in% dfNames){
-      dfNames[fileNum] <- paste0(period, "_", table, "_",2)
+      dfNames[fileNum] <- glue("P{period}_{table}_2")
     } else{
       dfNames[fileNum] <- temp_name
     }
@@ -233,24 +149,25 @@ getAllSheets <- function(dir_path, ai_files, ai_periods, table){
     if (table == "emp"){
       print(glue("Getting employment data from {file} ..."))
       suppressMessages(dataList[[fileNum]] <- getEmp(dir_path, file))
-      # Clean df here
-      # dataList[[fileNum]] <- cleanEmp(dataList[[fileNum]], period)
     }
     
     if (table == "vacc"){
       print(glue("Getting vaccination data from {file} ..."))
       suppressMessages(dataList[[fileNum]] <- getVacc(dir_path, file))
-      # Clean df here
-      #df <- cleanVacc(df)
     }
-    
+      
     print(glue("Done\n\n"))
     
   }
   
-  names(dataList) <- dfNames
+  # There is no vaccination data in the first A/I week, 
+  # so this needs to be removed from data list and dfNames
+  if(table == "vacc"){
+    dfNames <- dfNames[dfNames != "P1_vacc_1"]
+    dataList[['P1_emp_1']] <- NULL
+  }
   
-  dataList <- dataList[order(names(dataList))]
+  names(dataList) <- dfNames    
   
   return(dataList)
   
@@ -260,18 +177,17 @@ getAllSheets <- function(dir_path, ai_files, ai_periods, table){
 # Where is the data? (i.e. excel files)
 data_path <- file.path(rootDir,"Methods/Data/Surveys/Axios-Ipsos/Raw")
 
-# List all files
+# Get a list of all the files in the dir.
 ai_files <- list.files(data_path, pattern = "^Axios")
 
+
+# Get all the employment and vaccination sheets.
 empData <- getAllSheets(data_path, ai_files, ai_periods, "emp")
-save(empData, file = 'AI_empData.RData')
-
 vaccData <- getAllSheets(data_path, ai_files, ai_periods, "vacc")
-save(vaccData, file = 'AI_empData.RData')
 
-getIndices <- function(df, table){
-  
-  
-}
+# Where to save the data? 
+proc_data_path <- file.path(rootDir,"Methods/Data/Surveys/Axios-Ipsos/Proc")
+fname <- "AI_data.RData"
+save(empData, vaccData, file = file.path(proc_data_path, fname))
 
 
