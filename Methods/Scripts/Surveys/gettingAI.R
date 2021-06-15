@@ -74,52 +74,54 @@ cleanEmp <- function(df, period){
   #' NB: Reporting changes after period 8 (i.e. March 1st); 
   #'     'Not working' becomes a single category, whereas before it was 5 (temp layoff, looking, retired, disabled)
   #'     Since we don't the more granular information starting March, it makes sense to combine them for when they are available.
-
-  if(period < 9){
   
-      df <- df %>% 
-        filter(!is.na(...1)) %>% # Remove rows where the first col is na 
-        rename(Status = ...1,
-               Total = ...2) %>% # Rename columns
-        select(!(contains("Yes") | contains("No"))) %>% # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
-        mutate(across(!contains("status"),as.double)) 
-      
-      # Sum of working
-      w_sum <- cumsum(df[3:5, -1])[2,]
-      w_sum$Status <- 'Working'
-      
-      # Sum of not working
-      nw_sum <- cumsum(df[5:9,-1])[5,]
-      nw_sum$Status <- 'Not working'
-      
-      df <- df %>% 
-        filter(!(tolower(Status) %like% '*working*'))
-      
-      df <- rbind(df, w_sum)
-      df <- rbind(df, nw_sum)
-      
-  } else {
+  # Remove "*" characters from the data.
+  df[] <- lapply(df, gsub, pattern = '\\*', replacement = '')
+  
+  df <- df %>% 
+    filter(!is.na(...1)) %>% # Remove rows where the first col is na 
+    rename(Status = ...1,
+           Total = ...2) %>% # Rename columns
+    select(!(contains("Yes") | contains("No"))) %>%  # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
+    mutate(across(!contains("Status"),as.double)) 
+  
+  cNames <- df$Status
+  df$Status <- NULL
+  
+  # Transpose the df for calculations (working with rows is an absolute pain in R)
+  cDF <- as.data.frame(t(as.matrix(df)))
+  colnames(cDF) <- cNames
+  
+  
+  if (period < 9){
     
-      df <- df %>% 
-        filter(!is.na(...1)) %>% # Remove rows where the first col is na 
-        rename(Status = ...1,
-               Total = ...2) %>% # Rename columns
-        select(!(contains("Yes") | contains("No"))) %>% # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
-        mutate(across(!contains("status"),as.double)) 
-      
-      # Sum of working
-      w_sum <- cumsum(df[3:5, -1])[2,]
-      w_sum$Status <- 'Working'
-      
-      df <- rbind(df, w_sum)
-      
-      df <- df %>% 
-        filter(Status != 'Working full-time' & Status != 'Working part-time')
-      
-      df <- df[c(1,2,4,3),]      
-  }
+    cDF <- cDF %>% 
+      mutate(Working = `Working - self-employed` + `Working - as a paid employee`,
+             `Not working` = `Not working - on temporary layoff from a job` + 
+               `Not working - looking for work` +
+               `Not working - retired` +
+               `Not working - disabled` +
+               `Not working - other`) %>% 
+      select(Working, `Not working`) %>% 
+      mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
+      select(unemployed)
+    
+  } else{
+    
+    cDF <- cDF %>% 
+      mutate(Working = `Working full-time` + `Working part-time`) %>% 
+      select(Working, `Not working`) %>% 
+      mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
+      select(unemployed)
+    
+  } 
   
-  return(df)
+  cDF <- cDF %>% 
+    add_column(Status = rownames(cDF), .before = 1)
+  
+  rownames(cDF) <- NULL
+  
+  return(cDF)
   
 }
 
@@ -146,6 +148,7 @@ getVacc <- function(dir_path, file){
                      n_max = 34)
     
   } else {
+    df <- NULL
     print(glue("No sheet Q73 for {file}"))
   }
   
@@ -154,8 +157,28 @@ getVacc <- function(dir_path, file){
 
 
 
-cleanVacc <- function(df){
+cleanVacc <- function(df, period){
   #' Clean vaccination dataframe
+  
+   
+  df[] <- lapply(df, gsub, pattern='\\*', replacement='')
+  
+  df <- df %>% 
+    filter(!is.na(...1)) %>% 
+    rename(Status = ...1,
+           Total = ...2) %>% 
+    select(!(contains(c("Yes", "No")))) %>% 
+    mutate(across(!contains('status'), as.double))
+  
+  cNames <- df$Status
+  df$Status <- NULL
+  cDF <- as.data.frame(t(as.matrix(df)))
+  colnames(cDF) <- cNames
+  cDF <- cDF %>% 
+    select(!contains(c("Mentions", "Skipped", "Top", "Base", "(net)")))
+  
+  return(cDF)
+  
   
   
 }
@@ -172,7 +195,7 @@ getAllSheets <- function(dir_path, ai_files, ai_periods, table){
   dfNames <- character(length(ai_files))
   
   # Initialize empty list for holding variables.
-  dataList <- list() 
+  dataList <- vector("list", length(ai_periods$Period))#list() 
   
   # Which periods are unique
   unique_periods <- ai_periods$Period[!ai_periods$Period %in% ai_periods$Period[duplicated(ai_periods$Period)]]
@@ -241,7 +264,10 @@ data_path <- file.path(rootDir,"Methods/Data/Surveys/Axios-Ipsos/Raw")
 ai_files <- list.files(data_path, pattern = "^Axios")
 
 empData <- getAllSheets(data_path, ai_files, ai_periods, "emp")
+save(empData, file = 'AI_empData.RData')
+
 vaccData <- getAllSheets(data_path, ai_files, ai_periods, "vacc")
+save(vaccData, file = 'AI_empData.RData')
 
 getIndices <- function(df, table){
   

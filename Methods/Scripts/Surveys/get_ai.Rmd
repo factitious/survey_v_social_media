@@ -99,6 +99,11 @@ rm(list = ls())
 Data downloaded manually from SEAN. There doesn't seem to be a straightforward way to do this programmatically.
 Both employment and vaccination are in the same file, but under different sheets.
 
+
+## Employment
+
+## Vaccination
+
 For employment we need sheet *PPEMPLOY* (or *PPWORK*).
 For vaccination we need *Q73*.
 
@@ -221,7 +226,7 @@ getAllSheets <- function(dir_path, ai_files, ai_periods, table){
 ```
 
 ```{r, warning=FALSE}
-rm(list = ls())
+rm(list = ls()) 
 source("gettingAI.R", local = knitr::knit_global())
 ```
 
@@ -241,31 +246,114 @@ vaccData['P2_vacc_2']
 ```
 
 ```{r}
-names(vaccData)
+names(vaccData)[1]
 ```
-
-```{r}
-empData2 <- empData[order(names(empData))]
-```
-
 
 
 ```{r}
-test <- empData2[['P2_emp_1']]
-test2 <- empData2[['P12_emp_1']]
+bla <- c(1:12)
+bla
+```
 
-test <- test %>% 
-  filter(!is.na(...1))
 
-test2 <- test2 %>% 
-  filter(!is.na(...1))
+```{r}
+for(i in 1:12){
+  period <- str_extract(names(vaccData)[i], pattern = "\\d+")
+  print(glue("{names(vaccData)[i]}: {period}"))
+  
+}
 
-colnames(test) == colnames(test2)
+cleanVacc_dev <- function(df, period){
 
-test2 %>% 
-  select(ifelse(colnames(.) != colnames(test2), 0, 1))
+    df[] <- lapply(df, gsub, pattern='\\*', replacement='')
+    
+    df <- df %>% 
+      filter(!is.na(...1)) %>% 
+      rename(Status = ...1,
+             Total = ...2) %>% 
+      select(!(contains(c("Yes", "No")))) %>% 
+      mutate(across(!contains('status'), as.double))
+    
+    cNames <- df$Status
+    df$Status <- NULL
+    cDF <- as.data.frame(t(as.matrix(df)))
+    colnames(cDF) <- cNames
+    cDF <- cDF %>% 
+      select(!contains(c("Mentions", "Skipped", "Top", "Base", "(net)")))
+      
+    return(cDF)
+
+}
+
+cleanAI <- function(empData, vaccData){
+  
+  cleanEmpData <- vector("list", length = length(empData))
+  cleanVaccData <- vector("list", length = length(vaccData))
+  empPeriods <- as.numeric(str_extract(names(empData), pattern = "\\d+"))
+  vaccPeriods <- as.numeric(str_extract(names(vaccData), pattern = "\\d+"))
+  
+  for (idx in length(data)){
+  
+    cleanEmpData[[idx]] <- cleanEmp(empData[[idx]], empPeriods[idx]) 
+    cleanVaccData[[idx]] <- cleanVacc(vaccData[[idx]], vaccPeriods[idx])
+  
+  }
+  
+  cleanDataAll <- list(cleanEmpData, cleanVaccData)
+  names(cleanDataAll) <- c("empData", "vaccData")
+  
+  return(cleanDataAll)
+  
+}
+
 
 ```
+
+```{r}
+for (i in empData){
+  print(colnames(i))
+}
+```
+
+
+
+```{r}
+
+allCNames <- list()
+
+for(period in 2:12){
+  
+  df <- vaccData[[glue('P{period}_vacc_1')]]
+  bla <- cleanVacc_dev(df, period)
+  
+  allCNames[[period]] <- colnames(bla)
+}
+
+allCNames
+
+```
+
+```{r}
+period <- 1
+empData[[glue('P{period}_emp_1')]]
+```
+
+
+
+```{r}
+allCNamesE <- list()
+
+for(period in 1:12){
+  
+  df <- empData[[glue('P{period}_emp_1')]]
+  bla <- cleanEmp_v2(df, period)
+  
+  allCNamesE[[period]] <- colnames(bla)
+}
+
+allCNamesE
+```
+
 
 ```{r}
 df <- empData[['P2_emp_1']]
@@ -300,10 +388,8 @@ df <- empData[['P2_emp_1']]
       
       
 
-# cDF
+cDF
 ```
-
-
 
 
 ```{r}
@@ -381,6 +467,9 @@ cleanEmp_v2 <- function(df, period){
   #'     'Not working' becomes a single category, whereas before it was 5 (temp layoff, looking, retired, disabled)
   #'     Since we don't the more granular information starting March, it makes sense to combine them for when they are available.
 
+  # Remove "*" characters from the data.
+  df[] <- lapply(df, gsub, pattern = '\\*', replacement = '')
+  
   df <- df %>% 
     filter(!is.na(...1)) %>% # Remove rows where the first col is na 
     rename(Status = ...1,
@@ -419,11 +508,47 @@ cleanEmp_v2 <- function(df, period){
     
   } 
   
-  cDF$Status <- rownames(cDF)
-  cDF <- spread(cDF, Status, unemployed)
+  cDF <- cDF %>% 
+    add_column(Status = rownames(cDF), .before = 1)
+  rownames(cDF) <- NULL
   
   return(cDF)
   
 }
 ```
+
+```{r}
+ai_periods
+```
+
+
+
+```{r}
+period <- 12
+
+df <- empData[[glue('P{period}_emp_2')]]
+bla <- cleanEmp_v2(df, period)
+
+bla
+```
+
+
+
+
+```{r}
+bla <- empData[['P5_emp_1']]
+bla[] <- lapply(empData[['P5_emp_1']], gsub, pattern = '\\*', replacement = '')
+
+empData[['P5_emp_1']] %>% 
+  filter(!is.na(...1))  %>%  # Remove rows where the first col is na 
+  mutate(across(str_replace(., pattern = "*", replacement = "")))
+#     rename(Status = ...1,
+#            Total = ...2) %>% # Rename columns
+#     select(!(contains("Yes") | contains("No"))) %>%  # Select only the columns that don't contain "Yes" or "No", we're not really interested in this.
+#     mutate(across(!contains("Status"),as.double)) 
+
+bla
+```
+
+
 

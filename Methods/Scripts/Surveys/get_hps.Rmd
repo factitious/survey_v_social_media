@@ -4,7 +4,7 @@ output: html_notebook
 ---
 
 ```{r, setup, include = FALSE, message=FALSE}
-knitr::opts_knit$set(root.dir = '/Users/munchausend/GoogleDrive/MSc/Dissertation')
+knitr::opts_knit$set(root.dir = '/Volumes//Volumes/Survey_Social_Media_Compare')
 knitr::opts_knit$set(echo = FALSE, message = FALSE, include = FALSE, results = FALSE)
 rm(list = ls())
 library(readxl)
