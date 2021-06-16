@@ -1,3 +1,9 @@
+library(readxl)
+library(tidyverse)
+library(data.table)
+library(glue)
+
+
 rootDir <- '/Volumes/Survey_Social_Media_Compare'
 proc_data_path <- file.path(rootDir,"Methods/Data/Surveys/HPS/Proc")
 fname <- "HPS_data.RData"
@@ -60,7 +66,8 @@ cleanEmp2 <- function(df){
     mutate(demog = ...1, 
            emp_loss_total = ...2,
            emp_loss_yes = Yes,
-           emp_loss_no = No) 
+           emp_loss_no = No) %>% 
+    select(demog, emp_loss_total, emp_loss_yes, emp_loss_no)
   
   # %>%
   #   mutate(unemployed = emp_loss_yes/(emp_loss_yes + emp_loss_no)) %>% # Calculate ratio
