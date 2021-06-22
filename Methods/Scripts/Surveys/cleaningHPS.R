@@ -85,7 +85,7 @@ cleanVacc <- function(df, phase){
     filter_all(any_vars(complete.cases(.))) 
   
   df <- df %>% 
-    slice(3:11) %>% 
+    slice(2:11) %>% 
     filter(...1 != "Age" & ...1 != "Sex")
   
   if (phase == "3.0"){
