@@ -1,0 +1,55 @@
+appnope==0.1.2
+backcall==0.2.0
+brotlipy==0.7.0
+certifi==2021.5.30
+cffi @ file:///Users/runner/miniforge3/conda-bld/cffi_1613413897768/work
+chardet @ file:///Users/runner/miniforge3/conda-bld/chardet_1610093485994/work
+click==8.0.1
+cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography_1616851693031/work
+cycler==0.10.0
+decorator==5.0.9
+et-xmlfile==1.1.0
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1593328102638/work
+importlib-metadata==4.5.0
+ipykernel==5.5.5
+ipython==7.24.1
+ipython-genutils==0.2.0
+jedi==0.18.0
+jupyter-client==6.1.12
+jupyter-core==4.7.1
+kiwisolver @ file:///Users/runner/miniforge3/conda-bld/kiwisolver_1624925923223/work
+matplotlib @ file:///Users/runner/miniforge3/conda-bld/matplotlib-suite_1620506054670/work
+matplotlib-inline==0.1.2
+ndg-httpsclient==0.5.1
+numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1624399942782/work
+olefile @ file:///home/conda/feedstock_root/build_artifacts/olefile_1602866521163/work
+openpyxl==3.0.7
+pandas==1.2.4
+parso==0.8.2
+pexpect==4.8.0
+pickleshare==0.7.5
+Pillow @ file:///Users/runner/miniforge3/conda-bld/pillow_1625143811779/work
+praw @ file:///home/conda/feedstock_root/build_artifacts/praw_1588468450379/work
+prawcore @ file:///home/conda/feedstock_root/build_artifacts/prawcore_1588466065629/work
+prompt-toolkit==3.0.18
+psaw==0.1.0
+ptyprocess==0.7.0
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1593275161868/work
+Pygments==2.9.0
+pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1608055815057/work
+pyparsing==2.4.7
+PySocks @ file:///Users/runner/miniforge3/conda-bld/pysocks_1610291468418/work
+python-dateutil==2.8.1
+pytz==2021.1
+pyzmq==22.1.0
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1608156231189/work
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1590081179328/work
+tornado==6.1
+traitlets==5.0.5
+typing-extensions==3.10.0.0
+update-checker @ file:///home/conda/feedstock_root/build_artifacts/update_checker_1596529541613/work
+urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1615828766818/work
+wcwidth==0.2.5
+websocket-client @ file:///Users/runner/miniforge3/conda-bld/websocket-client_1610127684290/work
+xlrd==2.0.1
+zipp==3.4.1
