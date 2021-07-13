@@ -39,9 +39,8 @@ class TwitterData():
 		self.t_total = 0
 
 		# Date ranges (mondays)
-		self.drange, \
-		self.drange_str = \
-			self.survey_dates()
+		self.drange = self.survey_dates()
+		# self.drange_str
 
 		# Determine search terms based on topic
 		if topic == 'Employment':
@@ -76,7 +75,7 @@ class TwitterData():
 		country = 'US',
 		exclude_rt = True,
 		results_per_call = 500,
-		return_fields = 'id,created_at,text,public_metrics, retweet_count',
+		return_fields = 'id,created_at,text,public_metrics',
 		otherTerms = []
 		):
 
@@ -119,7 +118,7 @@ class TwitterData():
 							else '{}'.format(self.search_terms)
 
 		#  Build qury text
-		query_text = '{} lang: {} place_country:{}'.\
+		query_text = '{} lang:{} place_country:{}'.\
 							format(self.search_terms,
 								   language,
 								   country)
@@ -149,10 +148,6 @@ class TwitterData():
 
 		self.result = list(self.rs.stream())
 		
-		# We can get the total requests made for a payload using:
-		# twitterData_instance.rs.n_requests
-		# twitterData_instance.rs.session_request_counter
-		
 		# This can be used to get the overall requests made and saving logs.
 		self.all_requests += self.rs.session_request_counter	   
 		self.total_results_overall += self.rs.total_results
@@ -163,9 +158,8 @@ class TwitterData():
 		t_start = time.time()
 
 		# Get start and end date from the week number.
-		start_date = self.drange_str[week_num-1][0]
-		end_date = self.drange_str[week_num-1][1]
-
+		start_date = self.drange[week_num].strftime('%Y-%m-%d')
+		end_date = self.following_monday(start_date).strftime('%Y-%m-%d')
 
 
 		# Build query.
@@ -191,8 +185,11 @@ class TwitterData():
 		time_covered = str(most_recent - oldest)
 
 		self.logs[start_date] = {
-			'mostRecent': str(most_recent),
+			'weekNum': week_num,
+			'weekStart': start_date,
+			'weekEnd': end_date,
 			'oldest': str(oldest),
+			'mostRecent': str(most_recent),
 			'periodCovered': time_covered,
 			'sessionRequestCounter': self.rs.session_request_counter,
 			'totalRequests': self.all_requests,
@@ -233,7 +230,7 @@ class TwitterData():
 							format(self.topic, self.current_week))
 
 		logs_path = path.join(self.main_path,
-							 'Data/Twitter/{}/LOGS/{}.csv'.\
+							 'Data/Twitter/{}/LOGS/{}.json'.\
 							 format(self.topic, self.current_week))
 
 			
@@ -244,7 +241,7 @@ class TwitterData():
 		self.all_data[self.current_week].to_csv(df_path)
 
 		with open(logs_path, 'w') as fout:
-			json.dump(self.logs, fout)
+			json.dump(self.logs[self.current_week], fout)
 
 
 	@classmethod
@@ -252,17 +249,18 @@ class TwitterData():
 		cls,
 		topic,
 		week_num, 
-		loadDF = True, 
-		loadJSON = False):
+		df_only = True):
 		'''
 		week_num (int): name of file to be loaded
 		topic (str): "Employment" or "Vaccination"
 		
 		'''
 
+		df, result, log = None,None,None
+
 		obj = TwitterData(topic)
 		
-		week_start_date = obj.drange_str[week_num-1][0]
+		week_start_date = obj.drange[week_num].strftime('%Y-%m-%d')
 
 		df_path = path.join(
 						obj.main_path,
@@ -270,31 +268,103 @@ class TwitterData():
 						format(topic, week_start_date)
 						)
 
-		json_path = path.join(
-						obj.main_path,
-						'Data/Twitter/{}/JSON/{}.json'.\
-						format(topic, week_start_date)
-						)
+		df = cls.load_df(df_path)
 
+		if df_only == True:
 
-		if(loadDF and not loadJSON):
-			df = pd.read_csv(df_path, index_col=0, dtype={'id': object})
 			return df
-		
-		if(not loadDF and loadJSON):
-			with open(json_path) as f:
-				result = json.load(f)
+
+		else:
+
+			json_path = path.join(
+							obj.main_path,
+							'Data/Twitter/{}/JSON/{}.json'.\
+							format(topic, week_start_date)
+							)
 			
-			return result
+			result = cls.load_json(json_path)
+
+			logs_path = path.join(
+							obj.main_path,
+							'Data/Twitter/{}/LOGS/{}.json'.\
+							format(topic, week_start_date)
+							)
+
+			log = cls.load_logs(logs_path)
+
+			return df,result,log
+
+	@classmethod
+	def load_all(
+		cls,
+		topic):
+
+		dfs_list, logs_list = [],[]
+		dfs, logs = None,None
+
+		obj = TwitterData(topic)
+
+		for week_num in range(len(obj.drange)):
+
+			week_start_date = obj.drange[week_num].strftime('%Y-%m-%d')
+
+			df_path = path.join(
+				obj.main_path,
+				'Data/Twitter/{}/CSV/{}.csv'.\
+				format(topic, week_start_date)
+				)
+
+			df = cls.load_df(df_path)
+
+
+			logs_path = path.join(
+							obj.main_path,
+							'Data/Twitter/{}/LOGS/{}.json'.\
+							format(topic, week_start_date)
+							)
+
+			log = cls.load_logs(logs_path, df = True)
+
+			dfs_list.append(df)
+			logs_list.append(log)
+
+		dfs = pd.concat(dfs_list)
+		dfs.set_index('created_at', inplace = True)
+
+		logs = pd.concat(logs_list)
+		logs.set_index('weekNum', inplace = True)
+
+		return dfs, logs
+
+
+	@classmethod
+	def load_df(cls,path):
 		
-		if(loadDF and loadJSON):
-			df = pd.read_csv(df_path, index_col=0, dtype={'id': object})
+		df = pd.read_csv(path, index_col=0, dtype={'id': object})
+		return df
+
+	@classmethod
+	def load_json(cls,path):
+
+		with open(path) as f:
+			result = json.load(f)
 			
-			with open(json_path) as f:
-				result = json.load(f)
-					
-			return df, result			   
-	
+		return result
+
+	@classmethod
+	def load_logs(cls,path, df = False):
+
+
+		with open(path) as f:
+			logs = json.load(f)
+
+		if df == True:
+			logs_df = pd.json_normalize(logs)
+			
+			return logs_df
+
+		else:
+			return logs
 
 	@classmethod
 	def to_datetime(cls,date_str):
@@ -362,58 +432,26 @@ class TwitterData():
 		_, last_date = cls.week_from_day(ai_periods['A_I_start_date'].iloc[-1])
 
 		# Create date range from first to last date (mondays)
-		mondays = pd.date_range(
+		drange = pd.date_range(
 						first_date, 
 						last_date, 
 						freq = 'W-MON'
 						)
 
-		mondays_str = mondays.strftime('%Y-%m-%d')
+		#drange = [(m, s) for m, s in zip(mondays, mondays_leading)]
 
-		mondays_leading = pd.date_range(
-							cls.following_monday(first_date),
-							cls.following_monday(last_date)
-							)
+		# mondays_str = mondays.strftime('%Y-%m-%d')
 
-		mondays_leading_str = mondays_leading.strftime('%Y-%m-%d')
+		# mondays_leading = pd.date_range(
+		# 					cls.following_monday(first_date),
+		# 					cls.following_monday(last_date)
+		# 					)
+
+		# mondays_leading_str = mondays_leading.strftime('%Y-%m-%d')
 
 		# Tuple
-		drange = [(m, s) for m, s in zip(mondays, mondays_leading)]
-		drange_str = [(m, s) for m, s in zip(mondays_str, mondays_leading_str)]
+		# drange = [(m, s) for m, s in zip(mondays, mondays_leading)]
+		# drange_str = [(m, s) for m, s in zip(mondays_str, mondays_leading_str)]
 
 
-		return drange, drange_str
-
-
-
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		return drange #, drange_str
