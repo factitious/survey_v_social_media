@@ -4,6 +4,8 @@ from datetime import datetime, timedelta, timezone
 from psaw import PushshiftAPI
 import matplotlib.pyplot as plt
 import re
+from os import path
+import time
 
 # Global variables
 
@@ -96,24 +98,24 @@ class RedditData():
 		t_start = time.time()
 
 		# Get start and end date from the week number
-		start_date = self.drange[week_num].timestamp()
-		end_date = self.following_monday(self.drange[week_num]).timestamp()
+		start_date = int(self.drange[week_num].timestamp())
+		end_date = int(self.following_monday(self.drange[week_num]).timestamp())
 
 		# Get current week as str
-		self.current_week = start_date.strftime('%Y-%m-%d')
+		self.current_week = self.drange[week_num].strftime('%Y-%m-%d')
 
 		# Build query
 		self.build_query(start_date, end_date)
 
 		# Get the data
-		self.all_data[self.current_week] = get_data()
+		self.all_data[self.current_week] = self.get_data()
 
 
 		t_end = time.time()
 
 		t_week = round(t_end-t_start, 2)
 
-		self.t_total += current_week
+		self.t_total += self.current_week
 
 		# Calculate the time covered.
 		most_recent = max(self.all_data[self.current_week]['date'])
@@ -134,19 +136,24 @@ class RedditData():
 			'timeTakenTotal': self.t_total
 		}
 
-	# @classmethod
-	# def to_datetime(cls, date_ts):
-	# 	'''Transform utc timestamp (int) to datetime'''
+	def export_one_week(self):
+		df_path = path.join(
+						self.data_path,
+						'CSV/{}.csv'.\
+						format(self.current_week)
+						)
 
-	# 	date_dt = datetime.fromtimestamp(date_ts)
+		self.all_data[self.current_week].to_csv(df_path)
 
-	# 	return date_dt
+		logs_path = path.join(
+						 self.data_path,
+						 'LOGS/{}.json'.\
+						 format(self.current_week)
+						 )
 
-	# @classmethod
-	# def to_utc_timestamp(cls, date_ts):
-	# 	dateDT = date_ts.replace(tzinfo = timezone.utc).timestamp()
-    
- #    	return dateDT
+		with open(logs_path, 'w') as fout:
+			json.dump(self.logs[self.current_week], fout)
+
 
 	@classmethod
 	def week_from_day(cls,day):
@@ -199,13 +206,16 @@ class RedditData():
 		return drange
 
 
-
 class RedditSubmissions(RedditData):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self,topic):
+		super().__init__(topic)
 		self.keep_fields = SUBMISSIONS_KEEP_FIELDS
 		self.api = PushshiftAPI()
+		self.data_path = path.join(
+								self.main_path,
+								'Data/Reddit/{}/Submissions'.\
+								format(self.topic))
 
 
 	def build_query(
@@ -216,14 +226,18 @@ class RedditSubmissions(RedditData):
 
 		self.api_request_generator = self.api.search_submissions(
 											q=self.search_terms,
-											after=start_time,
-											before=end_time,
+											after=start_date,
+											before=end_date,
 											subreddit_subscribers='>2',
 											over_18=False,
 											is_blank=True,
 											author='![deleted]',
 											filter=self.keep_fields
 											)
+	@classmethod
+	def load_one_week():
+		pass
+
 
 
 
@@ -237,7 +251,15 @@ class RedditComments(RedditData):
 
 		if ids:
 			self.ids = ids
+			self.data_path = path.join(
+									self.main_path,
+									'Data/Reddit/{}/Comments/SubID'.\
+									format(self.topic))
 		else:
+			self.data_path = path.join(
+									self.main_path,
+									'Data/Reddit/{}/Comments/Queried'.\
+									format(self.topic))
 			self.ids = None
 
 	def build_query(
@@ -250,8 +272,8 @@ class RedditComments(RedditData):
 			# Get all the comments associated with submissions
 			self.api_request_generator = self.api.search_comments(
 												link_id=self.sub_ids,
-												after=self.start_time,
-												before=self.end_time,
+												after=start_date,
+												before=end_date,
 												author = '![deleted],!AutoModerator',
 												filter = self.keep_fields
 												)
@@ -259,26 +281,11 @@ class RedditComments(RedditData):
 			# Request based on [topic]_QUERY
 			self.api_request_generator = self.api.search_comments(
 												q=self.search_terms,
-												after = start_time,
-												before = end_time,
+												after = start_date,
+												before = end_date,
 												author = '![deleted],!AutoModerator',
 												filter = self.keep_fields
 												)
-
-	
-	def get_one_week(self, week_num):
-
-		t_start = time.time()
-
-		# Get start and end date from the week number
-		start_date = self.drange[week_num].timestamp()
-		end_date = self.following_monday(self.drange[week_num]).timestamp()
-
-
-
-
-	def merge_comments_submissions():
-		pass
 
 
 
