@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import re
 from os import path
 import time
+import json
 
 # Global variables
 
@@ -115,7 +116,7 @@ class RedditData():
 
 		t_week = round(t_end-t_start, 2)
 
-		self.t_total += self.current_week
+		self.t_total += t_week
 
 		# Calculate the time covered.
 		most_recent = max(self.all_data[self.current_week]['date'])
@@ -125,8 +126,8 @@ class RedditData():
 
 		self.logs[self.current_week] = {
 			'weekNum': week_num,
-			'weekStart': start_date,
-			'weekEnd': end_date,
+			'weekStart': self.current_week,
+			'weekEnd': self.following_monday(self.drange[week_num]).strftime('%Y-%m-%d'),
 			'mostRecent': str(most_recent),
 			'oldest': str(oldest),
 			'periodCovered': time_covered,
@@ -154,6 +155,28 @@ class RedditData():
 		with open(logs_path, 'w') as fout:
 			json.dump(self.logs[self.current_week], fout)
 
+
+	@classmethod
+	def load_df(cls,path):
+		df = pd.read_csv(path, index_col=0)
+		return df
+
+	@classmethod
+	def load_log(cls, path):
+		with open(path) as fin:
+			log = json.load(fin)
+		return log
+
+	@classmethod
+	def load_log(cls,path, df = False):
+		with open(path) as fin:
+			log = json.load(fin)
+
+		if df == True:
+			log_df = pd.json_normalize(log)
+			return log_df
+		else:
+			return log
 
 	@classmethod
 	def week_from_day(cls,day):
@@ -235,22 +258,57 @@ class RedditSubmissions(RedditData):
 											filter=self.keep_fields
 											)
 	@classmethod
-	def load_one_week():
-		pass
+	def load_one_week(
+		cls,
+		topic,
+		week_num,
+		type,
+		df_only = True
+		):
+
+		df, log = None, None
+
+		if type == 'Submissions':
+			obj = RedditSubmissions(topic)
+
+		elif type == 'Comments':
+			obj = RedditComments(topic, search_ids = True)
+
+		elif type == 'SubComments':
+			obj = RedditComments(topic, search_ids = False)
+
+		week_start_date = obj.drange[week_num].strftime('%Y-%m-%d')
+
+		df_path = path.join(
+					   obj.data_path,
+					   'CSV/{}.csv')
+
+		df = cls.load_df(df_path)
+
+		if df_only == True:
+			return df
+		else:
+			log_path = path.join(
+							 obj.data_path,
+							 'LOGS/{}.json')
+
+			log = cls.load_log(log_path)
 
 
+		return df, log
 
 
 
 class RedditComments(RedditData):
 
-	def __init__(self, ids = None):
+	def __init__(self, search_ids = False,ids = []):
 		super().__init__()
 		self.keep_fields = COMMENTS_KEEP_FIELDS
 		self.api = PushshiftAPI()
+		self.search_ids = search_ids
+		self.ids = ids
 
-		if ids:
-			self.ids = ids
+		if self.search_ids:
 			self.data_path = path.join(
 									self.main_path,
 									'Data/Reddit/{}/Comments/SubID'.\
@@ -260,7 +318,6 @@ class RedditComments(RedditData):
 									self.main_path,
 									'Data/Reddit/{}/Comments/Queried'.\
 									format(self.topic))
-			self.ids = None
 
 	def build_query(
 		self,
@@ -268,7 +325,7 @@ class RedditComments(RedditData):
 		end_date
 		):
 
-		if self.ids:
+		if self.search_ids:
 			# Get all the comments associated with submissions
 			self.api_request_generator = self.api.search_comments(
 												link_id=self.sub_ids,
@@ -286,8 +343,6 @@ class RedditComments(RedditData):
 												author = '![deleted],!AutoModerator',
 												filter = self.keep_fields
 												)
-
-
 
 
 
