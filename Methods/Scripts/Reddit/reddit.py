@@ -244,10 +244,10 @@ class RedditData():
 			obj = RedditSubmissions(topic)
 
 		elif post_type == 'Comments':
-			obj = RedditComments(topic, search_ids = True)
+			obj = RedditComments(topic, search_ids = False)
 
 		elif post_type == 'SubComments':
-			obj = RedditComments(topic, search_ids = False)
+			obj = RedditComments(topic, search_ids = True)
 
 		week_start_date = obj.drange[week_num].strftime('%Y-%m-%d')
 
