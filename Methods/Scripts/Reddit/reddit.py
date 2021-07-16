@@ -137,6 +137,7 @@ class RedditData():
 			'timeTakenTotal': self.t_total
 		}
 
+
 	def export_one_week(self):
 		df_path = path.join(
 						self.data_path,
@@ -228,6 +229,18 @@ class RedditData():
 
 		return drange
 
+	@classmethod
+	def get_ids(cls, df):
+		ids = df[df['num_comments'] > 2].get('id')
+
+		return list(ids)
+
+	@classmethod
+	def id_chunks(cls, ids, n):
+		"""Yield successive n-sized chunks from lst."""
+		for i in range(0, len(ids), n):
+			yield ids[i:i + n]
+
 
 	@classmethod
 	def load_one_week(
@@ -272,6 +285,7 @@ class RedditData():
 		return df, log
 
 
+
 class RedditSubmissions(RedditData):
 
 	def __init__(self,topic):
@@ -305,23 +319,18 @@ class RedditSubmissions(RedditData):
 
 class RedditComments(RedditData):
 
-	def __init__(self, topic, search_ids = False,ids = []):
+	def __init__(self, topic):
 		super().__init__(topic)
 		self.keep_fields = COMMENTS_KEEP_FIELDS
 		self.api = PushshiftAPI()
 		self.search_ids = search_ids
-		self.ids = ids
+		self.sub_ids = ids
 
-		if self.search_ids:
-			self.data_path = path.join(
-									self.main_path,
-									'Data/Reddit/{}/Comments/SubID'.\
-									format(self.topic))
-		else:
-			self.data_path = path.join(
-									self.main_path,
-									'Data/Reddit/{}/Comments/Queried'.\
-									format(self.topic))
+		
+		self.data_path = path.join(
+								self.main_path,
+								'Data/Reddit/{}/Comments/Queried'.\
+								format(self.topic))
 
 	def build_query(
 		self,
@@ -329,24 +338,93 @@ class RedditComments(RedditData):
 		end_date
 		):
 
-		if self.search_ids:
-			# Get all the comments associated with submissions
-			self.api_request_generator = self.api.search_comments(
-												link_id=self.sub_ids,
-												after=start_date,
-												before=end_date,
-												author = '![deleted],!AutoModerator',
-												filter = self.keep_fields
-												)
-		else:
-			# Request based on [topic]_QUERY
-			self.api_request_generator = self.api.search_comments(
-												q=self.search_terms,
-												after = start_date,
-												before = end_date,
-												author = '![deleted],!AutoModerator',
-												filter = self.keep_fields
-												)
+		# Request based on [topic]_QUERY
+		self.api_request_generator = self.api.search_comments(
+											q=self.search_terms,
+											after = start_date,
+											before = end_date,
+											author = '![deleted],!AutoModerator',
+											filter = self.keep_fields
+											)
+
+
+class RedditSubComments(RedditData):
+
+	def __init__(self, topic, sub_ids, chunk_size):
+		super().__init__(topic)
+		self.keep_fields = COMMENTS_KEEP_FIELDS
+		self.api = PushshiftAPI()
+		self.sub_ids = sub_ids
+		self.chunk_size = chunk_size
+
+		self.data_path = path.join(
+								self.main_path,
+								'Data/Reddit/{}/Comments/SubID'.\
+								format(self.topic))
+
+	def build_query(
+		self,
+		start_date,
+		end_date
+		):
+
+		self.api_request_generator = self.api.search_comments(
+											link_id=self.sub_ids,
+											after=start_date,
+											before=end_date,
+											author = '![deleted],!AutoModerator',
+											filter = self.keep_fields
+										)
+
+
+
+
+	def get_sub_comments(self, week_num):
+
+		self.current_week = self.drange[week_num].strftime('%Y-%m-%d')
+
+		df_list = []
+
+		id_subsets = RedditData.id_chunks(self.sub_ids, self.chunk_size)
+		n_chunk = 0
+
+		for id_subset in id_subsets:
+
+			current_sub = RedditSubComments(
+								topic = self.topic, 
+								sub_ids = id_subset,
+								chunk_size = self.chunk_size)
+
+			current_sub.get_one_week(week_num)
+
+			df_list.append(current_sub.all_data[current_sub.current_week])
+
+			if n_chunk == 0:
+				all_logs = current_sub.logs[current_sub.current_week]
+
+			else:
+				all_logs.update({
+
+					'mostRecent': max(all_logs['mostRecent'],
+									  current_sub.logs[self.current_week]['mostRecent']),
+					'oldest': min(all_logs['oldest'],
+									  current_sub.logs[self.current_week]['oldest']),
+					'periodCovered': max(['periodCovered'],
+									  current_sub.logs[self.current_week]['periodCovered']),
+					'total': all_logs['total'] + current_sub.logs[self.current_week]['total'],
+					'totalOverall': all_logs['totalOverall'] + \
+									current_sub.logs[self.current_week]['totalOverall'],
+					'timeTaken': all_logs['timeTaken'] + \
+								 current_sub.logs[self.current_week]['timeTaken'],
+					'timeTakenTotal': all_logs['timeTakenTotal'] + \
+								 current_sub.logs[self.current_week]['timeTakenTotal']
+				})
+				
+			n_chunk += 1
+
+		self.all_data[self.current_week] = pd.concat(df_list)
+		self.all_logs[self.current_week] = all_logs
+
 
 
 
