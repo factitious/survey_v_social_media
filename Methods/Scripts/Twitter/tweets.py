@@ -18,6 +18,8 @@ JOB_QUERY = '(jobs OR employement) -steve -blow'
 
 VACC_QUERY = '(vacc OR vax OR vaccine OR vaccination) (corona OR covid)'
 
+KEEP_FIELDS = 'id,created_at,text,public_metrics, conversation_id, in_reply_to_user_id'
+
 
 class TwitterData():
 	'''Query Twitter API and save data.'''
@@ -75,7 +77,7 @@ class TwitterData():
 		country = 'US',
 		exclude_rt = True,
 		results_per_call = 500,
-		return_fields = 'id,created_at,text,public_metrics',
+		return_fields =  KEEP_FIELDS,
 		otherTerms = []
 		):
 
@@ -197,7 +199,7 @@ class TwitterData():
 			'totalTweetsOverall': self.total_results_overall,
 			'requestParams': self.rs.request_parameters,
 			'timeTaken': t_week,
-			'totalTimeTaken': self.t_total
+			'timeTakenTotal': self.t_total
 			}
 
         # Save current week's Monday date.
@@ -438,20 +440,5 @@ class TwitterData():
 						freq = 'W-MON'
 						)
 
-		#drange = [(m, s) for m, s in zip(mondays, mondays_leading)]
 
-		# mondays_str = mondays.strftime('%Y-%m-%d')
-
-		# mondays_leading = pd.date_range(
-		# 					cls.following_monday(first_date),
-		# 					cls.following_monday(last_date)
-		# 					)
-
-		# mondays_leading_str = mondays_leading.strftime('%Y-%m-%d')
-
-		# Tuple
-		# drange = [(m, s) for m, s in zip(mondays, mondays_leading)]
-		# drange_str = [(m, s) for m, s in zip(mondays_str, mondays_leading_str)]
-
-
-		return drange #, drange_str
+		return drange
