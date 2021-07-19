@@ -257,10 +257,10 @@ class RedditData():
 			obj = RedditSubmissions(topic)
 
 		elif post_type == 'Comments':
-			obj = RedditComments(topic, search_ids = False)
+			obj = RedditComments(topic)
 
 		elif post_type == 'SubComments':
-			obj = RedditComments(topic, search_ids = True)
+			obj = RedditSubComments(topic)
 
 		week_start_date = obj.drange[week_num].strftime('%Y-%m-%d')
 
@@ -409,7 +409,7 @@ class RedditSubComments(RedditData):
 									  current_sub.logs[self.current_week]['mostRecent']),
 					'oldest': min(all_logs['oldest'],
 									  current_sub.logs[self.current_week]['oldest']),
-					'periodCovered': max(['periodCovered'],
+					'periodCovered': max(all_logs['periodCovered'],
 									  current_sub.logs[self.current_week]['periodCovered']),
 					'total': all_logs['total'] + current_sub.logs[self.current_week]['total'],
 					'totalOverall': all_logs['totalOverall'] + \
@@ -423,7 +423,7 @@ class RedditSubComments(RedditData):
 			n_chunk += 1
 
 		self.all_data[self.current_week] = pd.concat(df_list)
-		self.all_logs[self.current_week] = all_logs
+		self.logs[self.current_week] = all_logs
 
 
 
