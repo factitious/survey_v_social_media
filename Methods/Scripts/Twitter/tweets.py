@@ -163,8 +163,9 @@ class TwitterData():
 							else '{}'.format(self.search_terms)
 
 		#  Build qury text
-		query_text = '{} lang:{} place_country:{}'.\
+		query_text = '{} {} lang:{} place_country:{}'.\
 							format(self.search_terms,
+								   rt,
 								   language,
 								   country)
 
