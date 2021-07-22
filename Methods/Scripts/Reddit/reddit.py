@@ -57,7 +57,7 @@ SUBMISSIONS_KEEP_FIELDS = [
 	'num_comments',
 	'num_crossposts',
 	'upvote_ratio',
-	'full_link'
+	'full_link',
 	'title',
 	'selftext',
 	'is_created_from_ads_ui',
@@ -322,7 +322,7 @@ class RedditSubmissions(RedditData):
 		self.api = PushshiftAPI()
 		self.data_path = path.join(
 								self.main_path,
-								'Data/Reddit/{}/Submissions'.\
+								'Data/Reddit/Raw/{}/Submissions'.\
 								format(self.topic))
 
 
@@ -354,7 +354,7 @@ class RedditComments(RedditData):
 		
 		self.data_path = path.join(
 								self.main_path,
-								'Data/Reddit/{}/Comments/Queried'.\
+								'Data/Reddit/Raw/{}/Comments/Queried'.\
 								format(self.topic))
 
 	def build_query(
@@ -383,7 +383,7 @@ class RedditSubComments(RedditData):
 
 		self.data_path = path.join(
 								self.main_path,
-								'Data/Reddit/{}/Comments/SubID'.\
+								'Data/Reddit/Raw/{}/Comments/SubID'.\
 								format(self.topic))
 
 	def build_query(
