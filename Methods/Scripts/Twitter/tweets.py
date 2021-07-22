@@ -282,16 +282,16 @@ class TwitterData():
 	def export_one_week(self):
 
 		json_path = path.join(self.main_path, 
-							 'Data/Twitter/{}/JSON/{}.json'.\
+							 'Data/Twitter/Raw/{}/JSON/{}.json'.\
 							 format(self.topic,self.current_week))
 
 		
 		df_path = path.join(self.main_path,
-							'Data/Twitter/{}/CSV/{}.csv'.\
+							'Data/Twitter/Raw/{}/CSV/{}.csv'.\
 							format(self.topic, self.current_week))
 
 		logs_path = path.join(self.main_path,
-							 'Data/Twitter/{}/LOGS/{}.json'.\
+							 'Data/Twitter/Raw/{}/LOGS/{}.json'.\
 							 format(self.topic, self.current_week))
 
 			
@@ -325,7 +325,7 @@ class TwitterData():
 
 		df_path = path.join(
 						obj.main_path,
-						'Data/Twitter/{}/CSV/{}.csv'.\
+						'Data/Twitter/Raw/{}/CSV/{}.csv'.\
 						format(topic, week_start_date)
 						)
 
@@ -339,7 +339,7 @@ class TwitterData():
 
 			json_path = path.join(
 							obj.main_path,
-							'Data/Twitter/{}/JSON/{}.json'.\
+							'Data/Twitter/Raw/{}/JSON/{}.json'.\
 							format(topic, week_start_date)
 							)
 			
@@ -347,7 +347,7 @@ class TwitterData():
 
 			logs_path = path.join(
 							obj.main_path,
-							'Data/Twitter/{}/LOGS/{}.json'.\
+							'Data/Twitter/Raw/{}/LOGS/{}.json'.\
 							format(topic, week_start_date)
 							)
 
@@ -371,7 +371,7 @@ class TwitterData():
 
 			df_path = path.join(
 				obj.main_path,
-				'Data/Twitter/{}/CSV/{}.csv'.\
+				'Data/Twitter/Raw/{}/CSV/{}.csv'.\
 				format(topic, week_start_date)
 				)
 
@@ -380,7 +380,7 @@ class TwitterData():
 
 			logs_path = path.join(
 							obj.main_path,
-							'Data/Twitter/{}/LOGS/{}.json'.\
+							'Data/Twitter/Raw/{}/LOGS/{}.json'.\
 							format(topic, week_start_date)
 							)
 

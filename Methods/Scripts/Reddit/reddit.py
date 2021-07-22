@@ -13,9 +13,39 @@ import json
 
 MAIN_PATH = '/Volumes/Survey_Social_Media_Compare/Methods/'
 
-JOB_QUERY =  '(jobs | employment)'
 
-VACC_QUERY = '(vacc | vax | vaccine | vaccination)&(corona | covid)'
+job_terms = [
+	'jobs',
+	'employment'
+]
+
+
+vacc_terms1 = [
+	'vacc',
+	'vax',
+	'vaccine',
+	'vacine',
+	'immunization',
+	'immunisation',
+	'vaccines'
+]
+
+vacc_terms2 = [
+	'corona',
+	'covid',
+	'covid-19',
+	'covid19',
+	'pandemic'
+]
+
+JOB_QUERY = '({})'.format(
+	" | ".join(job_terms)
+	)
+
+VACC_QUERY = '({})+({})'.format(
+	"|".join(vacc_terms1),
+	"|".join(vacc_terms2)
+	)
 
 SUBMISSIONS_KEEP_FIELDS = [
 	'id', 
@@ -31,7 +61,9 @@ SUBMISSIONS_KEEP_FIELDS = [
 	'title',
 	'selftext',
 	'is_created_from_ads_ui',
-	'is_robot_indexable']
+	'is_robot_indexable',
+	'is_reddit_media_domain',
+	'is_blank']
 
 
 COMMENTS_KEEP_FIELDS = [
@@ -137,7 +169,6 @@ class RedditData():
 			'timeTakenTotal': self.t_total
 		}
 
-
 	def export_one_week(self):
 		df_path = path.join(
 						self.data_path,
@@ -241,7 +272,6 @@ class RedditData():
 		for i in range(0, len(ids), n):
 			yield ids[i:i + n]
 
-
 	@classmethod
 	def load_one_week(
 		cls,
@@ -284,8 +314,6 @@ class RedditData():
 
 		return df, log
 
-
-
 class RedditSubmissions(RedditData):
 
 	def __init__(self,topic):
@@ -310,12 +338,9 @@ class RedditSubmissions(RedditData):
 											before=end_date,
 											subreddit_subscribers='>2',
 											over_18=False,
-											is_blank=True,
 											author='![deleted]',
 											filter=self.keep_fields
 											)
-
-
 
 class RedditComments(RedditData):
 
@@ -347,7 +372,6 @@ class RedditComments(RedditData):
 											filter = self.keep_fields
 											)
 
-
 class RedditSubComments(RedditData):
 
 	def __init__(self, topic, sub_ids, chunk_size):
@@ -369,11 +393,11 @@ class RedditSubComments(RedditData):
 		):
 
 		self.api_request_generator = self.api.search_comments(
-											link_id=self.sub_ids,
-											after=start_date,
-											before=end_date,
-											author = '![deleted],!AutoModerator',
-											filter = self.keep_fields
+										link_id=self.sub_ids,
+										after=start_date,
+										before=end_date,
+										author = '![deleted],!AutoModerator',
+										filter = self.keep_fields
 										)
 
 
@@ -406,18 +430,19 @@ class RedditSubComments(RedditData):
 				all_logs.update({
 
 					'mostRecent': max(all_logs['mostRecent'],
-									  current_sub.logs[self.current_week]['mostRecent']),
+						current_sub.logs[self.current_week]['mostRecent']),
 					'oldest': min(all_logs['oldest'],
-									  current_sub.logs[self.current_week]['oldest']),
+						current_sub.logs[self.current_week]['oldest']),
 					'periodCovered': max(all_logs['periodCovered'],
-									  current_sub.logs[self.current_week]['periodCovered']),
-					'total': all_logs['total'] + current_sub.logs[self.current_week]['total'],
+						current_sub.logs[self.current_week]['periodCovered']),
+					'total': all_logs['total'] + \
+						current_sub.logs[self.current_week]['total'],
 					'totalOverall': all_logs['totalOverall'] + \
-									current_sub.logs[self.current_week]['totalOverall'],
+						current_sub.logs[self.current_week]['totalOverall'],
 					'timeTaken': all_logs['timeTaken'] + \
-								 current_sub.logs[self.current_week]['timeTaken'],
+						current_sub.logs[self.current_week]['timeTaken'],
 					'timeTakenTotal': all_logs['timeTakenTotal'] + \
-								 current_sub.logs[self.current_week]['timeTakenTotal']
+						current_sub.logs[self.current_week]['timeTakenTotal']
 				})
 				
 			n_chunk += 1
