@@ -86,7 +86,6 @@ class TwitterData():
 
 		# Date ranges (mondays)
 		self.drange = self.survey_dates()
-		# self.drange_str
 
 		# Determine search terms based on topic
 		if topic == 'Employment':
