@@ -311,8 +311,38 @@ class RedditData():
 
 			log = cls.load_log(log_path)
 
+			return df, log
 
-		return df, log
+
+	@classmethod
+	def load_all(
+		cls,
+		topic,
+		post_type,
+		start_week = 0,
+		end_week = 1,
+		df_only = True):
+
+		df_list, all_logs = list(), dict()
+		drange = cls.survey_dates()
+
+		for week_num in range(start_week, end_week + 1):
+
+			cw_date = str(drange[week_num]).\
+				split(' ')[0]
+
+			df, log = cls.load_one_week(
+				topic = topic,
+				week_num = week_num,
+				post_type = post_type,
+				df_only = df_only)
+
+			df_list.append(df)
+			all_logs[cw_date] = log
+
+		all_dfs = pd.concat(df_list)
+
+		return all_dfs, all_logs
 
 class RedditSubmissions(RedditData):
 
