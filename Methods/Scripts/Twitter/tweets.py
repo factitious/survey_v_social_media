@@ -14,11 +14,55 @@ import time
 
 MAIN_PATH = '/Volumes/Survey_Social_Media_Compare/Methods/'
 
-JOB_QUERY = '(jobs OR employement) -steve -blow'
+job_terms = [
+	'jobs',
+	'employment'
+]
 
-VACC_QUERY = '(vacc OR vax OR vaccine OR vaccination) (corona OR covid)'
 
-KEEP_FIELDS = 'id,created_at,text,public_metrics, conversation_id, in_reply_to_user_id'
+vacc_terms1 = [
+	'vacc',
+	'vax',
+	'vaccine',
+	'vacine',
+	'immunization',
+	'immunisation',
+	'vaccines'
+]
+
+vacc_terms2 = [
+	'corona',
+	'covid',
+	'covid-19',
+	'covid19',
+	'pandemic'
+]
+
+
+fields  = [
+	'id',
+	'created_at',
+	'text',
+	'public_metrics',
+	'lang',
+	'geo',
+	'source'
+	]
+
+
+JOB_QUERY = '({})'.format(
+	" OR ".join(job_terms)
+	)
+
+VACC_QUERY = '({}) ({})'.format(
+	" OR ".join(vacc_terms1),
+	" OR ".join(vacc_terms2)
+	)
+
+
+KEEP_FIELDS = ','.join(fields)
+
+
 
 
 class TwitterData():
@@ -137,6 +181,7 @@ class TwitterData():
 									  start_time = start_date,
 									  end_time = end_date,
 									  tweet_fields = return_fields,
+									  expansions = 'geo.place_id',
 									  results_per_call = self.results_per_call)
 
 
@@ -213,10 +258,24 @@ class TwitterData():
 		# Remove the entries (i.e. dictionaries) that contain
 		# the key 'newest_id' from the payload, i.e. the result 
 		# of our query (which is a list of dictionaries).		
-		clean_json_list = [x for x in result if 'newest_id' not in x]		
+		clean_json_list = [x for x in result 
+							     if 'newest_id' not in x 
+							     and 'places' not in x]
+
+		places = [x for x in result if 'places' in x]
+		places_df = pd.DataFrame(places[0]['places'])
+		places_df.set_index('id', drop = True, inplace = True)
 		
 		# Get date in nice pd.df 
 		df = pd.json_normalize(clean_json_list)
+
+		# Add name to place ids
+		df = pd.merge(
+			left = df,
+			right = places_df,
+			how = 'left',
+			left_on = 'geo.place_id',
+			right_index = True)
 
 		return df
 
