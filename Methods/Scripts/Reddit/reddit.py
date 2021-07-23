@@ -205,7 +205,10 @@ class RedditData():
 			log = json.load(fin)
 
 		if df == True:
-			log_df = pd.json_normalize(log)
+			log_df = pd.DataFrame.from_dict(
+				log,
+				orient = 'index'
+				)
 			return log_df
 		else:
 			return log
@@ -341,8 +344,12 @@ class RedditData():
 			all_logs[cw_date] = log
 
 		all_dfs = pd.concat(df_list)
+		all_logs_df = pd.DataFrame.from_dict(
+			all_logs,
+			orient = 'index'
+			)
 
-		return all_dfs, all_logs
+		return all_dfs, all_logs_df
 
 class RedditSubmissions(RedditData):
 
