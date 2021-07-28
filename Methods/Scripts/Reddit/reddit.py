@@ -19,7 +19,6 @@ job_terms = [
 	'employment'
 ]
 
-
 vacc_terms1 = [
 	'vacc',
 	'vax',
@@ -79,6 +78,149 @@ COMMENTS_KEEP_FIELDS = [
 	'body',
 	'locked']	
 
+SR_TERMS1 = [
+	'job',
+	'work',
+	'employ',
+	'career',
+	'resume'
+]
+
+SR_TERMS2 = [
+	'uk',
+	'europe',
+	'eu',
+	'china',
+	'u_',
+	'network',
+	'75thrangerrecruiting',
+	'ashesrecruitment',
+	'beachbodyworkouts',
+	'woodwork',
+	'brawlrecruit',
+	'homework',
+	'canada',
+	'india',
+	'bdjobsbarta',
+	'gta',
+	'glasgow',
+	'german',
+	'cscareerquestionssea',
+	'careerblogzino',
+	'dogeworkers', 
+	'dubai_jobs',
+	'edmontonjobs',
+	'entitledcoworkers',
+	'fastworkers',
+	'fifacareers',
+	'guildwarsdyejob'
+	'howhumanbeingswork'
+	'idoworkherelady',
+	'idontworkhere',
+	'idontworkherelady',
+	'iceland',
+	'workshop',
+	'jobsims',
+	'joblessreincarnation',
+	'philippine',
+	'jobstobedone',
+	'jobswales',
+	'jobs_to_be_done',
+	'justnocoworker',
+	'lawjobssydney',
+	'framework',
+	'phjobs',
+	'pakjobsearch',
+	'perthjobs',
+	'qtframework',
+	'racistslosetheirjobs',
+	'radicalsocialwork',
+	'saskatchewanjobs',
+	'sexworkersanonymous',
+	'sgworkplace',
+	'shadowwork',
+	'solidworks',
+	'steve',
+	'swiss',
+	'thaijobs',
+	'vancouverislandjobs',
+	'vancouverjobs',
+	'victoriajobs',
+	'workinginottawa',
+	'workingk9',
+	'workingout',
+	'worktogame',
+	'workout',
+	'workingwithautismnj',
+	'auscscareerquestions',
+	'bananojobs',
+	'berlinjobs',
+	'cscareerquestionscad',
+	'cscareerquestionseu',
+	'cscareerquestionsin',
+	'cscareerquestionsjp',
+	'cscareerquestionsoce',
+	'de_jobs_jobsuche',
+	'dogswithoutjobs',
+	'ireland',
+	'ghostswithjobs',
+	'jobb',
+	'jobbit',
+	'jobcorps',
+	'jobmania',
+	'japan',
+	'london',
+	'mikew_reddit_work',
+	'nijobs',
+	'nzjobs',
+	'olyjobs',
+	'onejob',
+	'sex',
+	'artwork',
+	'fifa',
+	'stopworking',
+	'thisismyjob',
+	'trailwork',
+	'turtleswithjobs',
+	'work_at_nothing',
+	'workaholics',
+	'workandtravel',
+	'workplace_bullying',
+	'worksmarternotharder',
+	'ziojobs',
+	'careerblogzino',
+	'dogs',
+	'britishcolumbiajobs',
+	'cats',
+	'dejobs',
+	'govtjobnotification',
+	'guildwarsdyejob',
+	'hrisafunnycareer',
+	'horriblecoworkers',
+	'howhumanbeingswork',
+	'idoworkherelady',
+	'joebidenhatesjobs',
+	'learnhowitworks',
+	'mathnasiumemployees',
+	'nothowgirlswork',
+	'peoplewhoworkat',
+	'timeworkssubmissions',
+	'toowoombajobs',
+	'workingonitastrology',
+	'workplacesafety',
+	'workspaces',
+	'bathandbodyworks',
+	'dirtyjobs',
+	'dogswithjobs',
+	'employergore',
+	'energy_work',
+	'evejobs',
+	'funnyworkstories',
+	'mspaintatwork',
+	'regularjobz',
+	'theideologyofwork',
+	
+]
 
 
 
@@ -194,12 +336,6 @@ class RedditData():
 		return df
 
 	@classmethod
-	def load_log(cls, path):
-		with open(path) as fin:
-			log = json.load(fin)
-		return log
-
-	@classmethod
 	def load_log(cls,path, df = False):
 		with open(path) as fin:
 			log = json.load(fin)
@@ -276,6 +412,23 @@ class RedditData():
 			yield ids[i:i + n]
 
 	@classmethod
+	def get_subreddits(cls, df):
+
+		subreddits = list(np.unique(df['subreddit']))
+		subreddits = [x.lower() for x in subreddits]
+	
+		subreddits_relevant = [x for x in subreddits
+				if any(term in x for term in SR_TERMS1)
+				and all(term not in x for term in SR_TERMS2)]
+	
+		return sorted(subreddits_relevant)
+
+	@classmethod
+	def subreddit_chunks(cls, subreddits, n):
+		for i in range(0, len(subreddits),n):
+			yield ','.join(subreddits[i:i+n])
+
+	@classmethod
 	def load_one_week(
 		cls,
 		topic,
@@ -324,7 +477,7 @@ class RedditData():
 		post_type,
 		start_week = 0,
 		end_week = 1,
-		df_only = True):
+		df_only = False):
 
 		df_list, all_logs = list(), dict()
 		drange = cls.survey_dates()
@@ -419,9 +572,10 @@ class RedditSubComments(RedditData):
 		self.chunk_size = chunk_size
 
 		self.data_path = path.join(
-								self.main_path,
-								'Data/Reddit/Raw/{}/Comments/SubID'.\
-								format(self.topic))
+			self.main_path,
+			'Data/Reddit/Raw/{}/Comments/SubID'.\
+			format(self.topic)
+			)
 
 	def build_query(
 		self,
@@ -455,6 +609,82 @@ class RedditSubComments(RedditData):
 								topic = self.topic, 
 								sub_ids = id_subset,
 								chunk_size = self.chunk_size)
+
+			current_sub.get_one_week(week_num)
+
+			df_list.append(current_sub.all_data[current_sub.current_week])
+
+			if n_chunk == 0:
+				all_logs = current_sub.logs[current_sub.current_week]
+
+			else:
+				all_logs.update({
+
+					'mostRecent': max(all_logs['mostRecent'],
+						current_sub.logs[self.current_week]['mostRecent']),
+					'oldest': min(all_logs['oldest'],
+						current_sub.logs[self.current_week]['oldest']),
+					'periodCovered': max(all_logs['periodCovered'],
+						current_sub.logs[self.current_week]['periodCovered']),
+					'total': all_logs['total'] + \
+						current_sub.logs[self.current_week]['total'],
+					'totalOverall': all_logs['totalOverall'] + \
+						current_sub.logs[self.current_week]['totalOverall'],
+					'timeTaken': all_logs['timeTaken'] + \
+						current_sub.logs[self.current_week]['timeTaken'],
+					'timeTakenTotal': all_logs['timeTakenTotal'] + \
+						current_sub.logs[self.current_week]['timeTakenTotal']
+				})
+				
+			n_chunk += 1
+
+		self.all_data[self.current_week] = pd.concat(df_list)
+		self.logs[self.current_week] = all_logs
+
+
+class SubredditSubmissions(RedditData):
+
+	def __init__(self, topic, subreddits):
+		super().__init__(topic)
+		self.keep_fields = SUBMISSIONS_KEEP_FIELDS
+		self.api = PushshiftAPI()
+		self.subreddits = subreddits 
+
+		self.data_path = path.join(
+			self.main_path,
+			'Data/Reddit/Raw/{}/Submissions/Subreddits'.\
+			format(self.topic))
+
+	def build_query(
+		self,
+		start_date,
+		end_date
+		):
+
+		self.api_request_generator = self.api.search_submissions(
+											subreddit = self.subreddits,
+											after=start_date,
+											before=end_date,
+											subreddit_subscribers='>2',
+											over_18=False,
+											author='![deleted]',
+											filter=self.keep_fields
+											)
+
+	def get_subreddit_data(self, week_num):
+
+		self.current_week = self.drange[week_num].strftime('%Y-%m-%d')
+
+		df_list = []
+
+		subreddit_subsets = RedditData.subreddit_chunks(self.subreddits, 100)
+		n_chunk = 0
+
+		for sr_chunk in subreddit_subsets:
+
+			current_sub = SubredditSubmissions(
+								topic = self.topic, 
+								subreddits = sr_chunk)
 
 			current_sub.get_one_week(week_num)
 
