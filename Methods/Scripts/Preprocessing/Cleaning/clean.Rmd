@@ -1,0 +1,25 @@
+---
+title: "Cleaning social media data"
+output: html_notebook
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)
+rm(list = ls())
+```
+
+
+## Stage 1.
+
+* Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.)
+* All lower-case
+* Tokenize
+* Noise removal (punctuation, special characters, stopwords).
+
+```{r}
+rm(list = ls()) 
+
+# Run the script to import and clean reddit data.
+source("clean_reddit.R", local = knitr::knit_global())
+```
+
