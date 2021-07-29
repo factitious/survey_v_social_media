@@ -26,8 +26,8 @@ load_data <- function(source, topic){
   }
   
   full_path_df <- file.path(root_dir, 
-                         data_path,
-                         df_name)
+                            data_path,
+                            df_name)
   full_path_logs <- file.path(root_dir,
                               data_path,
                               logs_name)
@@ -42,7 +42,7 @@ load_data <- function(source, topic){
 change_dates <- function(df, logs, source){
   
   if(source == "Reddit"){
-  
+    
     df <- df %>% 
       mutate(retrieved_on = as.POSIXct(retrieved_on,
                                        origin = '1970-01-01',
@@ -85,10 +85,18 @@ clean_stage1a <- function(df, source){
         -selftext,
         -is_robot_indexable,
         -is_reddit_media_domain
-        )
+      )
     
     df$text <- removePunctuation(df$text)
+    df$text <- removeNumbers(df$text)
     df$text <- stripWhitespace(df$text)
+    
+    df <- df %>% 
+      unnest_tokens(word, text) %>% 
+      anti_join(stop_words) %>% 
+      mutate(text = gsub("'", '', text)) %>% 
+      filter(!nchar(word) < 3)
+    
     
   }
   
