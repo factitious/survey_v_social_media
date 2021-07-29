@@ -84,7 +84,12 @@ clean_stage1a <- function(df, source){
         -posttitle,
         -selftext,
         -is_robot_indexable,
-        -is_reddit_media_domain)
+        -is_reddit_media_domain
+        )
+    
+    df$text <- removePunctuation(df$text)
+    df$text <- stripWhitespace(df$text)
+    
   }
   
   return(df)
@@ -100,7 +105,3 @@ list[emp_df, emp_logs] <- change_dates(emp_df, emp_logs, 'Reddit')
 
 # Clean - stage1a
 emp_df_1a <- clean_stage1a(emp_df, 'Reddit')
-
-
-bla <- emp_df_1a %>% 
-  filter(selftext == '')
