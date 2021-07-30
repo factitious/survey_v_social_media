@@ -3,26 +3,43 @@ library(data.table)
 library(glue)
 library(lubridate)
 library(gsubfn)
+library(tidytext)
+library(qdap)
+library(tm)
 
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 setwd(root_dir)
-raw_data_path <- 'Methods/Data/Reddit/Raw/Employment/Aggregate/'
 
-
-load_data <- function(source, topic){
+load_data <- function(source, topic, source2 = 'Submissions'){
   
-  result <- list()
+  data_path <- glue('Methods/Data/{source}/Raw/Aggregate/')
   
-  data_path <- glue('Methods/Data/{source}/Raw/{topic}/Aggregate/')
-  
-  if(topic == 'Employment'){
-    df_name <- 'emp_df.csv'
-    logs_name <- 'emp_logs.csv'
+  if(source == "Twitter" | 
+     (source == "Reddit" & source2 == "Submissions")){
+    
+      if(topic == 'Employment'){
+        df_name <- 'emp_df.csv'
+        logs_name <- 'emp_logs.csv'
+      }
+      
+      else if(topic == 'Vaccination'){
+        df_name <- 'vacc_df.csv'
+        logs_name <- 'vacc_logs.csv'
+      }
   }
   
-  else if(topic == 'Vaccination'){
-    df_name <- 'vacc_df.csv'
-    logs_name <- 'vacc_logs.csv'
+  if(source == "Reddit" & source2 == "Subreddits"){
+    
+      if(topic == 'Employment'){
+        df_name <- 'emp_sr_df.csv'
+        logs_name <- 'emp_sr_logs.csv'
+      }
+      
+      else if(topic == 'Vaccination'){
+        df_name <- 'vacc_sr_df.csv'
+        logs_name <- 'vacc_sr_logs.csv'
+      }
+      
   }
   
   full_path_df <- file.path(root_dir, 
@@ -47,19 +64,44 @@ change_dates <- function(df, logs, source){
       mutate(retrieved_on = as.POSIXct(retrieved_on,
                                        origin = '1970-01-01',
                                        tz = 'UTC'),
-             date = ymd_hms(date))
+             date = ymd_hms(date,
+                            tz = 'UTC'))
     
     logs <- logs %>% 
-      mutate(mostRecent = ymd_hms(mostRecent),
-             oldest = ymd_hms(oldest)) %>% 
+      mutate(mostRecent = ymd_hms(mostRecent,
+                                  tz = 'UTC'),
+             oldest = ymd_hms(oldest,
+                              tz = 'UTC')) %>% 
       mutate(periodCovered = mostRecent - oldest)
+  }
+  
+  if(source == "Twitter"){
+    
+    df <- df %>% 
+      mutate(created_at = ymd_hms(created_at,
+                                  tz = 'UTC'))
+    
+    logs <- logs %>% 
+      mutate(
+        weekStart = ymd(weekStart, 
+                        tz = 'UTC'),
+        weekEnd = ymd(weekEnd,
+                      tz = 'UTC'),
+        mostRecent = ymd_hms(mostRecent,
+                                  tz = 'UTC'),
+        oldest = ymd_hms(oldest,
+                              tz = 'UTC'))
   }
   
   return(list(df, logs))
   
 }
 
-clean_stage1a <- function(df, source){
+clean_stage1b <- function(df, source){
+  
+  stop_words_nopunct <- stop_words %>% 
+    mutate(word = removePunctuation(word)) ##%>% 
+  # rbind(., c("word", "Custom"))
   
   if(source == 'Reddit'){
     
@@ -68,12 +110,7 @@ clean_stage1a <- function(df, source){
         -full_link,
         -retrieved_on, 
         -subreddit_id) %>%
-      mutate(is_reddit_media_domain = 
-               ifelse(is_reddit_media_domain == "True", 
-                      T, F)) %>% 
-      mutate(is_robot_indexable = 
-               ifelse(is_robot_indexable == "True", 
-                      T, F)) %>% 
+      filter(!str_detect(subreddit, '^u_')) %>% 
       filter(selftext != '[removed]'&
                selftext != '[deleted]') %>% 
       mutate(posttitle = title) %>% 
@@ -86,30 +123,106 @@ clean_stage1a <- function(df, source){
         -is_robot_indexable,
         -is_reddit_media_domain
       )
-    
-    df$text <- removePunctuation(df$text)
-    df$text <- removeNumbers(df$text)
-    df$text <- stripWhitespace(df$text)
+  }
+  
+  if(source == "Twitter"){
     
     df <- df %>% 
-      unnest_tokens(word, text) %>% 
-      anti_join(stop_words) %>% 
-      mutate(text = gsub("'", '', text)) %>% 
-      filter(!nchar(word) < 3)
-    
+      select(
+        -source,
+        -location
+      ) %>% 
+      filter(
+        !is.na(text) |
+          text == '' |
+          text == ' '
+      ) %>% 
+      mutate(
+        text = tolower(text)
+      )
     
   }
+  
+  # Remove mentions (@etc)
+  df$text <- gsub("@\\w+", "", df$text)
+  
+  # Remove html sequences (&gt)
+  df$text <- gsub("&\\w+", "", df$text)
+  
+  # Remove urls
+  df$text <- gsub("https?://.+", "", df$text)
+  
+  # Remove hashtags
+  df$text <- gsub("#\\w+", "", df$text)
+  
+  # Remove '
+  df$text <- gsub("’", "", df$text)
+  
+  # Remove anything but standard ASCII just in case
+  # Gets rid of emoticons at least.
+  df$text <- gsub("[^\x01-\x7F]", "", df$text)
+  
+  df$text <- removePunctuation(df$text)
+  df$text <- removeNumbers(df$text)
+  df$text <- stripWhitespace(df$text)
+  
+  df <- df %>% 
+    unnest_tokens(word, text) %>% 
+    anti_join(stop_words_nopunct) %>% 
+    anti_join(stop_words) %>% 
+    filter(!nchar(word) < 3)
+  
+  # Get rid of posts that have less than n (here 1) words.
+  df <- df %>% 
+    group_by(id) %>% 
+    filter(n()>1)
   
   return(df)
   
 }
 
+untidy_text <- function(df){
+  
+  df <- df %>% 
+    group_by(across(c(-word))) %>% 
+    summarize(text = str_c(word, collapse = " "))
+  
+  return(df)
+}
+
 
 # Load data
-list[emp_df, emp_logs] <- load_data('Reddit', 'Employment')
+list[reddit_emp_df, reddit_emp_logs] <- load_data('Reddit', 'Employment')
+list[twitter_emp_df, twitter_emp_logs] <- load_data('Twitter', 'Employment')
 
 # Get dates in the right format
-list[emp_df, emp_logs] <- change_dates(emp_df, emp_logs, 'Reddit')
+list[reddit_emp_df, reddit_emp_logs] <- change_dates(reddit_emp_df, reddit_emp_logs, 'Reddit')
+list[twitter_emp_df, twitter_emp_logs] <- change_dates(twitter_emp_df, twitter_emp_logs, 'Twitter')
 
 # Clean - stage1a
-emp_df_1a <- clean_stage1a(emp_df, 'Reddit')
+c1b_reddit_emp <- clean_stage1b(reddit_emp_df, 'Reddit')
+c1b_twitter_emp <- clean_stage1b(twitter_emp_df, 'Twitter')
+
+# Untidy
+c1a_untidy_reddit_emp <- untidy_text(c1a_reddit_emp)
+c1a_untidy_twitter_emp <- untidy_text(c1a_twitter_emp)
+
+
+# Find emoji codes
+find_emo <- function(df){
+  
+  emos <- dt %>% 
+    select(text) %>% 
+    iconv(text, from = "ASCII", to = "UTF-8", 'byte') %>% 
+    # Match the emoji codes here.
+    # Find text description
+    # Add to lexicon::hash_emojis
+}
+
+
+emo_tweet <- twitter_emp_df$text[twitter_emp_df$id == 1319772890649088000]
+
+
+  
+
+
