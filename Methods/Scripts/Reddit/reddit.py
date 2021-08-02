@@ -317,6 +317,8 @@ class RedditData():
 						'CSV/{}.csv'.\
 						format(self.current_week)
 						)
+		self.all_data[self.current_week]['selftext'] = \
+			self.all_data[self.current_week]['selftext'].str.replace('\r', '')
 
 		self.all_data[self.current_week].to_csv(df_path)
 
@@ -448,6 +450,9 @@ class RedditData():
 		elif post_type == 'SubComments':
 			obj = RedditSubComments(topic)
 
+		elif post_type == 'SubredditSubmissions':
+			obj = SubredditSubmissions(topic)
+
 		week_start_date = obj.drange[week_num].strftime('%Y-%m-%d')
 
 		df_path = path.join(
@@ -496,7 +501,7 @@ class RedditData():
 			df_list.append(df)
 			all_logs[cw_date] = log
 
-		all_dfs = pd.concat(df_list)
+		all_dfs = pd.concat(df_list,ignore_index = True)
 		all_logs_df = pd.DataFrame.from_dict(
 			all_logs,
 			orient = 'index'
@@ -644,7 +649,7 @@ class RedditSubComments(RedditData):
 
 class SubredditSubmissions(RedditData):
 
-	def __init__(self, topic, subreddits):
+	def __init__(self, topic, subreddits = None):
 		super().__init__(topic)
 		self.keep_fields = SUBMISSIONS_KEEP_FIELDS
 		self.api = PushshiftAPI()
