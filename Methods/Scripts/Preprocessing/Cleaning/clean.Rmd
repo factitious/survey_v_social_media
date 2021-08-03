@@ -7,8 +7,17 @@ output: html_notebook
 knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)
 ```
 
+## Reddit datasets
 
-## Stage 1a + b.
+```{r}
+rm(list = ls())
+
+# Run script to create the reddit subsets
+source("reddit_subsets.R", local = knitr::knit_global())
+```
+
+
+## Cleaning: Stages 1a + b.
 a:
 * Remove useless columns
 * Done in python scripts (Reddit/main and Twitter/main)
@@ -20,14 +29,29 @@ b:
 * Noise removal (punctuation, special characters, stopwords).
 
 ```{r}
-rm(list = ls()) 
-
-# Run the script to import and clean reddit data.
-source("reddit_subsets.R", local = knitr::knit_global())
+# Load functions to clean sm data.
 source("cleaning_funcs.R", local = knitr::knit_global())
 ```
 
-```{r}
 
+```{r}
+# Load data
+reddit_emp_1 <- load_data('Reddit', 'Employment', 1)
+reddit_emp_2 <- load_data('Reddit', 'Employment', 2)
+reddit_emp_3 <- load_data('Reddit', 'Employment', 3)
+reddit_emp_4 <- load_data('Reddit', 'Employment', 4)
 ```
+
+```{r}
+# Get all dates in the right format
+reddit_emp_1 <- change_dates(reddit_emp_1)
+reddit_emp_2 <- change_dates(reddit_emp_2)
+reddit_emp_3 <- change_dates(reddit_emp_3)
+reddit_emp_4 <- change_dates(reddit_emp_4)
+```
+
+```{r}
+# Cleaning: stage 1b
+```
+
 

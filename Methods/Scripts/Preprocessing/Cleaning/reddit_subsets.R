@@ -13,55 +13,53 @@ library(glue)
 library(gsubfn)
 library(stringr)
 
-rm(list = ls())
-
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 setwd(root_dir)
 
-# load_data <- function(source, topic, source2 = 'Submissions'){
-#   
-#   data_path <- glue('Methods/Data/{source}/Raw/Aggregate/')
-#   
-#   if(source == "Twitter" | 
-#      (source == "Reddit" & source2 == "Submissions")){
-#     
-#     if(topic == 'Employment'){
-#       df_name <- 'emp_1.csv'
-#       logs_name <- 'emp_1_logs.csv'
-#     }
-#     
-#     else if(topic == 'Vaccination'){
-#       df_name <- 'vac_1_df.csv'
-#       logs_name <- 'vac_1_logs.csv'
-#     }
-#   }
-#   
-#   if(source == "Reddit" & source2 == "Subreddits"){
-#     
-#     if(topic == 'Employment'){
-#       df_name <- 'emp_4_df.csv'
-#       logs_name <- 'emp_4_logs.csv'
-#     }
-#     
-#     else if(topic == 'Vaccination'){
-#       df_name <- 'vac_4_df.csv'
-#       logs_name <- 'vac_4_logs.csv'
-#     }
-#     
-#   }
-#   
-#   full_path_df <- file.path(root_dir, 
-#                             data_path,
-#                             df_name)
-#   full_path_logs <- file.path(root_dir,
-#                               data_path,
-#                               logs_name)
-#   
-#   df <- read.csv(full_path_df, header = T)
-#   logs <- read.csv(full_path_logs, header = T)
-#   
-#   return(list(df, logs))
-#   
+load_data <- function(source, topic, source2 = 'Submissions'){
+
+  data_path <- glue('Methods/Data/{source}/Raw/Aggregate/')
+
+  if(source == "Twitter" |
+     (source == "Reddit" & source2 == "Submissions")){
+
+    if(topic == 'Employment'){
+      df_name <- 'emp_1.csv'
+      logs_name <- 'emp_1_logs.csv'
+    }
+
+    else if(topic == 'Vaccination'){
+      df_name <- 'vac_1_df.csv'
+      logs_name <- 'vac_1_logs.csv'
+    }
+  }
+
+  if(source == "Reddit" & source2 == "Subreddits"){
+
+    if(topic == 'Employment'){
+      df_name <- 'emp_4_df.csv'
+      logs_name <- 'emp_4_logs.csv'
+    }
+
+    else if(topic == 'Vaccination'){
+      df_name <- 'vac_4_df.csv'
+      logs_name <- 'vac_4_logs.csv'
+    }
+
+  }
+
+  full_path_df <- file.path(root_dir,
+                            data_path,
+                            df_name)
+  full_path_logs <- file.path(root_dir,
+                              data_path,
+                              logs_name)
+
+  df <- read.csv(full_path_df, header = T)
+  logs <- read.csv(full_path_logs, header = T)
+
+  return(list(df, logs))
+
 }
 
 top_sr <- function(df){
@@ -260,7 +258,7 @@ filter_relevant <- function(df){
 }
 
 # Load data
-# list[reddit_emp_df, reddit_emp_logs] <- load_data('Reddit', 'Employment')
+list[reddit_emp_df, reddit_emp_logs] <- load_data('Reddit', 'Employment')
 
 # Filter top 100 subreddits
 reddit_emp_df_top100 <- filter_topn(reddit_emp_df, 100)
