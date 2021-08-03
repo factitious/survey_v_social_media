@@ -1770,28 +1770,29 @@ rm(list = ls())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<div id="stage-1." class="section level2">
-<h2>Stage 1.</h2>
-<ul>
-<li>Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.)</li>
-<li>All lower-case</li>
-<li>Tokenize</li>
-<li>Noise removal (punctuation, special characters, stopwords).</li>
-</ul>
+<div id="stage-1a-b." class="section level2">
+<h2>Stage 1a + b.</h2>
+<p>a: * Remove useless columns * Done in python scripts (Reddit/main and Twitter/main)</p>
+<p>b: * Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.) * All lower-case. * Tokenize * Noise removal (punctuation, special characters, stopwords).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdCA9IGxzKCkpIFxuXG4jIFJ1biB0aGUgc2NyaXB0IHRvIGltcG9ydCBhbmQgY2xlYW4gcmVkZGl0IGRhdGEuXG5zb3VyY2UoXCJjbGVhbl9yZWRkaXQuUlwiLCBsb2NhbCA9IGtuaXRyOjprbml0X2dsb2JhbCgpKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdCA9IGxzKCkpIFxuXG4jIFJ1biB0aGUgc2NyaXB0IHRvIGltcG9ydCBhbmQgY2xlYW4gcmVkZGl0IGRhdGEuXG5zb3VyY2UoXCJyZWRkaXRfc3Vic2V0cy5SXCIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpXG5zb3VyY2UoXCJjbGVhbmluZ19mdW5jcy5SXCIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpXG5gYGAifQ== -->
 <pre class="r"><code>rm(list = ls()) 
 
 # Run the script to import and clean reddit data.
-source(&quot;clean_reddit.R&quot;, local = knitr::knit_global())</code></pre>
+source(&quot;reddit_subsets.R&quot;, local = knitr::knit_global())
+source(&quot;cleaning_funcs.R&quot;, local = knitr::knit_global())</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2xlYW5pbmcgc29jaWFsIG1lZGlhIGRhdGEiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCmBgYHtyfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUsIGluY2x1ZGUgPSBUUlVFLCB3YXJuaW5nID0gRkFMU0UpCnJtKGxpc3QgPSBscygpKQpgYGAKCgojIyBTdGFnZSAxLgoKKiBSZW1vdmUgYW55IGFub21hbGllcy91c2VsZXNzIHBvc3RzIG1pc3NlZCBieSBmaWx0ZXJzIChlLmcuIGJsYW5rcy9yZW1vdmVkL05hTiwgZXRjLikKKiBBbGwgbG93ZXItY2FzZQoqIFRva2VuaXplCiogTm9pc2UgcmVtb3ZhbCAocHVuY3R1YXRpb24sIHNwZWNpYWwgY2hhcmFjdGVycywgc3RvcHdvcmRzKS4KCmBgYHtyfQpybShsaXN0ID0gbHMoKSkgCgojIFJ1biB0aGUgc2NyaXB0IHRvIGltcG9ydCBhbmQgY2xlYW4gcmVkZGl0IGRhdGEuCnNvdXJjZSgiY2xlYW5fcmVkZGl0LlIiLCBsb2NhbCA9IGtuaXRyOjprbml0X2dsb2JhbCgpKQpgYGAKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2xlYW5pbmcgc29jaWFsIG1lZGlhIGRhdGEiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCmBgYHtyfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUsIGluY2x1ZGUgPSBUUlVFLCB3YXJuaW5nID0gRkFMU0UpCmBgYAoKCiMjIFN0YWdlIDFhICsgYi4KYToKKiBSZW1vdmUgdXNlbGVzcyBjb2x1bW5zCiogRG9uZSBpbiBweXRob24gc2NyaXB0cyAoUmVkZGl0L21haW4gYW5kIFR3aXR0ZXIvbWFpbikKCmI6IAoqIFJlbW92ZSBhbnkgYW5vbWFsaWVzL3VzZWxlc3MgcG9zdHMgbWlzc2VkIGJ5IGZpbHRlcnMgKGUuZy4gYmxhbmtzL3JlbW92ZWQvTmFOLCBldGMuKQoqIEFsbCBsb3dlci1jYXNlLgoqIFRva2VuaXplCiogTm9pc2UgcmVtb3ZhbCAocHVuY3R1YXRpb24sIHNwZWNpYWwgY2hhcmFjdGVycywgc3RvcHdvcmRzKS4KCmBgYHtyfQpybShsaXN0ID0gbHMoKSkgCgojIFJ1biB0aGUgc2NyaXB0IHRvIGltcG9ydCBhbmQgY2xlYW4gcmVkZGl0IGRhdGEuCnNvdXJjZSgicmVkZGl0X3N1YnNldHMuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCnNvdXJjZSgiY2xlYW5pbmdfZnVuY3MuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKYGBge3J9CgpgYGAKCg==</div>
 
 
 

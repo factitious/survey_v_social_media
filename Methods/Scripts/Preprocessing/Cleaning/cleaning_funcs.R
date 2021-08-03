@@ -10,49 +10,70 @@ library(tm)
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 setwd(root_dir)
 
-load_data <- function(source, topic, source2 = 'Submissions'){
+load_data <- function(source, topic, set){
   
-  data_path <- glue('Methods/Data/{source}/Raw/Aggregate/')
+  topic_short <- substr(
+    tolower(topic),
+    1,
+    3
+    )
   
-  if(source == "Twitter" | 
-     (source == "Reddit" & source2 == "Submissions")){
-    
-      if(topic == 'Employment'){
-        df_name <- 'emp_df.csv'
-        logs_name <- 'emp_logs.csv'
-      }
-      
-      else if(topic == 'Vaccination'){
-        df_name <- 'vacc_df.csv'
-        logs_name <- 'vacc_logs.csv'
-      }
-  }
+  df_path <- glue('Methods/Data/
+                    {source}/Raw/Aggregate/
+                    {topic_short}_{set}.csv')
   
-  if(source == "Reddit" & source2 == "Subreddits"){
-    
-      if(topic == 'Employment'){
-        df_name <- 'emp_sr_df.csv'
-        logs_name <- 'emp_sr_logs.csv'
-      }
-      
-      else if(topic == 'Vaccination'){
-        df_name <- 'vacc_sr_df.csv'
-        logs_name <- 'vacc_sr_logs.csv'
-      }
-      
-  }
+  logs_path <- glue('Methods/Data/
+                    {source}/Raw/Aggregate/
+                    {topic_short}_{set}_logs.csv')
   
-  full_path_df <- file.path(root_dir, 
-                            data_path,
-                            df_name)
-  full_path_logs <- file.path(root_dir,
-                              data_path,
-                              logs_name)
+  df <- read.csv(df_path)
+  logs <- read.csv(logs_path)
   
-  df <- read.csv(full_path_df, header = T)
-  logs <- read.csv(full_path_logs, header = T)
+  # if(source == "Twitter" | 
+  #    (source == "Reddit" & source2 == "Submissions")){
+  #   
+  #     if(topic == 'Employment'){
+  #       df_name <- 'emp_1.csv'
+  #       logs_name <- 'emp_1_logs.csv'
+  #     }
+  #     
+  #     else if(topic == 'Vaccination'){
+  #       df_name <- 'vac_1_df.csv'
+  #       logs_name <- 'vac_1_logs.csv'
+  #     }
+  # }
+  # 
+  # if(source == "Reddit" & source2 == "Subreddits"){
+  #   
+  #     if(topic == 'Employment'){
+  #       df_name <- 'emp_4_df.csv'
+  #       logs_name <- 'emp_4_logs.csv'
+  #     }
+  #     
+  #     else if(topic == 'Vaccination'){
+  #       df_name <- 'vac_4_df.csv'
+  #       logs_name <- 'vac_4_logs.csv'
+  #     }
+  #     
+  # }
+  # 
+  # full_path_df <- file.path(root_dir, 
+  #                           data_path,
+  #                           df_name)
+  # full_path_logs <- file.path(root_dir,
+  #                             data_path,
+  #                             logs_name)
+  # 
+  # df <- read.csv(full_path_df, header = T)
+  # logs <- read.csv(full_path_logs, header = T)
   
   return(list(df, logs))
+  
+}
+
+
+load_all_data <- function(){
+  
   
 }
 
@@ -204,25 +225,5 @@ c1b_reddit_emp <- clean_stage1b(reddit_emp_df, 'Reddit')
 c1b_twitter_emp <- clean_stage1b(twitter_emp_df, 'Twitter')
 
 # Untidy
-c1a_untidy_reddit_emp <- untidy_text(c1a_reddit_emp)
-c1a_untidy_twitter_emp <- untidy_text(c1a_twitter_emp)
-
-
-# Find emoji codes
-find_emo <- function(df){
-  
-  emos <- dt %>% 
-    select(text) %>% 
-    iconv(text, from = "ASCII", to = "UTF-8", 'byte') %>% 
-    # Match the emoji codes here.
-    # Find text description
-    # Add to lexicon::hash_emojis
-}
-
-
-emo_tweet <- twitter_emp_df$text[twitter_emp_df$id == 1319772890649088000]
-
-
-  
-
-
+c1b_untidy_reddit_emp <- untidy_text(c1b_reddit_emp)
+c1b_untidy_twitter_emp <- untidy_text(c1b_twitter_emp)

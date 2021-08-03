@@ -5,14 +5,17 @@ output: html_notebook
 
 ```{r}
 knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)
-rm(list = ls())
 ```
 
 
-## Stage 1.
+## Stage 1a + b.
+a:
+* Remove useless columns
+* Done in python scripts (Reddit/main and Twitter/main)
 
+b: 
 * Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.)
-* All lower-case
+* All lower-case.
 * Tokenize
 * Noise removal (punctuation, special characters, stopwords).
 
@@ -20,6 +23,11 @@ rm(list = ls())
 rm(list = ls()) 
 
 # Run the script to import and clean reddit data.
-source("clean_reddit.R", local = knitr::knit_global())
+source("reddit_subsets.R", local = knitr::knit_global())
+source("cleaning_funcs.R", local = knitr::knit_global())
+```
+
+```{r}
+
 ```
 
