@@ -2,6 +2,12 @@ library(lubridate)
 library(tidytext)
 library(tm)
 
+library(tidyverse)
+library(data.table)
+library(glue)
+library(gsubfn)
+library(stringr)
+
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 setwd(root_dir)
 
@@ -24,87 +30,18 @@ load_data <- function(source, topic, set){
   
   df <- read.csv(df_path)
   
-  # if(source == "Twitter" | 
-  #    (source == "Reddit" & source2 == "Submissions")){
-  #   
-  #     if(topic == 'Employment'){
-  #       df_name <- 'emp_1.csv'
-  #       logs_name <- 'emp_1_logs.csv'
-  #     }
-  #     
-  #     else if(topic == 'Vaccination'){
-  #       df_name <- 'vac_1_df.csv'
-  #       logs_name <- 'vac_1_logs.csv'
-  #     }
-  # }
-  # 
-  # if(source == "Reddit" & source2 == "Subreddits"){
-  #   
-  #     if(topic == 'Employment'){
-  #       df_name <- 'emp_4_df.csv'
-  #       logs_name <- 'emp_4_logs.csv'
-  #     }
-  #     
-  #     else if(topic == 'Vaccination'){
-  #       df_name <- 'vac_4_df.csv'
-  #       logs_name <- 'vac_4_logs.csv'
-  #     }
-  #     
-  # }
-  # 
-  # full_path_df <- file.path(root_dir, 
-  #                           data_path,
-  #                           df_name)
-  # full_path_logs <- file.path(root_dir,
-  #                             data_path,
-  #                             logs_name)
-  # 
-  # df <- read.csv(full_path_df, header = T)
-  # logs <- read.csv(full_path_logs, header = T)
-  
   return(df)
   
 }
 
-# change_dates <- function(df, source){
-#   
-#   if(source == "Reddit"){
-#     
-#     df <- df %>% 
-#       mutate(retrieved_on = as.POSIXct(retrieved_on,
-#                                        origin = '1970-01-01',
-#                                        tz = 'UTC'),
-#              date = ymd_hms(date,
-#                             tz = 'UTC'))
-#     
-#     # logs <- logs %>% 
-#     #   mutate(mostRecent = ymd_hms(mostRecent,
-#     #                               tz = 'UTC'),
-#     #          oldest = ymd_hms(oldest,
-#     #                           tz = 'UTC')) %>% 
-#     #   mutate(periodCovered = mostRecent - oldest)
-#   }
-#   
-#   if(source == "Twitter"){
-#     
-#     df <- df %>% 
-#       mutate(created_at = ymd_hms(created_at,
-#                                   tz = 'UTC'))
-#     # logs <- logs %>% 
-#     #   mutate(
-#     #     weekStart = ymd(weekStart, 
-#     #                     tz = 'UTC'),
-#     #     weekEnd = ymd(weekEnd,
-#     #                   tz = 'UTC'),
-#     #     mostRecent = ymd_hms(mostRecent,
-#     #                               tz = 'UTC'),
-#     #     oldest = ymd_hms(oldest,
-#     #                           tz = 'UTC'))
-#   }
-#   
-#   return(list(df, logs))
-#   
-# }
+untidy_text <- function(df){
+  
+  df <- df %>% 
+    group_by(across(c(-word))) %>% 
+    summarize(text = str_c(word, collapse = " "))
+  
+  return(df)
+}
 
 clean_stage1b <- function(df, source){
   
@@ -122,10 +59,7 @@ clean_stage1b <- function(df, source){
       filter(!str_detect(subreddit, '^u_')) %>% 
       filter(selftext != '[removed]'&
                selftext != '[deleted]') %>% 
-      mutate(retrieved_on = as.POSIXct(retrieved_on,
-                                       origin = '1970-01-01',
-                                       tz = 'UTC'),
-             date = ymd_hms(date,
+      mutate(date = ymd_hms(date,
                             tz = 'UTC')) %>% 
       mutate(posttitle = title) %>% 
       mutate(text = glue('{posttitle} {selftext}')) %>%
@@ -194,25 +128,29 @@ clean_stage1b <- function(df, source){
     group_by(id) %>% 
     filter(n()>10)
   
-  
+  # Get data back into original format
+  df <- untidy_text(df)
   
   return(df)
   
 }
 
-
-# # Load data
-# list[reddit_emp_df, reddit_emp_logs] <- load_data('Reddit', 'Employment')
-# list[twitter_emp_df, twitter_emp_logs] <- load_data('Twitter', 'Employment')
-# 
-# # Get dates in the right format
-# list[reddit_emp_df, reddit_emp_logs] <- change_dates(reddit_emp_df, reddit_emp_logs, 'Reddit')
-# list[twitter_emp_df, twitter_emp_logs] <- change_dates(twitter_emp_df, twitter_emp_logs, 'Twitter')
-# 
-# # Clean - stage1a
-# c1b_reddit_emp <- clean_stage1b(reddit_emp_df, 'Reddit')
-# c1b_twitter_emp <- clean_stage1b(twitter_emp_df, 'Twitter')
-# 
-# # Untidy
-# c1b_untidy_reddit_emp <- untidy_text(c1b_reddit_emp)
-# c1b_untidy_twitter_emp <- untidy_text(c1b_twitter_emp)
+save_1b <- function(df, source, topic, set){
+  
+  
+  topic_short <- substr(
+    tolower(topic),
+    1,
+    3
+  )
+  
+  data_path <- glue('Methods/Data/{source}/Preprocessed')
+  
+  df_name <- glue('{topic_short}_{set}_c1b.rds')
+  
+  df_path <- file.path(root_dir,
+                       data_path,
+                       df_name)
+  
+  saveRDS(df, df_path)
+}

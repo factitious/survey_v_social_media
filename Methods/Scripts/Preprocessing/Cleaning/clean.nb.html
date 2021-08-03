@@ -1764,25 +1764,20 @@ summary {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFLCBpbmNsdWRlID0gVFJVRSwgd2FybmluZyA9IEZBTFNFKVxucm9vdF9kaXIgPC0gJy9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZSdcbnNldHdkKHJvb3RfZGlyKVxuYGBgIn0= -->
-<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)
-root_dir &lt;- &#39;/Volumes/Survey_Social_Media_Compare&#39;
-setwd(root_dir)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFLCBpbmNsdWRlID0gVFJVRSwgd2FybmluZyA9IEZBTFNFKVxuYGBgIn0= -->
+<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdhcyBjaGFuZ2VkIHRvIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZSBpbnNpZGUgYSBub3RlYm9vayBjaHVuay4gVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdpbGwgYmUgcmVzZXQgd2hlbiB0aGUgY2h1bmsgaXMgZmluaXNoZWQgcnVubmluZy4gVXNlIHRoZSBrbml0ciByb290LmRpciBvcHRpb24gaW4gdGhlIHNldHVwIGNodW5rIHRvIGNoYW5nZSB0aGUgd29ya2luZyBkaXJlY3RvcnkgZm9yIG5vdGVib29rIGNodW5rcy5cbiJ9 -->
-<pre><code>The working directory was changed to /Volumes/Survey_Social_Media_Compare inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks.</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="reddit-datasets" class="section level2">
 <h2>Reddit datasets</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdCA9IGxzKCkpXG5cbiMgUnVuIHNjcmlwdCB0byBjcmVhdGUgdGhlIHJlZGRpdCBzdWJzZXRzXG5zb3VyY2UoXCJyZWRkaXRfc3Vic2V0cy5SXCIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdCA9IGxzKCkpXG5cbiMgUnVuIHNjcmlwdCB0byBjcmVhdGUgdGhlIHJlZGRpdCBzdWJzZXRzXG4jIHNvdXJjZShcInJlZGRpdF9zdWJzZXRzLlJcIiwgbG9jYWwgPSBrbml0cjo6a25pdF9nbG9iYWwoKSlcbmBgYCJ9 -->
 <pre class="r"><code>rm(list = ls())
 
 # Run script to create the reddit subsets
-source(&quot;reddit_subsets.R&quot;, local = knitr::knit_global())</code></pre>
+# source(&quot;reddit_subsets.R&quot;, local = knitr::knit_global())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1801,8 +1796,9 @@ source(&quot;cleaning_funcs.R&quot;, local = knitr::knit_global())</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWRkaXRfZW1wXzEgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEpXG5yZWRkaXRfZW1wXzIgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDIpXG5yZWRkaXRfZW1wXzMgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMpXG5yZWRkaXRfZW1wXzQgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQpXG5gYGAifQ== -->
-<pre class="r"><code># reddit_emp_1 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 1)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBMb2FkIGRhdGFcbnJlZGRpdF9lbXBfMSA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSlcbnJlZGRpdF9lbXBfMiA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMilcbnJlZGRpdF9lbXBfMyA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMylcbnJlZGRpdF9lbXBfNCA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNClcbmBgYCJ9 -->
+<pre class="r"><code># Load data
+reddit_emp_1 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 1)
 reddit_emp_2 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 2)
 reddit_emp_3 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 3)
 reddit_emp_4 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 4)</code></pre>
@@ -1811,26 +1807,43 @@ reddit_emp_4 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 4)</code></
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBHZXQgYWxsIGRhdGVzIGluIHRoZSByaWdodCBmb3JtYXRcbnJlZGRpdF9lbXBfMSA8LSBjaGFuZ2VfZGF0ZXMocmVkZGl0X2VtcF8xKVxucmVkZGl0X2VtcF8yIDwtIGNoYW5nZV9kYXRlcyhyZWRkaXRfZW1wXzIpXG5yZWRkaXRfZW1wXzMgPC0gY2hhbmdlX2RhdGVzKHJlZGRpdF9lbXBfMylcbnJlZGRpdF9lbXBfNCA8LSBjaGFuZ2VfZGF0ZXMocmVkZGl0X2VtcF80KVxuYGBgIn0= -->
-<pre class="r"><code># Get all dates in the right format
-reddit_emp_1 &lt;- change_dates(reddit_emp_1)
-reddit_emp_2 &lt;- change_dates(reddit_emp_2)
-reddit_emp_3 &lt;- change_dates(reddit_emp_3)
-reddit_emp_4 &lt;- change_dates(reddit_emp_4)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbmluZzogc3RhZ2UgMWJcbnJlZGRpdF9lbXBfMV9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzEsICdSZWRkaXQnKVxucmVkZGl0X2VtcF8yX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfMiwgJ1JlZGRpdCcpXG5yZWRkaXRfZW1wXzNfYzFiIDwtIGNsZWFuX3N0YWdlMWIocmVkZGl0X2VtcF8zLCAnUmVkZGl0JylcbnJlZGRpdF9lbXBfNF9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzQsICdSZWRkaXQnKVxuXG5zYXZlXzFiKHJlZGRpdF9lbXBfMV9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEpXG5zYXZlXzFiKHJlZGRpdF9lbXBfMl9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDIpXG5zYXZlXzFiKHJlZGRpdF9lbXBfM19jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMpXG5zYXZlXzFiKHJlZGRpdF9lbXBfNF9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQpXG5gYGAifQ== -->
+<pre class="r"><code># Cleaning: stage 1b
+reddit_emp_1_c1b &lt;- clean_stage1b(reddit_emp_1, &#39;Reddit&#39;)
+reddit_emp_2_c1b &lt;- clean_stage1b(reddit_emp_2, &#39;Reddit&#39;)
+reddit_emp_3_c1b &lt;- clean_stage1b(reddit_emp_3, &#39;Reddit&#39;)
+reddit_emp_4_c1b &lt;- clean_stage1b(reddit_emp_4, &#39;Reddit&#39;)
+
+save_1b(reddit_emp_1_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 1)
+save_1b(reddit_emp_2_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 2)
+save_1b(reddit_emp_3_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 3)
+save_1b(reddit_emp_4_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 4)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbmluZzogc3RhZ2UgMWJcbmBgYCJ9 -->
-<pre class="r"><code># Cleaning: stage 1b</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHdpdHRlcl9lbXBfMSA8LSBsb2FkX2RhdGEoJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEpXG50d2l0dGVyX2VtcF8xX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHR3aXR0ZXJfZW1wXzEsICdUd2l0dGVyJylcbmBgYCJ9 -->
+<pre class="r"><code>twitter_emp_1 &lt;- load_data(&#39;Twitter&#39;, &#39;Employment&#39;, 1)
+twitter_emp_1_c1b &lt;- clean_stage1b(twitter_emp_1, &#39;Twitter&#39;)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2NyZWF0ZWRfYXQnLCAnaWQnLCAncmV0d2VldF9jb3VudCcsICdyZXBseV9jb3VudCcsICdsaWtlX2NvdW50Jy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGUgYC5ncm91cHNgIGFyZ3VtZW50LlxuIn0= -->
+<pre><code>Joining, by = &quot;word&quot;
+Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;created_at&#39;, &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;. You can override using the `.groups` argument.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV8xYih0d2l0dGVyX2VtcF8xX2MxYiwgJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEpXG5gYGAifQ== -->
+<pre class="r"><code>save_1b(twitter_emp_1_c1b, &#39;Twitter&#39;, &#39;Employment&#39;, 1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiY2Fubm90IG9wZW4gY29tcHJlc3NlZCBmaWxlICcvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1R3aXR0ZXIvUHJlcHJvY2Vzc2VkL2VtcF8xX2MxYi5yZHMnLCBwcm9iYWJsZSByZWFzb24gJ05vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnknRXJyb3IgaW4gZ3pmaWxlKGZpbGUsIG1vZGUpIDogY2Fubm90IG9wZW4gdGhlIGNvbm5lY3Rpb25cbiJ9 -->
+<pre><code>cannot open compressed file &#39;/Volumes/Survey_Social_Media_Compare/Methods/Data/Twitter/Preprocessed/emp_1_c1b.rds&#39;, probable reason &#39;No such file or directory&#39;Error in gzfile(file, mode) : cannot open the connection</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2xlYW5pbmcgc29jaWFsIG1lZGlhIGRhdGEiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCmBgYHtyfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUsIGluY2x1ZGUgPSBUUlVFLCB3YXJuaW5nID0gRkFMU0UpCmBgYAoKIyMgUmVkZGl0IGRhdGFzZXRzCgpgYGB7cn0Kcm0obGlzdCA9IGxzKCkpCgojIFJ1biBzY3JpcHQgdG8gY3JlYXRlIHRoZSByZWRkaXQgc3Vic2V0cwpzb3VyY2UoInJlZGRpdF9zdWJzZXRzLlIiLCBsb2NhbCA9IGtuaXRyOjprbml0X2dsb2JhbCgpKQpgYGAKCgojIyBDbGVhbmluZzogU3RhZ2VzIDFhICsgYi4KYToKKiBSZW1vdmUgdXNlbGVzcyBjb2x1bW5zCiogRG9uZSBpbiBweXRob24gc2NyaXB0cyAoUmVkZGl0L21haW4gYW5kIFR3aXR0ZXIvbWFpbikKCmI6IAoqIFJlbW92ZSBhbnkgYW5vbWFsaWVzL3VzZWxlc3MgcG9zdHMgbWlzc2VkIGJ5IGZpbHRlcnMgKGUuZy4gYmxhbmtzL3JlbW92ZWQvTmFOLCBldGMuKQoqIEFsbCBsb3dlci1jYXNlLgoqIFRva2VuaXplCiogTm9pc2UgcmVtb3ZhbCAocHVuY3R1YXRpb24sIHNwZWNpYWwgY2hhcmFjdGVycywgc3RvcHdvcmRzKS4KCmBgYHtyfQojIExvYWQgZnVuY3Rpb25zIHRvIGNsZWFuIHNtIGRhdGEuCnNvdXJjZSgiY2xlYW5pbmdfZnVuY3MuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCmBgYHtyfQojIExvYWQgZGF0YQpyZWRkaXRfZW1wXzEgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEpCnJlZGRpdF9lbXBfMiA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMikKcmVkZGl0X2VtcF8zIDwtIGxvYWRfZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzKQpyZWRkaXRfZW1wXzQgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQpCmBgYAoKYGBge3J9CiMgR2V0IGFsbCBkYXRlcyBpbiB0aGUgcmlnaHQgZm9ybWF0CnJlZGRpdF9lbXBfMSA8LSBjaGFuZ2VfZGF0ZXMocmVkZGl0X2VtcF8xKQpyZWRkaXRfZW1wXzIgPC0gY2hhbmdlX2RhdGVzKHJlZGRpdF9lbXBfMikKcmVkZGl0X2VtcF8zIDwtIGNoYW5nZV9kYXRlcyhyZWRkaXRfZW1wXzMpCnJlZGRpdF9lbXBfNCA8LSBjaGFuZ2VfZGF0ZXMocmVkZGl0X2VtcF80KQpgYGAKCmBgYHtyfQojIENsZWFuaW5nOiBzdGFnZSAxYgpgYGAKCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2xlYW5pbmcgc29jaWFsIG1lZGlhIGRhdGEiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCmBgYHtyfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUsIGluY2x1ZGUgPSBUUlVFLCB3YXJuaW5nID0gRkFMU0UpCmBgYAoKIyMgUmVkZGl0IGRhdGFzZXRzCgpgYGB7cn0Kcm0obGlzdCA9IGxzKCkpCgojIFJ1biBzY3JpcHQgdG8gY3JlYXRlIHRoZSByZWRkaXQgc3Vic2V0cwojIHNvdXJjZSgicmVkZGl0X3N1YnNldHMuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCiMjIENsZWFuaW5nOiBTdGFnZXMgMWEgKyBiLgphOgoqIFJlbW92ZSB1c2VsZXNzIGNvbHVtbnMKKiBEb25lIGluIHB5dGhvbiBzY3JpcHRzIChSZWRkaXQvbWFpbiBhbmQgVHdpdHRlci9tYWluKQoKYjogCiogUmVtb3ZlIGFueSBhbm9tYWxpZXMvdXNlbGVzcyBwb3N0cyBtaXNzZWQgYnkgZmlsdGVycyAoZS5nLiBibGFua3MvcmVtb3ZlZC9OYU4sIGV0Yy4pCiogQWxsIGxvd2VyLWNhc2UuCiogVG9rZW5pemUKKiBOb2lzZSByZW1vdmFsIChwdW5jdHVhdGlvbiwgc3BlY2lhbCBjaGFyYWN0ZXJzLCBzdG9wd29yZHMpLgoKYGBge3J9CiMgTG9hZCBmdW5jdGlvbnMgdG8gY2xlYW4gc20gZGF0YS4Kc291cmNlKCJjbGVhbmluZ19mdW5jcy5SIiwgbG9jYWwgPSBrbml0cjo6a25pdF9nbG9iYWwoKSkKYGBgCgoKYGBge3J9CiMgTG9hZCBkYXRhCnJlZGRpdF9lbXBfMSA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSkKcmVkZGl0X2VtcF8yIDwtIGxvYWRfZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyKQpyZWRkaXRfZW1wXzMgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMpCnJlZGRpdF9lbXBfNCA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCkKYGBgCgpgYGB7cn0KIyBDbGVhbmluZzogc3RhZ2UgMWIKcmVkZGl0X2VtcF8xX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfMSwgJ1JlZGRpdCcpCnJlZGRpdF9lbXBfMl9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzIsICdSZWRkaXQnKQpyZWRkaXRfZW1wXzNfYzFiIDwtIGNsZWFuX3N0YWdlMWIocmVkZGl0X2VtcF8zLCAnUmVkZGl0JykKcmVkZGl0X2VtcF80X2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfNCwgJ1JlZGRpdCcpCgpzYXZlXzFiKHJlZGRpdF9lbXBfMV9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEpCnNhdmVfMWIocmVkZGl0X2VtcF8yX2MxYiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMikKc2F2ZV8xYihyZWRkaXRfZW1wXzNfYzFiLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzKQpzYXZlXzFiKHJlZGRpdF9lbXBfNF9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQpCmBgYAoKYGBge3J9CnR3aXR0ZXJfZW1wXzEgPC0gbG9hZF9kYXRhKCdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxKQp0d2l0dGVyX2VtcF8xX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHR3aXR0ZXJfZW1wXzEsICdUd2l0dGVyJykKc2F2ZV8xYih0d2l0dGVyX2VtcF8xX2MxYiwgJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEpCmBgYAoK</div>
 
 
 

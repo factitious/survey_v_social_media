@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)
 rm(list = ls())
 
 # Run script to create the reddit subsets
-source("reddit_subsets.R", local = knitr::knit_global())
+# source("reddit_subsets.R", local = knitr::knit_global())
 ```
 
 
@@ -43,15 +43,21 @@ reddit_emp_4 <- load_data('Reddit', 'Employment', 4)
 ```
 
 ```{r}
-# Get all dates in the right format
-reddit_emp_1 <- change_dates(reddit_emp_1)
-reddit_emp_2 <- change_dates(reddit_emp_2)
-reddit_emp_3 <- change_dates(reddit_emp_3)
-reddit_emp_4 <- change_dates(reddit_emp_4)
+# Cleaning: stage 1b
+reddit_emp_1_c1b <- clean_stage1b(reddit_emp_1, 'Reddit')
+reddit_emp_2_c1b <- clean_stage1b(reddit_emp_2, 'Reddit')
+reddit_emp_3_c1b <- clean_stage1b(reddit_emp_3, 'Reddit')
+reddit_emp_4_c1b <- clean_stage1b(reddit_emp_4, 'Reddit')
+
+save_1b(reddit_emp_1_c1b, 'Reddit', 'Employment', 1)
+save_1b(reddit_emp_2_c1b, 'Reddit', 'Employment', 2)
+save_1b(reddit_emp_3_c1b, 'Reddit', 'Employment', 3)
+save_1b(reddit_emp_4_c1b, 'Reddit', 'Employment', 4)
 ```
 
 ```{r}
-# Cleaning: stage 1b
+twitter_emp_1 <- load_data('Twitter', 'Employment', 1)
+twitter_emp_1_c1b <- clean_stage1b(twitter_emp_1, 'Twitter')
+save_1b(twitter_emp_1_c1b, 'Twitter', 'Employment', 1)
 ```
-
 

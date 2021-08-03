@@ -288,3 +288,5 @@ write.csv(reddit_emp_df_top100,
 
 write.csv(reddit_emp_df_relevant,
           file = full_path_df3)
+
+rm(list = ls())
