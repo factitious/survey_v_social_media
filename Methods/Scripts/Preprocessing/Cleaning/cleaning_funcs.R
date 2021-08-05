@@ -3,8 +3,8 @@ library(tidytext)
 library(tm)
 library(SnowballC)
 library(topicmodels)
-
-
+library(ggplot2)
+library(tidyr)
 library(tidyverse)
 library(data.table)
 library(glue)
@@ -13,6 +13,8 @@ library(stringr)
 
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 setwd(root_dir)
+# source(file.path(root_dir,
+#                  'Methods/Scripts/Preprocessing/Cleaning/spelling.R'))
 
 load_data <- function(source, topic, set){
   
@@ -41,7 +43,8 @@ untidy_text <- function(df){
   
   df <- df %>% 
     group_by(across(c(-word))) %>% 
-    summarize(text = str_c(word, collapse = " "))
+    summarize(text = str_c(word, collapse = " ")) %>% 
+    ungroup()
   
   return(df)
 }
@@ -138,18 +141,74 @@ clean_stage1b <- function(df, source){
   
 }
 
-clean_stage2a <- function(df, source){
+clean_stage2 <- function(df, source){
   
-  df <- df %>% 
+  # N.B.: When doing lexicon-based analysis later on
+  # the lexicons will need to be stemmed as well. 
+  # e.g.:
+  # bing_stem <- get_sentiments('bing') %>% 
+  #   mutate(word = wordStem(word))%>% 
+  #   distinct()
+  
+  df <- df %>%
     unnest_tokens(word, text) %>%
-    mutate(stem = wordStem(word))
+    mutate(word = wordStem(word)) %>%
+    filter(!nchar(word) < 3) %>%
+    group_by(id) %>%
+    filter(n()>3) %>% 
+    untidy_text(.)
   
   return(df)
   
 }
 
-save_1b <- function(df, source, topic, set){
+topic_id <- function(df, source){
   
+  df_dtm <- df %>% 
+    unnest_tokens(word, text) %>% 
+    select(word) %>% 
+    group_by(word) %>% 
+    summarize(count = n()) %>% 
+    mutate(document = "Current") %>% 
+    cast_dtm(.,
+             document,
+             term  = word,
+             count)
+  
+  df_lda <- LDA(df_dtm, k = 3, control = list(seed = 13))
+  
+  df_topics <- tidy(df_lda, matrix = "beta")
+    
+  
+  return(df_topics)
+  
+}
+
+topic_top_terms <- function(df, source, plotit = FALSE){
+  
+  df_top_terms <- df %>% 
+    group_by(topic) %>%
+    slice_max(beta, n = 10) %>% 
+    ungroup() %>%
+    arrange(topic, -beta)
+  
+  if(plotit){
+    
+    tt_plot <- df_top_terms %>%
+      mutate(term = reorder_within(term, beta, topic)) %>%
+      ggplot(aes(beta, term, fill = factor(topic))) +
+      geom_col(show.legend = FALSE) +
+      facet_wrap(~ topic, scales = "free") +
+      scale_y_reordered()
+    
+    print(tt_plot)
+    
+  }
+  
+  return(df_top_terms)
+}
+
+save_c <- function(df, source, topic, set, stage){
   
   topic_short <- substr(
     tolower(topic),
@@ -159,7 +218,7 @@ save_1b <- function(df, source, topic, set){
   
   data_path <- glue('Methods/Data/{source}/Preprocessed')
   
-  df_name <- glue('{topic_short}_{set}_c1b.rds')
+  df_name <- glue('{topic_short}_{set}_c{stage}.rds')
   
   df_path <- file.path(root_dir,
                        data_path,
@@ -167,3 +226,10 @@ save_1b <- function(df, source, topic, set){
   
   saveRDS(df, df_path)
 }
+
+
+# twitter_topics <- topic_id(twitter_emp_1_c2a, "Twitter")
+# twitter_top_terms <- topic_top_terms(twitter_topics, plotit = TRUE)
+
+  
+  
