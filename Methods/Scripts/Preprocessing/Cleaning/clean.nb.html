@@ -1792,6 +1792,66 @@ summary {
 <pre class="r"><code># Load functions to clean sm data.
 source(&quot;cleaning_funcs.R&quot;, local = knitr::knit_global())</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoicGFja2FnZSDigJhsdWJyaWRhdGXigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjAuMlxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmGx1YnJpZGF0ZeKAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6YmFzZeKAmTpcblxuICAgIGRhdGUsIGludGVyc2VjdCwgc2V0ZGlmZiwgdW5pb25cblxucGFja2FnZSDigJh0aWR5dGV4dOKAmSB3YXMgYnVpbHQgdW5kZXIgUiB2ZXJzaW9uIDQuMC4ycGFja2FnZSDigJh0beKAmSB3YXMgYnVpbHQgdW5kZXIgUiB2ZXJzaW9uIDQuMC4yTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBOTFBcbnBhY2thZ2Ug4oCYTkxQ4oCZIHdhcyBidWlsdCB1bmRlciBSIHZlcnNpb24gNC4wLjJSZWdpc3RlcmVkIFMzIG1ldGhvZHMgb3ZlcndyaXR0ZW4gYnkgJ2RicGx5cic6XG4gIG1ldGhvZCAgICAgICAgIGZyb21cbiAgcHJpbnQudGJsX2xhenkgICAgIFxuICBwcmludC50Ymxfc3FsICAgICAgXG5cdTAwMWJbMzdt4pSA4pSAIFx1MDAxYlsxbUF0dGFjaGluZyBwYWNrYWdlc1x1MDAxYlsyMm0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAIHRpZHl2ZXJzZSAxLjMuMCDilIDilIBcdTAwMWJbMzltXG5cdTAwMWJbMzdtXHUwMDFiWzMybeKck1x1MDAxYlszN20gXHUwMDFiWzM0bWdncGxvdDJcdTAwMWJbMzdtIDMuMy4zICAgICBcdTAwMWJbMzJt4pyTXHUwMDFiWzM3bSBcdTAwMWJbMzRtcHVycnIgIFx1MDAxYlszN20gMC4zLjRcblx1MDAxYlszMm3inJNcdTAwMWJbMzdtIFx1MDAxYlszNG10aWJibGUgXHUwMDFiWzM3bSAzLjAuNiAgICAgXHUwMDFiWzMybeKck1x1MDAxYlszN20gXHUwMDFiWzM0bWRwbHlyICBcdTAwMWJbMzdtIDEuMC4zXG5cdTAwMWJbMzJt4pyTXHUwMDFiWzM3bSBcdTAwMWJbMzRtdGlkeXIgIFx1MDAxYlszN20gMS4xLjIgICAgIFx1MDAxYlszMm3inJNcdTAwMWJbMzdtIFx1MDAxYlszNG1zdHJpbmdyXHUwMDFiWzM3bSAxLjQuMFxuXHUwMDFiWzMybeKck1x1MDAxYlszN20gXHUwMDFiWzM0bXJlYWRyICBcdTAwMWJbMzdtIDEuNC4wICAgICBcdTAwMWJbMzJt4pyTXHUwMDFiWzM3bSBcdTAwMWJbMzRtZm9yY2F0c1x1MDAxYlszN20gMC41LjBcdTAwMWJbMzltXG5wYWNrYWdlIOKAmGdncGxvdDLigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjAuMnBhY2thZ2Ug4oCYdGliYmxl4oCZIHdhcyBidWlsdCB1bmRlciBSIHZlcnNpb24gNC4wLjJwYWNrYWdlIOKAmHRpZHly4oCZIHdhcyBidWlsdCB1bmRlciBSIHZlcnNpb24gNC4wLjJwYWNrYWdlIOKAmHJlYWRy4oCZIHdhcyBidWlsdCB1bmRlciBSIHZlcnNpb24gNC4wLjJwYWNrYWdlIOKAmGRwbHly4oCZIHdhcyBidWlsdCB1bmRlciBSIHZlcnNpb24gNC4wLjJcdTAwMWJbMzdt4pSA4pSAIFx1MDAxYlsxbUNvbmZsaWN0c1x1MDAxYlsyMm0g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAIHRpZHl2ZXJzZV9jb25mbGljdHMoKSDilIDilIBcblx1MDAxYlszMW14XHUwMDFiWzM3bSBcdTAwMWJbMzRtZ2dwbG90Mlx1MDAxYlszN206Olx1MDAxYlszMm1hbm5vdGF0ZSgpXHUwMDFiWzM3bSAgICAgIG1hc2tzIFx1MDAxYlszNG1OTFBcdTAwMWJbMzdtOjphbm5vdGF0ZSgpXG5cdTAwMWJbMzFteFx1MDAxYlszN20gXHUwMDFiWzM0bWx1YnJpZGF0ZVx1MDAxYlszN206Olx1MDAxYlszMm1hcy5kaWZmdGltZSgpXHUwMDFiWzM3bSBtYXNrcyBcdTAwMWJbMzRtYmFzZVx1MDAxYlszN206OmFzLmRpZmZ0aW1lKClcblx1MDAxYlszMW14XHUwMDFiWzM3bSBcdTAwMWJbMzRtbHVicmlkYXRlXHUwMDFiWzM3bTo6XHUwMDFiWzMybWRhdGUoKVx1MDAxYlszN20gICAgICAgIG1hc2tzIFx1MDAxYlszNG1iYXNlXHUwMDFiWzM3bTo6ZGF0ZSgpXG5cdTAwMWJbMzFteFx1MDAxYlszN20gXHUwMDFiWzM0bWRwbHlyXHUwMDFiWzM3bTo6XHUwMDFiWzMybWZpbHRlcigpXHUwMDFiWzM3bSAgICAgICAgICBtYXNrcyBcdTAwMWJbMzRtc3RhdHNcdTAwMWJbMzdtOjpmaWx0ZXIoKVxuXHUwMDFiWzMxbXhcdTAwMWJbMzdtIFx1MDAxYlszNG1sdWJyaWRhdGVcdTAwMWJbMzdtOjpcdTAwMWJbMzJtaW50ZXJzZWN0KClcdTAwMWJbMzdtICAgbWFza3MgXHUwMDFiWzM0bWJhc2VcdTAwMWJbMzdtOjppbnRlcnNlY3QoKVxuXHUwMDFiWzMxbXhcdTAwMWJbMzdtIFx1MDAxYlszNG1kcGx5clx1MDAxYlszN206Olx1MDAxYlszMm1sYWcoKVx1MDAxYlszN20gICAgICAgICAgICAgbWFza3MgXHUwMDFiWzM0bXN0YXRzXHUwMDFiWzM3bTo6bGFnKClcblx1MDAxYlszMW14XHUwMDFiWzM3bSBcdTAwMWJbMzRtbHVicmlkYXRlXHUwMDFiWzM3bTo6XHUwMDFiWzMybXNldGRpZmYoKVx1MDAxYlszN20gICAgIG1hc2tzIFx1MDAxYlszNG1iYXNlXHUwMDFiWzM3bTo6c2V0ZGlmZigpXG5cdTAwMWJbMzFteFx1MDAxYlszN20gXHUwMDFiWzM0bWx1YnJpZGF0ZVx1MDAxYlszN206Olx1MDAxYlszMm11bmlvbigpXHUwMDFiWzM3bSAgICAgICBtYXNrcyBcdTAwMWJbMzRtYmFzZVx1MDAxYlszN206OnVuaW9uKClcdTAwMWJbMzltXG5wYWNrYWdlIOKAmGRhdGEudGFibGXigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjAuMlJlZ2lzdGVyZWQgUzMgbWV0aG9kIG92ZXJ3cml0dGVuIGJ5ICdkYXRhLnRhYmxlJzpcbiAgbWV0aG9kICAgICAgICAgICBmcm9tXG4gIHByaW50LmRhdGEudGFibGUgICAgIFxuZGF0YS50YWJsZSAxLjEzLjQgdXNpbmcgMSB0aHJlYWRzIChzZWUgP2dldERUdGhyZWFkcykuICBMYXRlc3QgbmV3czogci1kYXRhdGFibGUuY29tXG4qKioqKioqKioqXG5UaGlzIGluc3RhbGxhdGlvbiBvZiBkYXRhLnRhYmxlIGhhcyBub3QgZGV0ZWN0ZWQgT3Blbk1QIHN1cHBvcnQuIEl0IHNob3VsZCBzdGlsbCB3b3JrIGJ1dCBpbiBzaW5nbGUtdGhyZWFkZWQgbW9kZS5cblRoaXMgaXMgYSBNYWMuIFBsZWFzZSByZWFkIGh0dHBzOi8vbWFjLnItcHJvamVjdC5vcmcvb3Blbm1wLy4gUGxlYXNlIGVuZ2FnZSB3aXRoIEFwcGxlIGFuZCBhc2sgdGhlbSBmb3Igc3VwcG9ydC4gQ2hlY2sgci1kYXRhdGFibGUuY29tIGZvciB1cGRhdGVzLCBhbmQgb3VyIE1hYyBpbnN0cnVjdGlvbnMgaGVyZTogaHR0cHM6Ly9naXRodWIuY29tL1JkYXRhdGFibGUvZGF0YS50YWJsZS93aWtpL0luc3RhbGxhdGlvbi4gQWZ0ZXIgc2V2ZXJhbCB5ZWFycyBvZiBtYW55IHJlcG9ydHMgb2YgaW5zdGFsbGF0aW9uIHByb2JsZW1zIG9uIE1hYywgaXQncyB0aW1lIHRvIGdpbmdlcmx5IHBvaW50IG91dCB0aGF0IHRoZXJlIGhhdmUgYmVlbiBubyBzaW1pbGFyIHByb2JsZW1zIG9uIFdpbmRvd3Mgb3IgTGludXguXG4qKioqKioqKioqXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJhkYXRhLnRhYmxl4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpkcGx5cuKAmTpcblxuICAgIGJldHdlZW4sIGZpcnN0LCBsYXN0XG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6cHVycnLigJk6XG5cbiAgICB0cmFuc3Bvc2VcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmx1YnJpZGF0ZeKAmTpcblxuICAgIGhvdXIsIGlzb3dlZWssIG1kYXksIG1pbnV0ZSwgbW9udGgsIHF1YXJ0ZXIsIHNlY29uZCwgd2RheSwgd2VlaywgeWRheSwgeWVhclxuXG5wYWNrYWdlIOKAmGdsdWXigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjAuMlxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmGdsdWXigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpkcGx5cuKAmTpcblxuICAgIGNvbGxhcHNlXG5cbnBhY2thZ2Ug4oCYZ3N1YmZu4oCZIHdhcyBidWlsdCB1bmRlciBSIHZlcnNpb24gNC4wLjJMb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IHByb3RvXG5wYWNrYWdlIOKAmHByb3Rv4oCZIHdhcyBidWlsdCB1bmRlciBSIHZlcnNpb24gNC4wLjJUaGUgd29ya2luZyBkaXJlY3Rvcnkgd2FzIGNoYW5nZWQgdG8gL1ZvbHVtZXMvU3VydmV5X1NvY2lhbF9NZWRpYV9Db21wYXJlIGluc2lkZSBhIG5vdGVib29rIGNodW5rLiBUaGUgd29ya2luZyBkaXJlY3Rvcnkgd2lsbCBiZSByZXNldCB3aGVuIHRoZSBjaHVuayBpcyBmaW5pc2hlZCBydW5uaW5nLiBVc2UgdGhlIGtuaXRyIHJvb3QuZGlyIG9wdGlvbiBpbiB0aGUgc2V0dXAgY2h1bmsgdG8gY2hhbmdlIHRoZSB3b3JraW5nIGRpcmVjdG9yeSBmb3Igbm90ZWJvb2sgY2h1bmtzLlxuIn0= -->
+<pre><code>package ‘lubridate’ was built under R version 4.0.2
+Attaching package: ‘lubridate’
+
+The following objects are masked from ‘package:base’:
+
+    date, intersect, setdiff, union
+
+package ‘tidytext’ was built under R version 4.0.2package ‘tm’ was built under R version 4.0.2Loading required package: NLP
+package ‘NLP’ was built under R version 4.0.2Registered S3 methods overwritten by &#39;dbplyr&#39;:
+  method         from
+  print.tbl_lazy     
+  print.tbl_sql      
+[37m── [1mAttaching packages[22m ────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──[39m
+[37m[32m✓[37m [34mggplot2[37m 3.3.3     [32m✓[37m [34mpurrr  [37m 0.3.4
+[32m✓[37m [34mtibble [37m 3.0.6     [32m✓[37m [34mdplyr  [37m 1.0.3
+[32m✓[37m [34mtidyr  [37m 1.1.2     [32m✓[37m [34mstringr[37m 1.4.0
+[32m✓[37m [34mreadr  [37m 1.4.0     [32m✓[37m [34mforcats[37m 0.5.0[39m
+package ‘ggplot2’ was built under R version 4.0.2package ‘tibble’ was built under R version 4.0.2package ‘tidyr’ was built under R version 4.0.2package ‘readr’ was built under R version 4.0.2package ‘dplyr’ was built under R version 4.0.2[37m── [1mConflicts[22m ───────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+[31mx[37m [34mggplot2[37m::[32mannotate()[37m      masks [34mNLP[37m::annotate()
+[31mx[37m [34mlubridate[37m::[32mas.difftime()[37m masks [34mbase[37m::as.difftime()
+[31mx[37m [34mlubridate[37m::[32mdate()[37m        masks [34mbase[37m::date()
+[31mx[37m [34mdplyr[37m::[32mfilter()[37m          masks [34mstats[37m::filter()
+[31mx[37m [34mlubridate[37m::[32mintersect()[37m   masks [34mbase[37m::intersect()
+[31mx[37m [34mdplyr[37m::[32mlag()[37m             masks [34mstats[37m::lag()
+[31mx[37m [34mlubridate[37m::[32msetdiff()[37m     masks [34mbase[37m::setdiff()
+[31mx[37m [34mlubridate[37m::[32munion()[37m       masks [34mbase[37m::union()[39m
+package ‘data.table’ was built under R version 4.0.2Registered S3 method overwritten by &#39;data.table&#39;:
+  method           from
+  print.data.table     
+data.table 1.13.4 using 1 threads (see ?getDTthreads).  Latest news: r-datatable.com
+**********
+This installation of data.table has not detected OpenMP support. It should still work but in single-threaded mode.
+This is a Mac. Please read https://mac.r-project.org/openmp/. Please engage with Apple and ask them for support. Check r-datatable.com for updates, and our Mac instructions here: https://github.com/Rdatatable/data.table/wiki/Installation. After several years of many reports of installation problems on Mac, it&#39;s time to gingerly point out that there have been no similar problems on Windows or Linux.
+**********
+
+Attaching package: ‘data.table’
+
+The following objects are masked from ‘package:dplyr’:
+
+    between, first, last
+
+The following object is masked from ‘package:purrr’:
+
+    transpose
+
+The following objects are masked from ‘package:lubridate’:
+
+    hour, isoweek, mday, minute, month, quarter, second, wday, week, yday, year
+
+package ‘glue’ was built under R version 4.0.2
+Attaching package: ‘glue’
+
+The following object is masked from ‘package:dplyr’:
+
+    collapse
+
+package ‘gsubfn’ was built under R version 4.0.2Loading required package: proto
+package ‘proto’ was built under R version 4.0.2The working directory was changed to /Volumes/Survey_Social_Media_Compare inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks.</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1807,14 +1867,41 @@ reddit_emp_4 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 4)</code></
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbmluZzogc3RhZ2UgMWJcbnJlZGRpdF9lbXBfMV9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzEsICdSZWRkaXQnKVxucmVkZGl0X2VtcF8yX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfMiwgJ1JlZGRpdCcpXG5yZWRkaXRfZW1wXzNfYzFiIDwtIGNsZWFuX3N0YWdlMWIocmVkZGl0X2VtcF8zLCAnUmVkZGl0JylcbnJlZGRpdF9lbXBfNF9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzQsICdSZWRkaXQnKVxuXG5zYXZlXzFiKHJlZGRpdF9lbXBfMV9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEpXG5zYXZlXzFiKHJlZGRpdF9lbXBfMl9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDIpXG5zYXZlXzFiKHJlZGRpdF9lbXBfM19jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMpXG5zYXZlXzFiKHJlZGRpdF9lbXBfNF9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbmluZzogc3RhZ2UgMWJcbnJlZGRpdF9lbXBfMV9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzEsICdSZWRkaXQnKVxuYGBgIn0= -->
 <pre class="r"><code># Cleaning: stage 1b
-reddit_emp_1_c1b &lt;- clean_stage1b(reddit_emp_1, &#39;Reddit&#39;)
-reddit_emp_2_c1b &lt;- clean_stage1b(reddit_emp_2, &#39;Reddit&#39;)
-reddit_emp_3_c1b &lt;- clean_stage1b(reddit_emp_3, &#39;Reddit&#39;)
-reddit_emp_4_c1b &lt;- clean_stage1b(reddit_emp_4, &#39;Reddit&#39;)
-
-save_1b(reddit_emp_1_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 1)
+reddit_emp_1_c1b &lt;- clean_stage1b(reddit_emp_1, &#39;Reddit&#39;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGUgYC5ncm91cHNgIGFyZ3VtZW50LlxuIn0= -->
+<pre><code>Joining, by = &quot;word&quot;
+Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;. You can override using the `.groups` argument.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVkZGl0X2VtcF8yX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfMiwgJ1JlZGRpdCcpXG5gYGAifQ== -->
+<pre class="r"><code>reddit_emp_2_c1b &lt;- clean_stage1b(reddit_emp_2, &#39;Reddit&#39;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ1gnLCAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG4ifQ== -->
+<pre><code>Joining, by = &quot;word&quot;
+Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;X&#39;, &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;. You can override using the `.groups` argument.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVkZGl0X2VtcF8zX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfMywgJ1JlZGRpdCcpXG5gYGAifQ== -->
+<pre class="r"><code>reddit_emp_3_c1b &lt;- clean_stage1b(reddit_emp_3, &#39;Reddit&#39;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ1gnLCAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG4ifQ== -->
+<pre><code>Joining, by = &quot;word&quot;
+Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;X&#39;, &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;. You can override using the `.groups` argument.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVkZGl0X2VtcF80X2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfNCwgJ1JlZGRpdCcpXG5gYGAifQ== -->
+<pre class="r"><code>reddit_emp_4_c1b &lt;- clean_stage1b(reddit_emp_4, &#39;Reddit&#39;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGUgYC5ncm91cHNgIGFyZ3VtZW50LlxuIn0= -->
+<pre><code>Joining, by = &quot;word&quot;
+Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;. You can override using the `.groups` argument.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV8xYihyZWRkaXRfZW1wXzFfYzFiLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxKVxuc2F2ZV8xYihyZWRkaXRfZW1wXzJfYzFiLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyKVxuc2F2ZV8xYihyZWRkaXRfZW1wXzNfYzFiLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzKVxuc2F2ZV8xYihyZWRkaXRfZW1wXzRfYzFiLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0KVxuYGBgIn0= -->
+<pre class="r"><code>save_1b(reddit_emp_1_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 1)
 save_1b(reddit_emp_2_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 2)
 save_1b(reddit_emp_3_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 3)
 save_1b(reddit_emp_4_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 4)</code></pre>
@@ -1835,9 +1922,6 @@ Joining, by = &quot;word&quot;
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV8xYih0d2l0dGVyX2VtcF8xX2MxYiwgJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEpXG5gYGAifQ== -->
 <pre class="r"><code>save_1b(twitter_emp_1_c1b, &#39;Twitter&#39;, &#39;Employment&#39;, 1)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiY2Fubm90IG9wZW4gY29tcHJlc3NlZCBmaWxlICcvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1R3aXR0ZXIvUHJlcHJvY2Vzc2VkL2VtcF8xX2MxYi5yZHMnLCBwcm9iYWJsZSByZWFzb24gJ05vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnknRXJyb3IgaW4gZ3pmaWxlKGZpbGUsIG1vZGUpIDogY2Fubm90IG9wZW4gdGhlIGNvbm5lY3Rpb25cbiJ9 -->
-<pre><code>cannot open compressed file &#39;/Volumes/Survey_Social_Media_Compare/Methods/Data/Twitter/Preprocessed/emp_1_c1b.rds&#39;, probable reason &#39;No such file or directory&#39;Error in gzfile(file, mode) : cannot open the connection</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->

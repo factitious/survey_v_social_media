@@ -1,6 +1,9 @@
 library(lubridate)
 library(tidytext)
 library(tm)
+library(SnowballC)
+library(topicmodels)
+
 
 library(tidyverse)
 library(data.table)
@@ -126,10 +129,20 @@ clean_stage1b <- function(df, source){
   # Get rid of posts that have less than n (here 10) words.
   df <- df %>% 
     group_by(id) %>% 
-    filter(n()>10)
+    filter(n()>3)
   
   # Get data back into original format
   df <- untidy_text(df)
+  
+  return(df)
+  
+}
+
+clean_stage2a <- function(df, source){
+  
+  df <- df %>% 
+    unnest_tokens(word, text) %>%
+    mutate(stem = wordStem(word))
   
   return(df)
   
