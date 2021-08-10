@@ -227,9 +227,5 @@ save_c <- function(df, source, topic, set, stage){
   saveRDS(df, df_path)
 }
 
-
-# twitter_topics <- topic_id(twitter_emp_1_c2a, "Twitter")
-# twitter_top_terms <- topic_top_terms(twitter_topics, plotit = TRUE)
-
   
   

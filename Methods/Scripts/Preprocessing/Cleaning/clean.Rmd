@@ -56,7 +56,7 @@ save_c(reddit_emp_3_c1b, 'Reddit', 'Employment', 3, '1b')
 save_c(reddit_emp_4_c1b, 'Reddit', 'Employment', 4, '1b')
 
 twitter_emp_1_c1b <- clean_stage1b(twitter_emp_1, 'Twitter')
-save_(twitter_emp_1_c1b, 'Twitter', 'Employment', 1, '1b')
+save_c(twitter_emp_1_c1b, 'Twitter', 'Employment', 1, '1b')
 ```
 
 ```{r}
@@ -72,7 +72,12 @@ save_c(reddit_emp_3_c2, 'Reddit', 'Employment', 3, '2')
 save_c(reddit_emp_4_c2, 'Reddit', 'Employment', 4, '2')
 
 twitter_emp_1_c2 <- clean_stage2(twitter_emp_1_c1b, 'Twitter')
-save_(twitter_emp_1_c2, 'Twitter', 'Employment', 1, '2')
+save_c(twitter_emp_1_c2, 'Twitter', 'Employment', 1, '2')
 
+```
+
+```{r}
+save_c(twitter_emp_1_c1b, 'Twitter', 'Employment', 1, '1b')
+save_c(twitter_emp_1_c2, 'Twitter', 'Employment', 1, '2')
 ```
 

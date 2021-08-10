@@ -1,0 +1,75 @@
+---
+title: "NLP: Lexicon-based"
+output: html_notebook
+---
+
+
+
+```{r}
+source("lexicon_funcs.R", local = knitr::knit_global())
+```
+
+
+
+```{r}
+# Emp 1
+emp_1_c1b <- load_cdata('Reddit', 'Employment', 1, '1b')
+emp_1_c1b_lex <- gsc_all_lexicons(emp_1_c1b)
+save_lex(emp_1_c1b_lex, 'Reddit', 'Employment', 1, '1b')
+rm(emp_1_c1b)
+
+emp_1_c2 <- load_cdata('Reddit', 'Employment', 1, '2')
+emp_1_c2_lex <- gsc_all_lexicons(emp_1_c2,stemmed = T)
+save_lex(emp_1_c2_lex, 'Reddit', 'Employment', 1, '2')
+rm(emp_1_c2)
+
+# Emp 2
+emp_2_c1b <- load_cdata('Reddit', 'Employment', 2, '1b')
+emp_2_c1b_lex <- gsc_all_lexicons(emp_2_c1b)
+save_lex(emp_2_c1b_lex, 'Reddit', 'Employment', 2, '1b')
+rm(emp_2_c1b)
+
+emp_2_c2 <- load_cdata('Reddit', 'Employment', 2, '2')
+emp_2_c2_lex <- gsc_all_lexicons(emp_2_c2,stemmed = T)
+save_lex(emp_2_c2_lex, 'Reddit', 'Employment', 2, '2')
+rm(emp_2_c2)
+
+# Emp 3
+emp_3_c1b <- load_cdata('Reddit', 'Employment', 3, '1b')
+emp_3_c1b_lex <- gsc_all_lexicons(emp_3_c1b)
+save_lex(emp_3_c1b_lex, 'Reddit', 'Employment', 3, '1b')
+rm(emp_3_c1b)
+
+emp_3_c2 <- load_cdata('Reddit', 'Employment', 3, '2')
+emp_3_c2_lex <- gsc_all_lexicons(emp_3_c2,stemmed = T)
+save_lex(emp_3_c2_lex, 'Reddit', 'Employment', 3, '2')
+rm(emp_3_c2)
+
+# Emp 4
+emp_4_c1b <- load_cdata('Reddit', 'Employment', 4, '1b')
+emp_4_c1b_lex <- gsc_all_lexicons(emp_4_c1b)
+save_lex(emp_4_c1b_lex, 'Reddit', 'Employment', 4, '1b')
+rm(emp_4_c1b)
+
+emp_4_c2 <- load_cdata('Reddit', 'Employment', 4, '2')
+emp_4_c2_lex <- gsc_all_lexicons(emp_4_c2,stemmed = T)
+save_lex(emp_4_c2_lex, 'Reddit', 'Employment', 4, '2')
+rm(emp_4_c2)
+
+```
+
+```{r}
+twitter_emp_1_c1b <- load_cdata('Twitter', 'Employment', 1, '1b')
+twitter_emp_1_c1b_lex <- gsc_all_lexicons(twitter_emp_1_c1b)
+save_lex(twitter_emp_1_c1b_lex, 'Twitter', 'Employment', 1, '1b')
+rm(twitter_emp_1_c1b)
+
+twitter_emp_1_c2 <- load_cdata('Twitter', 'Employment', 1, '2')
+twitter_emp_1_c2_lex <- gsc_all_lexicons(twitter_emp_1_c2)
+save_lex(twitter_emp_1_c2_lex, 'Twitter', 'Employment', 1, '2')
+rm(twitter_emp_1_c2)
+
+```
+
+
+

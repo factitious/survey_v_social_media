@@ -11,7 +11,7 @@
 
 
 
-<title>Cleaning social media data</title>
+<title>NLP: Lexicon-based</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1756,7 +1756,7 @@ summary {
 
 
 
-<h1 class="title toc-ignore">Cleaning social media data</h1>
+<h1 class="title toc-ignore">NLP: Lexicon-based</h1>
 
 </div>
 
@@ -1764,99 +1764,80 @@ summary {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFLCBpbmNsdWRlID0gVFJVRSwgd2FybmluZyA9IEZBTFNFKVxuYGBgIn0= -->
-<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<div id="reddit-datasets" class="section level2">
-<h2>Reddit datasets</h2>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdCA9IGxzKCkpXG5cbiMgUnVuIHNjcmlwdCB0byBjcmVhdGUgdGhlIHJlZGRpdCBzdWJzZXRzXG4jIHNvdXJjZShcInJlZGRpdF9zdWJzZXRzLlJcIiwgbG9jYWwgPSBrbml0cjo6a25pdF9nbG9iYWwoKSlcbmBgYCJ9 -->
-<pre class="r"><code>rm(list = ls())
-
-# Run script to create the reddit subsets
-# source(&quot;reddit_subsets.R&quot;, local = knitr::knit_global())</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="cleaning-stages-1a-b." class="section level2">
-<h2>Cleaning: Stages 1a + b.</h2>
-<p>a: * Remove useless columns * Done in python scripts (Reddit/main and Twitter/main)</p>
-<p>b: * Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.) * All lower-case. * Tokenize * Noise removal (punctuation, special characters, stopwords).</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBMb2FkIGZ1bmN0aW9ucyB0byBjbGVhbiBzbSBkYXRhLlxuc291cmNlKFwiY2xlYW5pbmdfZnVuY3MuUlwiLCBsb2NhbCA9IGtuaXRyOjprbml0X2dsb2JhbCgpKVxuYGBgIn0= -->
-<pre class="r"><code># Load functions to clean sm data.
-source(&quot;cleaning_funcs.R&quot;, local = knitr::knit_global())</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc291cmNlKFwibGV4aWNvbl9mdW5jcy5SXCIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpXG5gYGAifQ== -->
+<pre class="r"><code>source(&quot;lexicon_funcs.R&quot;, local = knitr::knit_global())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBMb2FkIGRhdGFcbnJlZGRpdF9lbXBfMSA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSlcbnJlZGRpdF9lbXBfMiA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMilcbnJlZGRpdF9lbXBfMyA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMylcbnJlZGRpdF9lbXBfNCA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNClcbnR3aXR0ZXJfZW1wXzEgPC0gbG9hZF9kYXRhKCdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxKVxuYGBgIn0= -->
-<pre class="r"><code># Load data
-reddit_emp_1 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 1)
-reddit_emp_2 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 2)
-reddit_emp_3 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 3)
-reddit_emp_4 &lt;- load_data(&#39;Reddit&#39;, &#39;Employment&#39;, 4)
-twitter_emp_1 &lt;- load_data(&#39;Twitter&#39;, &#39;Employment&#39;, 1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbmluZzogc3RhZ2UgMWJcbnJlZGRpdF9lbXBfMV9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzEsICdSZWRkaXQnKVxucmVkZGl0X2VtcF8yX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfMiwgJ1JlZGRpdCcpXG5yZWRkaXRfZW1wXzNfYzFiIDwtIGNsZWFuX3N0YWdlMWIocmVkZGl0X2VtcF8zLCAnUmVkZGl0JylcbnJlZGRpdF9lbXBfNF9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzQsICdSZWRkaXQnKVxuXG5zYXZlX2MocmVkZGl0X2VtcF8xX2MxYiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnNhdmVfYyhyZWRkaXRfZW1wXzJfYzFiLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMWInKVxuc2F2ZV9jKHJlZGRpdF9lbXBfM19jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcxYicpXG5zYXZlX2MocmVkZGl0X2VtcF80X2MxYiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzFiJylcblxudHdpdHRlcl9lbXBfMV9jMWIgPC0gY2xlYW5fc3RhZ2UxYih0d2l0dGVyX2VtcF8xLCAnVHdpdHRlcicpXG5zYXZlX2ModHdpdHRlcl9lbXBfMV9jMWIsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKVxuYGBgIn0= -->
-<pre class="r"><code># Cleaning: stage 1b
-reddit_emp_1_c1b &lt;- clean_stage1b(reddit_emp_1, &#39;Reddit&#39;)
-reddit_emp_2_c1b &lt;- clean_stage1b(reddit_emp_2, &#39;Reddit&#39;)
-reddit_emp_3_c1b &lt;- clean_stage1b(reddit_emp_3, &#39;Reddit&#39;)
-reddit_emp_4_c1b &lt;- clean_stage1b(reddit_emp_4, &#39;Reddit&#39;)
-
-save_c(reddit_emp_1_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
-save_c(reddit_emp_2_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;1b&#39;)
-save_c(reddit_emp_3_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;1b&#39;)
-save_c(reddit_emp_4_c1b, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;1b&#39;)
-
-twitter_emp_1_c1b &lt;- clean_stage1b(twitter_emp_1, &#39;Twitter&#39;)
-save_c(twitter_emp_1_c1b, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDbGVhbmluZzogc3RhZ2UgMlxucmVkZGl0X2VtcF8xX2MyIDwtIGNsZWFuX3N0YWdlMihyZWRkaXRfZW1wXzFfYzFiLCAnUmVkZGl0JylcbnJlZGRpdF9lbXBfMl9jMiA8LSBjbGVhbl9zdGFnZTIocmVkZGl0X2VtcF8yX2MxYiwgJ1JlZGRpdCcpXG5yZWRkaXRfZW1wXzNfYzIgPC0gY2xlYW5fc3RhZ2UyKHJlZGRpdF9lbXBfM19jMWIsICdSZWRkaXQnKVxucmVkZGl0X2VtcF80X2MyIDwtIGNsZWFuX3N0YWdlMihyZWRkaXRfZW1wXzRfYzFiLCAnUmVkZGl0Jylcblxuc2F2ZV9jKHJlZGRpdF9lbXBfMV9jMiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzInKVxuc2F2ZV9jKHJlZGRpdF9lbXBfMl9jMiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzInKVxuc2F2ZV9jKHJlZGRpdF9lbXBfM19jMiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzInKVxuc2F2ZV9jKHJlZGRpdF9lbXBfNF9jMiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzInKVxuXG50d2l0dGVyX2VtcF8xX2MyIDwtIGNsZWFuX3N0YWdlMih0d2l0dGVyX2VtcF8xX2MxYiwgJ1R3aXR0ZXInKVxuc2F2ZV9jKHR3aXR0ZXJfZW1wXzFfYzIsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG5cbmBgYCJ9 -->
-<pre class="r"><code># Cleaning: stage 2
-reddit_emp_1_c2 &lt;- clean_stage2(reddit_emp_1_c1b, &#39;Reddit&#39;)
-reddit_emp_2_c2 &lt;- clean_stage2(reddit_emp_2_c1b, &#39;Reddit&#39;)
-reddit_emp_3_c2 &lt;- clean_stage2(reddit_emp_3_c1b, &#39;Reddit&#39;)
-reddit_emp_4_c2 &lt;- clean_stage2(reddit_emp_4_c1b, &#39;Reddit&#39;)
-
-save_c(reddit_emp_1_c2, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
-save_c(reddit_emp_2_c2, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;2&#39;)
-save_c(reddit_emp_3_c2, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;2&#39;)
-save_c(reddit_emp_4_c2, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;2&#39;)
-
-twitter_emp_1_c2 &lt;- clean_stage2(twitter_emp_1_c1b, &#39;Twitter&#39;)
-save_c(twitter_emp_1_c2, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyAjIEVtcCAxXG4jIGVtcF8xX2MxYiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEsICcxYicpXG4jIGVtcF8xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMV9jMWIpXG4jIHNhdmVfbGV4KGVtcF8xX2MxYl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEsICcxYicpXG4jIHJtKGVtcF8xX2MxYilcbiMgXG4jIGVtcF8xX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzInKVxuIyBlbXBfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMV9jMixzdGVtbWVkID0gVClcbiMgc2F2ZV9sZXgoZW1wXzFfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG4jIHJtKGVtcF8xX2MyKVxuIyBcbiMgIyBFbXAgMlxuIyBlbXBfMl9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMWInKVxuIyBlbXBfMl9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzJfYzFiKVxuIyBzYXZlX2xleChlbXBfMl9jMWJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMWInKVxuIyBybShlbXBfMl9jMWIpXG4jIFxuIyBlbXBfMl9jMiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDIsICcyJylcbiMgZW1wXzJfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzJfYzIsc3RlbW1lZCA9IFQpXG4jIHNhdmVfbGV4KGVtcF8yX2MyX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzInKVxuIyBybShlbXBfMl9jMilcbiMgXG4jICMgRW1wIDNcbiMgZW1wXzNfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzFiJylcbiMgZW1wXzNfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8zX2MxYilcbiMgc2F2ZV9sZXgoZW1wXzNfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzFiJylcbiMgcm0oZW1wXzNfYzFiKVxuIyBcbiMgZW1wXzNfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMicpXG4jIGVtcF8zX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8zX2MyLHN0ZW1tZWQgPSBUKVxuIyBzYXZlX2xleChlbXBfM19jMl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcyJylcbiMgcm0oZW1wXzNfYzIpXG4jIFxuIyAjIEVtcCA0XG4jIGVtcF80X2MxYiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQsICcxYicpXG4jIGVtcF80X2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfNF9jMWIpXG4jIHNhdmVfbGV4KGVtcF80X2MxYl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQsICcxYicpXG4jIHJtKGVtcF80X2MxYilcbiMgXG4jIGVtcF80X2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzInKVxuIyBlbXBfNF9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfNF9jMixzdGVtbWVkID0gVClcbiMgc2F2ZV9sZXgoZW1wXzRfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMicpXG4jIHJtKGVtcF80X2MyKVxuXG5gYGAifQ== -->
+<pre class="r"><code># # Emp 1
+# emp_1_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
+# emp_1_c1b_lex &lt;- gsc_all_lexicons(emp_1_c1b)
+# save_lex(emp_1_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
+# rm(emp_1_c1b)
+# 
+# emp_1_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+# emp_1_c2_lex &lt;- gsc_all_lexicons(emp_1_c2,stemmed = T)
+# save_lex(emp_1_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+# rm(emp_1_c2)
+# 
+# # Emp 2
+# emp_2_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;1b&#39;)
+# emp_2_c1b_lex &lt;- gsc_all_lexicons(emp_2_c1b)
+# save_lex(emp_2_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;1b&#39;)
+# rm(emp_2_c1b)
+# 
+# emp_2_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;2&#39;)
+# emp_2_c2_lex &lt;- gsc_all_lexicons(emp_2_c2,stemmed = T)
+# save_lex(emp_2_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;2&#39;)
+# rm(emp_2_c2)
+# 
+# # Emp 3
+# emp_3_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;1b&#39;)
+# emp_3_c1b_lex &lt;- gsc_all_lexicons(emp_3_c1b)
+# save_lex(emp_3_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;1b&#39;)
+# rm(emp_3_c1b)
+# 
+# emp_3_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;2&#39;)
+# emp_3_c2_lex &lt;- gsc_all_lexicons(emp_3_c2,stemmed = T)
+# save_lex(emp_3_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;2&#39;)
+# rm(emp_3_c2)
+# 
+# # Emp 4
+# emp_4_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;1b&#39;)
+# emp_4_c1b_lex &lt;- gsc_all_lexicons(emp_4_c1b)
+# save_lex(emp_4_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;1b&#39;)
+# rm(emp_4_c1b)
+# 
+# emp_4_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;2&#39;)
+# emp_4_c2_lex &lt;- gsc_all_lexicons(emp_4_c2,stemmed = T)
+# save_lex(emp_4_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;2&#39;)
+# rm(emp_4_c2)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9jKHR3aXR0ZXJfZW1wXzFfYzFiLCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnNhdmVfYyh0d2l0dGVyX2VtcF8xX2MyLCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzInKVxuYGBgIn0= -->
-<pre class="r"><code>save_c(twitter_emp_1_c1b, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
-save_c(twitter_emp_1_c2, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHdpdHRlcl9lbXBfMV9jMWIgPC0gbG9hZF9jZGF0YSgnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnR3aXR0ZXJfZW1wXzFfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHR3aXR0ZXJfZW1wXzFfYzFiKVxuc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMWJfbGV4LCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnJtKHR3aXR0ZXJfZW1wXzFfYzFiKVxuXG50d2l0dGVyX2VtcF8xX2MyIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcyJylcbnR3aXR0ZXJfZW1wXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl9lbXBfMV9jMilcbnNhdmVfbGV4KHR3aXR0ZXJfZW1wXzFfYzJfbGV4LCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzInKVxucm0odHdpdHRlcl9lbXBfMV9jMilcblxuYGBgIn0= -->
+<pre class="r"><code>twitter_emp_1_c1b &lt;- load_cdata(&#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
+twitter_emp_1_c1b_lex &lt;- gsc_all_lexicons(twitter_emp_1_c1b)
+save_lex(twitter_emp_1_c1b_lex, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
+rm(twitter_emp_1_c1b)
+
+twitter_emp_1_c2 &lt;- load_cdata(&#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+twitter_emp_1_c2_lex &lt;- gsc_all_lexicons(twitter_emp_1_c2)
+save_lex(twitter_emp_1_c2_lex, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+rm(twitter_emp_1_c2)
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
-</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2xlYW5pbmcgc29jaWFsIG1lZGlhIGRhdGEiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCmBgYHtyfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUsIGluY2x1ZGUgPSBUUlVFLCB3YXJuaW5nID0gRkFMU0UpCmBgYAoKIyMgUmVkZGl0IGRhdGFzZXRzCgpgYGB7cn0Kcm0obGlzdCA9IGxzKCkpCgojIFJ1biBzY3JpcHQgdG8gY3JlYXRlIHRoZSByZWRkaXQgc3Vic2V0cwojIHNvdXJjZSgicmVkZGl0X3N1YnNldHMuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCiMjIENsZWFuaW5nOiBTdGFnZXMgMWEgKyBiLgphOgoqIFJlbW92ZSB1c2VsZXNzIGNvbHVtbnMKKiBEb25lIGluIHB5dGhvbiBzY3JpcHRzIChSZWRkaXQvbWFpbiBhbmQgVHdpdHRlci9tYWluKQoKYjogCiogUmVtb3ZlIGFueSBhbm9tYWxpZXMvdXNlbGVzcyBwb3N0cyBtaXNzZWQgYnkgZmlsdGVycyAoZS5nLiBibGFua3MvcmVtb3ZlZC9OYU4sIGV0Yy4pCiogQWxsIGxvd2VyLWNhc2UuCiogVG9rZW5pemUKKiBOb2lzZSByZW1vdmFsIChwdW5jdHVhdGlvbiwgc3BlY2lhbCBjaGFyYWN0ZXJzLCBzdG9wd29yZHMpLgoKYGBge3J9CiMgTG9hZCBmdW5jdGlvbnMgdG8gY2xlYW4gc20gZGF0YS4Kc291cmNlKCJjbGVhbmluZ19mdW5jcy5SIiwgbG9jYWwgPSBrbml0cjo6a25pdF9nbG9iYWwoKSkKYGBgCgoKYGBge3J9CiMgTG9hZCBkYXRhCnJlZGRpdF9lbXBfMSA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSkKcmVkZGl0X2VtcF8yIDwtIGxvYWRfZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyKQpyZWRkaXRfZW1wXzMgPC0gbG9hZF9kYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMpCnJlZGRpdF9lbXBfNCA8LSBsb2FkX2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCkKdHdpdHRlcl9lbXBfMSA8LSBsb2FkX2RhdGEoJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEpCmBgYAoKYGBge3J9CiMgQ2xlYW5pbmc6IHN0YWdlIDFiCnJlZGRpdF9lbXBfMV9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzEsICdSZWRkaXQnKQpyZWRkaXRfZW1wXzJfYzFiIDwtIGNsZWFuX3N0YWdlMWIocmVkZGl0X2VtcF8yLCAnUmVkZGl0JykKcmVkZGl0X2VtcF8zX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHJlZGRpdF9lbXBfMywgJ1JlZGRpdCcpCnJlZGRpdF9lbXBfNF9jMWIgPC0gY2xlYW5fc3RhZ2UxYihyZWRkaXRfZW1wXzQsICdSZWRkaXQnKQoKc2F2ZV9jKHJlZGRpdF9lbXBfMV9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEsICcxYicpCnNhdmVfYyhyZWRkaXRfZW1wXzJfYzFiLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMWInKQpzYXZlX2MocmVkZGl0X2VtcF8zX2MxYiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzFiJykKc2F2ZV9jKHJlZGRpdF9lbXBfNF9jMWIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQsICcxYicpCgp0d2l0dGVyX2VtcF8xX2MxYiA8LSBjbGVhbl9zdGFnZTFiKHR3aXR0ZXJfZW1wXzEsICdUd2l0dGVyJykKc2F2ZV9jKHR3aXR0ZXJfZW1wXzFfYzFiLCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJykKYGBgCgpgYGB7cn0KIyBDbGVhbmluZzogc3RhZ2UgMgpyZWRkaXRfZW1wXzFfYzIgPC0gY2xlYW5fc3RhZ2UyKHJlZGRpdF9lbXBfMV9jMWIsICdSZWRkaXQnKQpyZWRkaXRfZW1wXzJfYzIgPC0gY2xlYW5fc3RhZ2UyKHJlZGRpdF9lbXBfMl9jMWIsICdSZWRkaXQnKQpyZWRkaXRfZW1wXzNfYzIgPC0gY2xlYW5fc3RhZ2UyKHJlZGRpdF9lbXBfM19jMWIsICdSZWRkaXQnKQpyZWRkaXRfZW1wXzRfYzIgPC0gY2xlYW5fc3RhZ2UyKHJlZGRpdF9lbXBfNF9jMWIsICdSZWRkaXQnKQoKc2F2ZV9jKHJlZGRpdF9lbXBfMV9jMiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzInKQpzYXZlX2MocmVkZGl0X2VtcF8yX2MyLCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpCnNhdmVfYyhyZWRkaXRfZW1wXzNfYzIsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcyJykKc2F2ZV9jKHJlZGRpdF9lbXBfNF9jMiwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzInKQoKdHdpdHRlcl9lbXBfMV9jMiA8LSBjbGVhbl9zdGFnZTIodHdpdHRlcl9lbXBfMV9jMWIsICdUd2l0dGVyJykKc2F2ZV9jKHR3aXR0ZXJfZW1wXzFfYzIsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpCgpgYGAKCmBgYHtyfQpzYXZlX2ModHdpdHRlcl9lbXBfMV9jMWIsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKQpzYXZlX2ModHdpdHRlcl9lbXBfMV9jMiwgJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcyJykKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiTkxQOiBMZXhpY29uLWJhc2VkIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgoKCmBgYHtyfQpzb3VyY2UoImxleGljb25fZnVuY3MuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCgpgYGB7cn0KIyAjIEVtcCAxCiMgZW1wXzFfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzFiJykKIyBlbXBfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzFfYzFiKQojIHNhdmVfbGV4KGVtcF8xX2MxYl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEsICcxYicpCiMgcm0oZW1wXzFfYzFiKQojIAojIGVtcF8xX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzInKQojIGVtcF8xX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8xX2MyLHN0ZW1tZWQgPSBUKQojIHNhdmVfbGV4KGVtcF8xX2MyX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzInKQojIHJtKGVtcF8xX2MyKQojIAojICMgRW1wIDIKIyBlbXBfMl9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMWInKQojIGVtcF8yX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMl9jMWIpCiMgc2F2ZV9sZXgoZW1wXzJfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJykKIyBybShlbXBfMl9jMWIpCiMgCiMgZW1wXzJfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpCiMgZW1wXzJfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzJfYzIsc3RlbW1lZCA9IFQpCiMgc2F2ZV9sZXgoZW1wXzJfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpCiMgcm0oZW1wXzJfYzIpCiMgCiMgIyBFbXAgMwojIGVtcF8zX2MxYiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcxYicpCiMgZW1wXzNfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8zX2MxYikKIyBzYXZlX2xleChlbXBfM19jMWJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMWInKQojIHJtKGVtcF8zX2MxYikKIyAKIyBlbXBfM19jMiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcyJykKIyBlbXBfM19jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMixzdGVtbWVkID0gVCkKIyBzYXZlX2xleChlbXBfM19jMl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcyJykKIyBybShlbXBfM19jMikKIyAKIyAjIEVtcCA0CiMgZW1wXzRfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzFiJykKIyBlbXBfNF9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzRfYzFiKQojIHNhdmVfbGV4KGVtcF80X2MxYl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQsICcxYicpCiMgcm0oZW1wXzRfYzFiKQojIAojIGVtcF80X2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzInKQojIGVtcF80X2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF80X2MyLHN0ZW1tZWQgPSBUKQojIHNhdmVfbGV4KGVtcF80X2MyX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzInKQojIHJtKGVtcF80X2MyKQoKYGBgCgpgYGB7cn0KdHdpdHRlcl9lbXBfMV9jMWIgPC0gbG9hZF9jZGF0YSgnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJykKdHdpdHRlcl9lbXBfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl9lbXBfMV9jMWIpCnNhdmVfbGV4KHR3aXR0ZXJfZW1wXzFfYzFiX2xleCwgJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcxYicpCnJtKHR3aXR0ZXJfZW1wXzFfYzFiKQoKdHdpdHRlcl9lbXBfMV9jMiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpCnR3aXR0ZXJfZW1wXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl9lbXBfMV9jMikKc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMl9sZXgsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpCnJtKHR3aXR0ZXJfZW1wXzFfYzIpCgpgYGAKCgoK</div>
 
 
 
@@ -1903,7 +1884,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("clean.Rmd");
+  window.initializeSourceEmbed("NLP.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
