@@ -298,6 +298,8 @@ class TwitterData():
 		with open(json_path, 'w') as fout:
 			json.dump(self.result, fout)
 
+		self.all_data[self.current_week]['text'] = \
+			self.all_data[self.current_week]['text'].str.replace('\r', '')
 
 		self.all_data[self.current_week].to_csv(df_path)
 
