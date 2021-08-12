@@ -49,6 +49,7 @@ untidy_text <- function(df){
   return(df)
 }
 
+
 clean_stage1b <- function(df, source){
   
   stop_words_nopunct <- stop_words %>% 
@@ -86,14 +87,18 @@ clean_stage1b <- function(df, source){
         -source,
         -location
       ) %>% 
+      filter(
+        !is.na(text) &
+          text != '' &
+          text != ' ' &
+          !is.na(id) &
+          id != '' &
+          id != ' ' &
+          str_detect(created_at, 'Z$')
+      ) %>% 
       mutate(created_at = 
                ymd_hms(created_at,
                        tz = 'UTC')) %>% 
-      filter(
-        !is.na(text) |
-          text == '' |
-          text == ' '
-      ) %>% 
       mutate(
         text = tolower(text)
       )
@@ -129,13 +134,13 @@ clean_stage1b <- function(df, source){
     anti_join(stop_words) %>% 
     filter(!nchar(word) < 3)
   
-  # Get rid of posts that have less than n (here 10) words.
+  # Get rid of posts that have less than n (here 3) words.
+  # Get data back into original format
   df <- df %>% 
     group_by(id) %>% 
-    filter(n()>3)
+    filter(n()>3) %>% 
+    untidy_text()
   
-  # Get data back into original format
-  df <- untidy_text(df)
   
   return(df)
   
@@ -216,9 +221,9 @@ save_c <- function(df, source, topic, set, stage){
     3
   )
   
-  data_path <- glue('Methods/Data/{source}/Preprocessed')
+  data_path <- glue('Methods/Data/{source}/Preprocessed/c{stage}')
   
-  df_name <- glue('{topic_short}_{set}_c{stage}.rds')
+  df_name <- glue('{topic_short}_{set}.rds')
   
   df_path <- file.path(root_dir,
                        data_path,

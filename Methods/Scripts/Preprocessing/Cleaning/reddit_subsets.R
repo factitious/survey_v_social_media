@@ -1,4 +1,4 @@
-## Reddit data:
+## Reddit data (Employment):
 # 1. Query: all
 # 2. Query: top 100 subreddits.
 # 3. Query: likely-to-be-relevant subreddits.

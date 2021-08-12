@@ -324,6 +324,7 @@ class RedditData():
 						'CSV/{}.csv'.\
 						format(self.current_week)
 						)
+		
 		self.all_data[self.current_week]['selftext'] = \
 			self.all_data[self.current_week]['selftext'].str.replace('\r', '')
 

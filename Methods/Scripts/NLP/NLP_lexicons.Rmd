@@ -59,17 +59,44 @@ rm(emp_4_c2)
 ```
 
 ```{r}
+## Vac
+vac_1_c1b <- load_cdata('Reddit', 'Vaccination', 1, '1b')
+vac_1_c1b_lex <- gsc_all_lexicons(vac_1_c1b)
+save_lex(vac_1_c1b_lex, 'Reddit', 'Vaccination', 1, '1b')
+rm(vac_1_c1b)
+
+vac_1_c2 <- load_cdata('Reddit', 'Vaccination', 1, '2')
+vac_1_c2_lex <- gsc_all_lexicons(vac_1_c2, stemmed = T)
+save_lex(vac_1_c2_lex, 'Reddit', 'Vaccination', 1, '2')
+rm(vac_1_c2)
+```
+
+
+```{r}
+## Employment
 twitter_emp_1_c1b <- load_cdata('Twitter', 'Employment', 1, '1b')
 twitter_emp_1_c1b_lex <- gsc_all_lexicons(twitter_emp_1_c1b)
 save_lex(twitter_emp_1_c1b_lex, 'Twitter', 'Employment', 1, '1b')
 rm(twitter_emp_1_c1b)
 
 twitter_emp_1_c2 <- load_cdata('Twitter', 'Employment', 1, '2')
-twitter_emp_1_c2_lex <- gsc_all_lexicons(twitter_emp_1_c2)
+twitter_emp_1_c2_lex <- gsc_all_lexicons(twitter_emp_1_c2, stemmed = T)
 save_lex(twitter_emp_1_c2_lex, 'Twitter', 'Employment', 1, '2')
 rm(twitter_emp_1_c2)
 
 ```
 
+```{r}
+## Vaccination
+twitter_vac_1_c1b <- load_cdata('Twitter', 'Vaccination', 1, '1b')
+twitter_vac_1_c1b_lex <- gsc_all_lexicons(twitter_vac_1_c1b)
+save_lex(twitter_vac_1_c1b_lex, 'Twitter', 'Vaccination', 1, '1b')
+rm(twitter_vac_1_c1b)
+
+twitter_vac_1_c2 <- load_cdata('Twitter', 'Vaccination', 1, '2')
+twitter_vac_1_c2_lex <- gsc_all_lexicons(twitter_vac_1_c2, stemmed = T)
+save_lex(twitter_vac_1_c2_lex, 'Twitter', 'Vaccination', 1, '2')
+rm(twitter_vac_1_c2)
+```
 
 
