@@ -2,3 +2,33 @@
 title: "NLP: ML-based"
 output: html_notebook
 ---
+
+## Reddit datasets
+* Employment:
+  * 1. Query: all
+  * 2. Query: top 100 subreddits.
+  * 3. Query: likely-to-be-relevant subreddits.
+  * 4. No-query: all data from likely-to-be-relevant subreddits.
+* Vaccination:
+  * 1. Query: all
+  
+## Twitter datasets.
+* Employment:
+  * 1. Query: all
+* Vaccination:
+  * 1. Query: all
+
+
+## Cleaning
+1a:
+* Remove useless columns
+* Done in python scripts (Reddit/main and Twitter/main)
+
+1b: 
+* Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.)
+* All lower-case.
+* Tokenize
+* Noise removal (punctuation, special characters, stopwords).
+
+2:
+* Stemming

@@ -1762,14 +1762,59 @@ summary {
 
 
 <!-- rnb-text-begin -->
+<div id="reddit-datasets" class="section level2">
+<h2>Reddit datasets</h2>
+<ul>
+<li>Employment:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+<li><ol start="2" style="list-style-type: decimal">
+<li>Query: top 100 subreddits.</li>
+</ol></li>
+<li><ol start="3" style="list-style-type: decimal">
+<li>Query: likely-to-be-relevant subreddits.</li>
+</ol></li>
+<li><ol start="4" style="list-style-type: decimal">
+<li>No-query: all data from likely-to-be-relevant subreddits.</li>
+</ol></li>
+</ul></li>
+<li>Vaccination:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+</ul></li>
+</ul>
+</div>
+<div id="twitter-datasets." class="section level2">
+<h2>Twitter datasets.</h2>
+<ul>
+<li>Employment:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+</ul></li>
+<li>Vaccination:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+</ul></li>
+</ul>
+</div>
+<div id="cleaning" class="section level2">
+<h2>Cleaning</h2>
+<p>1a: * Remove useless columns * Done in python scripts (Reddit/main and Twitter/main)</p>
+<p>1b: * Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.) * All lower-case. * Tokenize * Noise removal (punctuation, special characters, stopwords).</p>
+<p>2: * Stemming</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc291cmNlKFwibGV4aWNvbl9mdW5jcy5SXCIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpXG5gYGAifQ== -->
 <pre class="r"><code>source(&quot;lexicon_funcs.R&quot;, local = knitr::knit_global())</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdhcyBjaGFuZ2VkIHRvIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZSBpbnNpZGUgYSBub3RlYm9vayBjaHVuay4gVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdpbGwgYmUgcmVzZXQgd2hlbiB0aGUgY2h1bmsgaXMgZmluaXNoZWQgcnVubmluZy4gVXNlIHRoZSBrbml0ciByb290LmRpciBvcHRpb24gaW4gdGhlIHNldHVwIGNodW5rIHRvIGNoYW5nZSB0aGUgd29ya2luZyBkaXJlY3RvcnkgZm9yIG5vdGVib29rIGNodW5rcy5cbiJ9 -->
-<pre><code>The working directory was changed to /Volumes/Survey_Social_Media_Compare inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks.</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1824,103 +1869,57 @@ rm(emp_4_c2)
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmFjXG52YWNfMV9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJylcbnZhY18xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh2YWNfMV9jMWIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmFjXG52YWNfMV9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJylcbnZhY18xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh2YWNfMV9jMWIpXG5zYXZlX2xleCh2YWNfMV9jMWJfbGV4LCAnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJylcbnJtKHZhY18xX2MxYilcblxudmFjXzFfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxudmFjXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModmFjXzFfYzIsIHN0ZW1tZWQgPSBUKVxuc2F2ZV9sZXgodmFjXzFfYzJfbGV4LCAnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxucm0odmFjXzFfYzIpXG5gYGAifQ== -->
 <pre class="r"><code>## Vac
 vac_1_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
-vac_1_c1b_lex &lt;- gsc_all_lexicons(vac_1_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodmFjXzFfYzFiX2xleCwgJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcxYicpXG5ybSh2YWNfMV9jMWIpXG5cbnZhY18xX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcyJylcbnZhY18xX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHZhY18xX2MyLCBzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(vac_1_c1b_lex, &#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
+vac_1_c1b_lex &lt;- gsc_all_lexicons(vac_1_c1b)
+save_lex(vac_1_c1b_lex, &#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
 rm(vac_1_c1b)
 
 vac_1_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
-vac_1_c2_lex &lt;- gsc_all_lexicons(vac_1_c2, stemmed = T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodmFjXzFfYzJfbGV4LCAnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxucm0odmFjXzFfYzIpXG5gYGAifQ== -->
-<pre class="r"><code>save_lex(vac_1_c2_lex, &#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
+vac_1_c2_lex &lt;- gsc_all_lexicons(vac_1_c2, stemmed = T)
+save_lex(vac_1_c2_lex, &#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
 rm(vac_1_c2)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgRW1wbG95bWVudFxudHdpdHRlcl9lbXBfMV9jMWIgPC0gbG9hZF9jZGF0YSgnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnR3aXR0ZXJfZW1wXzFfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHR3aXR0ZXJfZW1wXzFfYzFiKVxuc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMWJfbGV4LCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnJtKHR3aXR0ZXJfZW1wXzFfYzFiKVxuXG50d2l0dGVyX2VtcF8xX2MyIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcyJylcbnR3aXR0ZXJfZW1wXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl9lbXBfMV9jMiwgc3RlbW1lZCA9IFQpXG5zYXZlX2xleCh0d2l0dGVyX2VtcF8xX2MyX2xleCwgJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcyJylcbnJtKHR3aXR0ZXJfZW1wXzFfYzIpXG5cbmBgYCJ9 -->
+<pre class="r"><code>## Employment
+twitter_emp_1_c1b &lt;- load_cdata(&#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
+twitter_emp_1_c1b_lex &lt;- gsc_all_lexicons(twitter_emp_1_c1b)
+save_lex(twitter_emp_1_c1b_lex, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
+rm(twitter_emp_1_c1b)
+
+twitter_emp_1_c2 &lt;- load_cdata(&#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+twitter_emp_1_c2_lex &lt;- gsc_all_lexicons(twitter_emp_1_c2, stemmed = T)
+save_lex(twitter_emp_1_c2_lex, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+rm(twitter_emp_1_c2)
+</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmFjY2luYXRpb25cbnR3aXR0ZXJfdmFjXzFfYzFiIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnVmFjY2luYXRpb24nLCAxLCAnMWInKVxudHdpdHRlcl92YWNfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl92YWNfMV9jMWIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmFjY2luYXRpb25cbnR3aXR0ZXJfdmFjXzFfYzFiIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnVmFjY2luYXRpb24nLCAxLCAnMWInKVxudHdpdHRlcl92YWNfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl92YWNfMV9jMWIpXG5zYXZlX2xleCh0d2l0dGVyX3ZhY18xX2MxYl9sZXgsICdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJylcbnJtKHR3aXR0ZXJfdmFjXzFfYzFiKVxuXG50d2l0dGVyX3ZhY18xX2MyIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnVmFjY2luYXRpb24nLCAxLCAnMicpXG50d2l0dGVyX3ZhY18xX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHR3aXR0ZXJfdmFjXzFfYzIsIHN0ZW1tZWQgPSBUKVxuc2F2ZV9sZXgodHdpdHRlcl92YWNfMV9jMl9sZXgsICdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxucm0odHdpdHRlcl92YWNfMV9jMilcbmBgYCJ9 -->
 <pre class="r"><code>## Vaccination
 twitter_vac_1_c1b &lt;- load_cdata(&#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
-twitter_vac_1_c1b_lex &lt;- gsc_all_lexicons(twitter_vac_1_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2NyZWF0ZWRfYXQnLCAnaWQnLCAncmV0d2VldF9jb3VudCcsICdyZXBseV9jb3VudCcsICdsaWtlX2NvdW50JywgJ3F1b3RlX2NvdW50JywgJ2Jpbmdfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJjcmVhdGVkX2F0XCIsIFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIilcbkpvaW5pbmcsIGJ5ID0gXCJ3b3JkXCJcbmBzdW1tYXJpc2UoKWAgaGFzIGdyb3VwZWQgb3V0cHV0IGJ5ICdjcmVhdGVkX2F0JywgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImNyZWF0ZWRfYXRcIiwgXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiKVxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2NyZWF0ZWRfYXQnLCAnaWQnLCAncmV0d2VldF9jb3VudCcsICdyZXBseV9jb3VudCcsICdsaWtlX2NvdW50JywgJ3F1b3RlX2NvdW50JywgJ25yY193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImNyZWF0ZWRfYXRcIiwgXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiKVxuSm9pbmluZywgYnkgPSBjKFwiY3JlYXRlZF9hdFwiLCBcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwidGV4dFwiKVxuSm9pbmluZywgYnkgPSBjKFwiY3JlYXRlZF9hdFwiLCBcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwidGV4dFwiKVxuIn0= -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;created_at&#39;, &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;created_at&#39;, &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;created_at&#39;, &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;)
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;text&quot;)
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodHdpdHRlcl92YWNfMV9jMWJfbGV4LCAnVHdpdHRlcicsICdWYWNjaW5hdGlvbicsIDEsICcxYicpXG5ybSh0d2l0dGVyX3ZhY18xX2MxYilcblxudHdpdHRlcl92YWNfMV9jMiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxudHdpdHRlcl92YWNfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX3ZhY18xX2MyLCBzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(twitter_vac_1_c1b_lex, &#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
+twitter_vac_1_c1b_lex &lt;- gsc_all_lexicons(twitter_vac_1_c1b)
+save_lex(twitter_vac_1_c1b_lex, &#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
 rm(twitter_vac_1_c1b)
 
 twitter_vac_1_c2 &lt;- load_cdata(&#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
-twitter_vac_1_c2_lex &lt;- gsc_all_lexicons(twitter_vac_1_c2, stemmed = T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2NyZWF0ZWRfYXQnLCAnaWQnLCAncmV0d2VldF9jb3VudCcsICdyZXBseV9jb3VudCcsICdsaWtlX2NvdW50JywgJ3F1b3RlX2NvdW50JywgJ2Jpbmdfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJjcmVhdGVkX2F0XCIsIFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIilcbkpvaW5pbmcsIGJ5ID0gXCJ3b3JkXCJcbmBzdW1tYXJpc2UoKWAgaGFzIGdyb3VwZWQgb3V0cHV0IGJ5ICdjcmVhdGVkX2F0JywgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImNyZWF0ZWRfYXRcIiwgXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiKVxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2NyZWF0ZWRfYXQnLCAnaWQnLCAncmV0d2VldF9jb3VudCcsICdyZXBseV9jb3VudCcsICdsaWtlX2NvdW50JywgJ3F1b3RlX2NvdW50JywgJ25yY193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImNyZWF0ZWRfYXRcIiwgXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiKVxuSm9pbmluZywgYnkgPSBjKFwiY3JlYXRlZF9hdFwiLCBcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwidGV4dFwiKVxuSm9pbmluZywgYnkgPSBjKFwiY3JlYXRlZF9hdFwiLCBcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwidGV4dFwiKVxuIn0= -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;created_at&#39;, &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;created_at&#39;, &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;created_at&#39;, &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;)
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;text&quot;)
-Joining, by = c(&quot;created_at&quot;, &quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodHdpdHRlcl92YWNfMV9jMl9sZXgsICdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxucm0odHdpdHRlcl92YWNfMV9jMilcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(twitter_vac_1_c2_lex, &#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
+twitter_vac_1_c2_lex &lt;- gsc_all_lexicons(twitter_vac_1_c2, stemmed = T)
+save_lex(twitter_vac_1_c2_lex, &#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
 rm(twitter_vac_1_c2)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiTkxQOiBMZXhpY29uLWJhc2VkIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgoKCmBgYHtyfQpzb3VyY2UoImxleGljb25fZnVuY3MuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCgpgYGB7cn0KIyBFbXAgMQplbXBfMV9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKQplbXBfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzFfYzFiKQpzYXZlX2xleChlbXBfMV9jMWJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKQpybShlbXBfMV9jMWIpCgplbXBfMV9jMiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEsICcyJykKZW1wXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzFfYzIsc3RlbW1lZCA9IFQpCnNhdmVfbGV4KGVtcF8xX2MyX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzInKQpybShlbXBfMV9jMikKCiMgRW1wIDIKZW1wXzJfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJykKZW1wXzJfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8yX2MxYikKc2F2ZV9sZXgoZW1wXzJfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJykKcm0oZW1wXzJfYzFiKQoKZW1wXzJfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpCmVtcF8yX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8yX2MyLHN0ZW1tZWQgPSBUKQpzYXZlX2xleChlbXBfMl9jMl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDIsICcyJykKcm0oZW1wXzJfYzIpCgojIEVtcCAzCmVtcF8zX2MxYiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcxYicpCmVtcF8zX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMWIpCnNhdmVfbGV4KGVtcF8zX2MxYl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcxYicpCnJtKGVtcF8zX2MxYikKCmVtcF8zX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzInKQplbXBfM19jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMixzdGVtbWVkID0gVCkKc2F2ZV9sZXgoZW1wXzNfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMicpCnJtKGVtcF8zX2MyKQoKIyBFbXAgNAplbXBfNF9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMWInKQplbXBfNF9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzRfYzFiKQpzYXZlX2xleChlbXBfNF9jMWJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMWInKQpybShlbXBfNF9jMWIpCgplbXBfNF9jMiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQsICcyJykKZW1wXzRfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzRfYzIsc3RlbW1lZCA9IFQpCnNhdmVfbGV4KGVtcF80X2MyX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzInKQpybShlbXBfNF9jMikKCmBgYAoKYGBge3J9CiMjIFZhYwp2YWNfMV9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJykKdmFjXzFfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHZhY18xX2MxYikKc2F2ZV9sZXgodmFjXzFfYzFiX2xleCwgJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcxYicpCnJtKHZhY18xX2MxYikKCnZhY18xX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcyJykKdmFjXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModmFjXzFfYzIsIHN0ZW1tZWQgPSBUKQpzYXZlX2xleCh2YWNfMV9jMl9sZXgsICdSZWRkaXQnLCAnVmFjY2luYXRpb24nLCAxLCAnMicpCnJtKHZhY18xX2MyKQpgYGAKCgpgYGB7cn0KIyMgRW1wbG95bWVudAp0d2l0dGVyX2VtcF8xX2MxYiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKQp0d2l0dGVyX2VtcF8xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX2VtcF8xX2MxYikKc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMWJfbGV4LCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJykKcm0odHdpdHRlcl9lbXBfMV9jMWIpCgp0d2l0dGVyX2VtcF8xX2MyIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcyJykKdHdpdHRlcl9lbXBfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX2VtcF8xX2MyLCBzdGVtbWVkID0gVCkKc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMl9sZXgsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpCnJtKHR3aXR0ZXJfZW1wXzFfYzIpCgpgYGAKCmBgYHtyfQojIyBWYWNjaW5hdGlvbgp0d2l0dGVyX3ZhY18xX2MxYiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJykKdHdpdHRlcl92YWNfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl92YWNfMV9jMWIpCnNhdmVfbGV4KHR3aXR0ZXJfdmFjXzFfYzFiX2xleCwgJ1R3aXR0ZXInLCAnVmFjY2luYXRpb24nLCAxLCAnMWInKQpybSh0d2l0dGVyX3ZhY18xX2MxYikKCnR3aXR0ZXJfdmFjXzFfYzIgPC0gbG9hZF9jZGF0YSgnVHdpdHRlcicsICdWYWNjaW5hdGlvbicsIDEsICcyJykKdHdpdHRlcl92YWNfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX3ZhY18xX2MyLCBzdGVtbWVkID0gVCkKc2F2ZV9sZXgodHdpdHRlcl92YWNfMV9jMl9sZXgsICdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKQpybSh0d2l0dGVyX3ZhY18xX2MyKQpgYGAKCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiTkxQOiBMZXhpY29uLWJhc2VkIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIyBSZWRkaXQgZGF0YXNldHMKKiBFbXBsb3ltZW50OgogICogMS4gUXVlcnk6IGFsbAogICogMi4gUXVlcnk6IHRvcCAxMDAgc3VicmVkZGl0cy4KICAqIDMuIFF1ZXJ5OiBsaWtlbHktdG8tYmUtcmVsZXZhbnQgc3VicmVkZGl0cy4KICAqIDQuIE5vLXF1ZXJ5OiBhbGwgZGF0YSBmcm9tIGxpa2VseS10by1iZS1yZWxldmFudCBzdWJyZWRkaXRzLgoqIFZhY2NpbmF0aW9uOgogICogMS4gUXVlcnk6IGFsbAogIAojIyBUd2l0dGVyIGRhdGFzZXRzLgoqIEVtcGxveW1lbnQ6CiAgKiAxLiBRdWVyeTogYWxsCiogVmFjY2luYXRpb246CiAgKiAxLiBRdWVyeTogYWxsCgoKIyMgQ2xlYW5pbmcKMWE6CiogUmVtb3ZlIHVzZWxlc3MgY29sdW1ucwoqIERvbmUgaW4gcHl0aG9uIHNjcmlwdHMgKFJlZGRpdC9tYWluIGFuZCBUd2l0dGVyL21haW4pCgoxYjogCiogUmVtb3ZlIGFueSBhbm9tYWxpZXMvdXNlbGVzcyBwb3N0cyBtaXNzZWQgYnkgZmlsdGVycyAoZS5nLiBibGFua3MvcmVtb3ZlZC9OYU4sIGV0Yy4pCiogQWxsIGxvd2VyLWNhc2UuCiogVG9rZW5pemUKKiBOb2lzZSByZW1vdmFsIChwdW5jdHVhdGlvbiwgc3BlY2lhbCBjaGFyYWN0ZXJzLCBzdG9wd29yZHMpLgoKMjoKKiBTdGVtbWluZwoKCmBgYHtyfQpzb3VyY2UoImxleGljb25fZnVuY3MuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCgpgYGB7cn0KIyBFbXAgMQplbXBfMV9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKQplbXBfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzFfYzFiKQpzYXZlX2xleChlbXBfMV9jMWJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKQpybShlbXBfMV9jMWIpCgplbXBfMV9jMiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDEsICcyJykKZW1wXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzFfYzIsc3RlbW1lZCA9IFQpCnNhdmVfbGV4KGVtcF8xX2MyX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzInKQpybShlbXBfMV9jMikKCiMgRW1wIDIKZW1wXzJfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJykKZW1wXzJfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8yX2MxYikKc2F2ZV9sZXgoZW1wXzJfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJykKcm0oZW1wXzJfYzFiKQoKZW1wXzJfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpCmVtcF8yX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKGVtcF8yX2MyLHN0ZW1tZWQgPSBUKQpzYXZlX2xleChlbXBfMl9jMl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDIsICcyJykKcm0oZW1wXzJfYzIpCgojIEVtcCAzCmVtcF8zX2MxYiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcxYicpCmVtcF8zX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMWIpCnNhdmVfbGV4KGVtcF8zX2MxYl9sZXgsICdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDMsICcxYicpCnJtKGVtcF8zX2MxYikKCmVtcF8zX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzInKQplbXBfM19jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMixzdGVtbWVkID0gVCkKc2F2ZV9sZXgoZW1wXzNfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMicpCnJtKGVtcF8zX2MyKQoKIyBFbXAgNAplbXBfNF9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMWInKQplbXBfNF9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzRfYzFiKQpzYXZlX2xleChlbXBfNF9jMWJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMWInKQpybShlbXBfNF9jMWIpCgplbXBfNF9jMiA8LSBsb2FkX2NkYXRhKCdSZWRkaXQnLCAnRW1wbG95bWVudCcsIDQsICcyJykKZW1wXzRfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnMoZW1wXzRfYzIsc3RlbW1lZCA9IFQpCnNhdmVfbGV4KGVtcF80X2MyX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzInKQpybShlbXBfNF9jMikKCmBgYAoKYGBge3J9CiMjIFZhYwp2YWNfMV9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJykKdmFjXzFfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHZhY18xX2MxYikKc2F2ZV9sZXgodmFjXzFfYzFiX2xleCwgJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcxYicpCnJtKHZhY18xX2MxYikKCnZhY18xX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcyJykKdmFjXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModmFjXzFfYzIsIHN0ZW1tZWQgPSBUKQpzYXZlX2xleCh2YWNfMV9jMl9sZXgsICdSZWRkaXQnLCAnVmFjY2luYXRpb24nLCAxLCAnMicpCnJtKHZhY18xX2MyKQpgYGAKCgpgYGB7cn0KIyMgRW1wbG95bWVudAp0d2l0dGVyX2VtcF8xX2MxYiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMWInKQp0d2l0dGVyX2VtcF8xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX2VtcF8xX2MxYikKc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMWJfbGV4LCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJykKcm0odHdpdHRlcl9lbXBfMV9jMWIpCgp0d2l0dGVyX2VtcF8xX2MyIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcyJykKdHdpdHRlcl9lbXBfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX2VtcF8xX2MyLCBzdGVtbWVkID0gVCkKc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMl9sZXgsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpCnJtKHR3aXR0ZXJfZW1wXzFfYzIpCgpgYGAKCmBgYHtyfQojIyBWYWNjaW5hdGlvbgp0d2l0dGVyX3ZhY18xX2MxYiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJykKdHdpdHRlcl92YWNfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl92YWNfMV9jMWIpCnNhdmVfbGV4KHR3aXR0ZXJfdmFjXzFfYzFiX2xleCwgJ1R3aXR0ZXInLCAnVmFjY2luYXRpb24nLCAxLCAnMWInKQpybSh0d2l0dGVyX3ZhY18xX2MxYikKCnR3aXR0ZXJfdmFjXzFfYzIgPC0gbG9hZF9jZGF0YSgnVHdpdHRlcicsICdWYWNjaW5hdGlvbicsIDEsICcyJykKdHdpdHRlcl92YWNfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX3ZhY18xX2MyLCBzdGVtbWVkID0gVCkKc2F2ZV9sZXgodHdpdHRlcl92YWNfMV9jMl9sZXgsICdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKQpybSh0d2l0dGVyX3ZhY18xX2MyKQpgYGAKCgo=</div>
 
 
 

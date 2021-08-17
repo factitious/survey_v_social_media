@@ -1762,9 +1762,58 @@ summary {
 
 
 <!-- rnb-text-begin -->
+<div id="reddit-datasets" class="section level2">
+<h2>Reddit datasets</h2>
+<ul>
+<li>Employment:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+<li><ol start="2" style="list-style-type: decimal">
+<li>Query: top 100 subreddits.</li>
+</ol></li>
+<li><ol start="3" style="list-style-type: decimal">
+<li>Query: likely-to-be-relevant subreddits.</li>
+</ol></li>
+<li><ol start="4" style="list-style-type: decimal">
+<li>No-query: all data from likely-to-be-relevant subreddits.</li>
+</ol></li>
+</ul></li>
+<li>Vaccination:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+</ul></li>
+</ul>
+</div>
+<div id="twitter-datasets." class="section level2">
+<h2>Twitter datasets.</h2>
+<ul>
+<li>Employment:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+</ul></li>
+<li>Vaccination:
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Query: all</li>
+</ol></li>
+</ul></li>
+</ul>
+</div>
+<div id="cleaning" class="section level2">
+<h2>Cleaning</h2>
+<p>1a: * Remove useless columns * Done in python scripts (Reddit/main and Twitter/main)</p>
+<p>1b: * Remove any anomalies/useless posts missed by filters (e.g. blanks/removed/NaN, etc.) * All lower-case. * Tokenize * Noise removal (punctuation, special characters, stopwords).</p>
+<p>2: * Stemming</p>
 <!-- rnb-text-end -->
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiTkxQOiBNTC1iYXNlZCIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQ==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiTkxQOiBNTC1iYXNlZCIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyMgUmVkZGl0IGRhdGFzZXRzCiogRW1wbG95bWVudDoKICAqIDEuIFF1ZXJ5OiBhbGwKICAqIDIuIFF1ZXJ5OiB0b3AgMTAwIHN1YnJlZGRpdHMuCiAgKiAzLiBRdWVyeTogbGlrZWx5LXRvLWJlLXJlbGV2YW50IHN1YnJlZGRpdHMuCiAgKiA0LiBOby1xdWVyeTogYWxsIGRhdGEgZnJvbSBsaWtlbHktdG8tYmUtcmVsZXZhbnQgc3VicmVkZGl0cy4KKiBWYWNjaW5hdGlvbjoKICAqIDEuIFF1ZXJ5OiBhbGwKICAKIyMgVHdpdHRlciBkYXRhc2V0cy4KKiBFbXBsb3ltZW50OgogICogMS4gUXVlcnk6IGFsbAoqIFZhY2NpbmF0aW9uOgogICogMS4gUXVlcnk6IGFsbAoKCiMjIENsZWFuaW5nCjFhOgoqIFJlbW92ZSB1c2VsZXNzIGNvbHVtbnMKKiBEb25lIGluIHB5dGhvbiBzY3JpcHRzIChSZWRkaXQvbWFpbiBhbmQgVHdpdHRlci9tYWluKQoKMWI6IAoqIFJlbW92ZSBhbnkgYW5vbWFsaWVzL3VzZWxlc3MgcG9zdHMgbWlzc2VkIGJ5IGZpbHRlcnMgKGUuZy4gYmxhbmtzL3JlbW92ZWQvTmFOLCBldGMuKQoqIEFsbCBsb3dlci1jYXNlLgoqIFRva2VuaXplCiogTm9pc2UgcmVtb3ZhbCAocHVuY3R1YXRpb24sIHNwZWNpYWwgY2hhcmFjdGVycywgc3RvcHdvcmRzKS4KCjI6CiogU3RlbW1pbmc=</div>
 
 
 

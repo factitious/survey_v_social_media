@@ -96,9 +96,10 @@ clean_stage1b <- function(df, source){
           id != ' ' &
           str_detect(created_at, 'Z$')
       ) %>% 
-      mutate(created_at = 
+      mutate(date = 
                ymd_hms(created_at,
                        tz = 'UTC')) %>% 
+      select(-created_at) %>% 
       mutate(
         text = tolower(text)
       )
@@ -106,39 +107,55 @@ clean_stage1b <- function(df, source){
   }
   
   # Remove mentions (@etc)
-  df$text <- gsub("@\\w+", "", df$text)
+  df$text <- gsub("@\\w+", " ", df$text)
   
   # Remove html sequences (&gt)
-  df$text <- gsub("&\\w+", "", df$text)
+  df$text <- gsub("&\\w+", " ", df$text)
   
   # Remove urls
-  df$text <- gsub("https?://.+", "", df$text)
+  df$text <- gsub("https?://.+", " ", df$text)
   
   # Remove hashtags
-  df$text <- gsub("#\\w+", "", df$text)
+  df$text <- gsub("#\\w+", " ", df$text)
   
   # Remove '
-  df$text <- gsub("’", "", df$text)
+  df$text <- gsub("’", " ", df$text)
   
   # Remove anything but standard ASCII just in case
   # Gets rid of emoticons at least.
-  df$text <- gsub("[^\x01-\x7F]", "", df$text)
+  df$text <- gsub("[^\x01-\x7F]", " ", df$text)
   
-  df$text <- removePunctuation(df$text)
+  df$text <- gsub("[[:punct:]]", " ", df$text)
+  
+  # df$text <- removePunctuation(df$text)
   df$text <- removeNumbers(df$text)
   df$text <- stripWhitespace(df$text)
+  
+  w_count <- df %>% 
+    unnest_tokens(word, text) %>% 
+    count(word) %>% 
+    filter(n > 10)
+    
   
   df <- df %>% 
     unnest_tokens(word, text) %>% 
     anti_join(stop_words_nopunct) %>% 
     anti_join(stop_words) %>% 
-    filter(!nchar(word) < 3)
+    filter(!nchar(word) < 3,
+           !str_detect(word, pattern = "(.)\\1{2,}"))
+  
+  w_count <- df %>%
+    count(word) %>%
+    filter(n < 10)
+
+  df <- df %>%
+    anti_join(w_count)
   
   # Get rid of posts that have less than n (here 3) words.
   # Get data back into original format
   df <- df %>% 
     group_by(id) %>% 
-    filter(n()>3) %>% 
+    filter(n()>3) %>%
     untidy_text()
   
   
@@ -158,7 +175,16 @@ clean_stage2 <- function(df, source){
   df <- df %>%
     unnest_tokens(word, text) %>%
     mutate(word = wordStem(word)) %>%
-    filter(!nchar(word) < 3) %>%
+    filter(!nchar(word) < 3) 
+  
+  w_count <- df %>%
+    count(word) %>%
+    filter(n < 10)
+
+  df <- df %>%
+    anti_join(w_count)
+
+  df <- df %>%
     group_by(id) %>%
     filter(n()>3) %>% 
     untidy_text(.)
