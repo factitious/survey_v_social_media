@@ -97,32 +97,8 @@ val_ids <- function(df){
   return(ids$id)
 }
 
-doNB <- function(df){
-  
-  ids <- val_ids(df)
-  
-  df_sent <- df %>% 
-    filter(id %in% ids) %>% 
-    mutate(sent = ifelse(bing_score < 0, 'negative', 'positive'))
-  
-  dmatrix <- create_matrix(
-    df_sent$text,
-    language = 'english',
-    removeStopwords = F,
-    removeNumbers = F,
-    stemWords = F)
-  
-  mat <- as.matrix(dmatrix)
-  
-  classifier = naiveBayes(mat[1:2560,], as.factor(df_sent$sent[1:2560]))
-  
-  return(classifier)
-  
-}
-
-nb_class <- doNB(bla_lex)
-
-
+# This below needs to be worked into functions.
+# Plus testing + other classifiers + a way to integrate across the different datasets and analysis decisions.
 
 reddit_emp_4_c1b_lex <- load_nlp_data('Reddit', 'Employment', set = 4, level = 2, stage = '1b')
 
@@ -170,11 +146,10 @@ train_cm <- confusionMatrix(train_pred, reference = train$sentiment)
 test_cm <- confusionMatrix(test_pred, reference = test$sentiment)
 
 set.seed(13)
-o <- reddit_emp_4_c1b_lex[sample(nrow(reddit_emp_4_c1b_lex), 1000),] 
+o <- reddit_emp_4_c1b_lex[sample(nrow(reddit_emp_4_c1b_lex), 10000),] 
 
 o <- o %>% 
-  mutate(sent = ifelse(bing_score < 0, 'negative', 'positive'))
-
+  mutate(sent = as.factor(ifelse(bing_score < 0, 'negative', 'positive')))
 
 o_dtm <- DocumentTermMatrix(
   Corpus(VectorSource(o$text)), 
@@ -185,135 +160,5 @@ o_df <- as.data.frame(as.matrix(o_dtm))
 
 o_pred = predict(classifier, o_df)
 
+o_cm <- confusionMatrix(o_pred, reference = o$sent)
 
-
-
-
- # 
-# # test the validity
-# predicted = predict(classifier, mat[2561:3200,])
-# table(df_sent$sent[2561:3200], predicted)
-# 
-# table(t$bing_score[(train_size+1):s_size], predicted)
-# recall_accuracy(t$bing_score[train_size+1:s_size], predicted)
-# 
-# 
-# ids <- val_ids(bla_lex)
-# 
-# df_sent <- bla_lex %>% 
-#   filter(id %in% ids) %>% 
-#   mutate(sent = ifelse(bing_score < 0, 'negative', 'positive'))
-# 
-# dmatrix <- create_matrix(
-#   df_sent$text,
-#   language = 'english',
-#   removeStopwords = F,
-#   removeNumbers = F,
-#   stemWords = F)
-# 
-# 
-# dmatrix_ds <- removeSparseTerms(dmatrix, 0.99)
-# mat <- as.matrix(dmatrix_ds)
-# classifier = naiveBayes(mat[1:2560,], as.factor(df_sent$sent[1:2560]))
-# 
-# predicted = predict(classifier, mat[2561:3200,])
-# table(df_sent$sent[2561:3200], predicted)
-# recall_accuracy(df_sent$sent[2561:3200], predicted)
-# 
-# 
-# log_classifier <- glm(as.factor(df_sent$sent[1:2560]) ~ mat[1:2560], family = 'binomial')
-# log_predicted = predict(log_classifier, mat[2561:3200,])
-# 
-# 
-# table(df_sent$sent)
-# 
-# table(df_sent$sent[1:2560])
-# table(df_sent$sent[2561:3200])
-# 
-# 
-# 
-# 
-# 
-# reddit_emp_4_c1b <- load_nlp_data('Reddit', 'Employment', set = 4, level = 1, stage = '1b')
-# 
-# reddit_emp_4 <- load_nlp_data('Reddit', 'Employment', set = 4, level = 0)
-# 
-# pre_c1b <- clean_stage1b(reddit_emp_4, 'Reddit')
-# post_c1b <- clean_stage1b(reddit_emp_4, 'Reddit')
-# 
-# pre_c2 <- clean_stage2(pre_c1b, 'Reddit')
-# post_c2 <- clean_stage2(post_c1b, 'Reddit')
-# alt_c2 <- clean_stage2(post_c1b, 'Reddit')
-# 
-# final_c1b <- clean_stage1b(reddit_emp_4, 'Reddit')
-# final_c2 <- clean_stage2(final_c1b, 'Reddit')
-# 
-# 
-# 
-# 
-# v2_reddit_emp_4_c1b <- clean_stage1b(reddit_emp_4, 'Reddit')
-# 
-# v2_reddit_emp_4_c2 <- clean_stage2(v2_reddit_emp_4_c1b, 'Reddit')
-# 
-# 
-# reddit_emp_4_c1b %>% anti_join(v2_reddit_emp_4_c1b)
-# 
-# v2_reddit_emp_4_c1b %>% anti_join(reddit_emp_4_c1b)
-# 
-# t <- v2_reddit_emp_4_c1b[!(v2_reddit_emp_4_c1b$id %in% reddit_emp_4_c1b$id), ]
-# 
-# t_id <- 'ji2a42'
-# reddit_emp_4$title[reddit_emp_4$id == t_id]
-# removePunctuation(reddit_emp_4$title[reddit_emp_4$id == t_id])
-# 
-# reddit_emp_4$selftext[reddit_emp_4$id == t_id]
-# removePunctuation(reddit_emp_4$selftext[reddit_emp_4$id == t_id], 
-#                   preserve_intra_word_contractions = T,
-#                   preserve_intra_word_dashes = T)
-# gsub("[[:punct:]]", " ", reddit_emp_4$selftext[reddit_emp_4$id == t_id])
-# 
-# 
-# un <- v2_reddit_emp_4_c1b %>% 
-#   unnest_tokens(word, text)
-# 
-# 
-# w_count <- reddit_emp_4_c1b %>% 
-#   unnest_tokens(word, text) %>% 
-#   count(word)
-# 
-# v2_w_count <- v2_reddit_emp_4_c1b %>% 
-#   unnest_tokens(word, text) %>% 
-#   count(word) %>% 
-#   filter(n < 10)
-# 
-# v2_w_count_c2 <- v2_reddit_emp_4_c2 %>% 
-#   unnest_tokens(word, text) %>% 
-#   count(word)
-# 
-# v2_w_count_c2_f1 <- v2_w_count_c2 %>% 
-#   filter(n > 10)
-# 
-# 
-# w_count_f10 <- w_count %>% 
-#   filter(n > 10)
-# 
-# v2_w_count_f10 <- v2_w_count %>% 
-#   filter(n > 10)
-# 
-# bing_stem <- get_sentiments('bing') %>% 
-#   mutate(word = wordStem(word)) %>%
-#   distinct()
-# 
-# c_words <- v2_w_count_c2 %>% inner_join(bing_stem)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 

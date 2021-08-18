@@ -22,7 +22,7 @@ load_data <- function(source, topic, set){
     tolower(topic),
     1,
     3
-    )
+  )
   
   data_path <- glue('Methods/Data/{source}/Raw/Aggregate')
   df_name <- glue('{topic_short}_{set}.csv')
@@ -106,6 +106,14 @@ clean_stage1b <- function(df, source){
     
   }
   
+  df$text <- textclean::replace_contractions(df$text)
+  
+  # emos <- lexicon::hash_emojis
+  # emos$y <- gsub("[[:punct:]]", '', lexicon::hash_emojis$y)
+  # emos$y <- gsub(" ", "", emos$y)
+  # 
+  # df$text <- textclean::replce_emoji(df$text, emoji_dt = emos)
+  
   # Remove mentions (@etc)
   df$text <- gsub("@\\w+", " ", df$text)
   
@@ -113,7 +121,7 @@ clean_stage1b <- function(df, source){
   df$text <- gsub("&\\w+", " ", df$text)
   
   # Remove urls
-  df$text <- gsub("https?://.+", " ", df$text)
+  df$text <- gsub("https?://.+", " URL ", df$text)
   
   # Remove hashtags
   df$text <- gsub("#\\w+", " ", df$text)
@@ -131,13 +139,13 @@ clean_stage1b <- function(df, source){
   df$text <- removeNumbers(df$text)
   df$text <- stripWhitespace(df$text)
   
-  w_count <- df %>% 
-    unnest_tokens(word, text) %>% 
-    count(word) %>% 
+  w_count <- df %>%
+    unnest_tokens(word, text) %>%
+    count(word) %>%
     filter(n > 10)
-    
   
-  df <- df %>% 
+  
+  df <- df %>%
     unnest_tokens(word, text) %>% 
     anti_join(stop_words_nopunct) %>% 
     anti_join(stop_words) %>% 
@@ -147,7 +155,7 @@ clean_stage1b <- function(df, source){
   w_count <- df %>%
     count(word) %>%
     filter(n < 10)
-
+  
   df <- df %>%
     anti_join(w_count)
   
@@ -180,10 +188,10 @@ clean_stage2 <- function(df, source){
   w_count <- df %>%
     count(word) %>%
     filter(n < 10)
-
+  
   df <- df %>%
     anti_join(w_count)
-
+  
   df <- df %>%
     group_by(id) %>%
     filter(n()>3) %>% 
@@ -209,7 +217,7 @@ topic_id <- function(df, source){
   df_lda <- LDA(df_dtm, k = 3, control = list(seed = 13))
   
   df_topics <- tidy(df_lda, matrix = "beta")
-    
+  
   
   return(df_topics)
   
@@ -258,5 +266,52 @@ save_c <- function(df, source, topic, set, stage){
   saveRDS(df, df_path)
 }
 
-  
-  
+
+# Emojis
+
+emos <- lexicon::hash_emojis
+emos$y <- gsub("[[:punct:]]", '', lexicon::hash_emojis$y)
+emos$y <- gsub(" ", "", emos$y)
+
+emos <- emos %>% 
+  mutate(x = y)
+
+# et <- twitter_emp_1 %>% 
+#   filter(str_detect(text, pattern = 'U'))
+
+et <- twitter_emp_1
+
+et <- reddit_emp_1 %>% 
+  mutate(text = glue("{title} {selftext}")) %>% 
+  select(-title, -selftext)
+
+et$text <- textclean::replace_emoji(et$text, emoji_dt = lexicon::hash_emojis_identifier)
+
+emos_id <- lexicon::hash_emojis_identifier
+
+emos_id <- emos_id %>% 
+  mutate(word = y)
+
+
+et2 <- et %>% 
+  unnest_tokens(word, text) %>% 
+  inner_join(emos_id) %>% 
+  untidy_text()
+
+
+unique(et2$word)
+
+textclean::replace_emoji(et$text[2], emoji_dt = emos)
+
+
+textclean::replace_emoticon(et$text[2])
+
+replace_emoji('\U0001f1fa')
+
+
+c <- et$text[et$id == 'ji44as']
+textclean::replace_contraction(c)
+
+
+
+
