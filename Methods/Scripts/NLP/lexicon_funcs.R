@@ -16,8 +16,8 @@ load_cdata <- function(source, topic, set, stage){
     3
   )
   
-  data_path <- glue('Methods/Data/{source}/Preprocessed')
-  df_name <- glue('{topic_short}_{set}_c{stage}.rds')
+  data_path <- glue('Methods/Data/{source}/Preprocessed/c{stage}')
+  df_name <- glue('{topic_short}_{set}.rds')
   
   df_path <- file.path(
     root_dir,
@@ -25,8 +25,8 @@ load_cdata <- function(source, topic, set, stage){
     df_name
   )
   
-  df <- readRDS(df_path) %>% 
-    select(-any_of("X")) %>% 
+  df <- readRDS(df_path) %>%
+    select(-any_of("X")) %>%
     suppressWarnings()
   
   return(df)
@@ -129,6 +129,14 @@ gsc_all_lexicons <- function(df, stemmed = F){
     inner_join(l2) %>%
     inner_join(l3)
   
+  # # Remove observations where all sentiments are 0. 
+  # lex_df <- lex_df %>% 
+  #   filter(
+  #       bing_score != 0 &
+  #       afinn_score != 0 &
+  #       nrc_score != 0
+  #     )
+   
   return(lex_df)
 }
 

@@ -106,7 +106,7 @@ clean_stage1b <- function(df, source){
     
   }
   
-  df$text <- textclean::replace_contractions(df$text)
+  df$text <- textclean::replace_contraction(df$text)
   
   # emos <- lexicon::hash_emojis
   # emos$y <- gsub("[[:punct:]]", '', lexicon::hash_emojis$y)
@@ -267,51 +267,58 @@ save_c <- function(df, source, topic, set, stage){
 }
 
 
-# Emojis
-
-emos <- lexicon::hash_emojis
-emos$y <- gsub("[[:punct:]]", '', lexicon::hash_emojis$y)
-emos$y <- gsub(" ", "", emos$y)
-
-emos <- emos %>% 
-  mutate(x = y)
-
-# et <- twitter_emp_1 %>% 
-#   filter(str_detect(text, pattern = 'U'))
-
-et <- twitter_emp_1
-
-et <- reddit_emp_1 %>% 
-  mutate(text = glue("{title} {selftext}")) %>% 
-  select(-title, -selftext)
-
-et$text <- textclean::replace_emoji(et$text, emoji_dt = lexicon::hash_emojis_identifier)
-
-emos_id <- lexicon::hash_emojis_identifier
-
-emos_id <- emos_id %>% 
-  mutate(word = y)
-
-
-et2 <- et %>% 
-  unnest_tokens(word, text) %>% 
-  inner_join(emos_id) %>% 
-  untidy_text()
-
-
-unique(et2$word)
-
-textclean::replace_emoji(et$text[2], emoji_dt = emos)
-
-
-textclean::replace_emoticon(et$text[2])
-
-replace_emoji('\U0001f1fa')
-
-
-c <- et$text[et$id == 'ji44as']
-textclean::replace_contraction(c)
 
 
 
 
+
+
+# 
+# # Emojis
+# 
+# emos <- lexicon::hash_emojis
+# emos$y <- gsub("[[:punct:]]", '', lexicon::hash_emojis$y)
+# emos$y <- gsub(" ", "", emos$y)
+# 
+# emos <- emos %>% 
+#   mutate(x = y)
+# 
+# # et <- twitter_emp_1 %>% 
+# #   filter(str_detect(text, pattern = 'U'))
+# 
+# et <- twitter_emp_1
+# 
+# et <- reddit_emp_1 %>% 
+#   mutate(text = glue("{title} {selftext}")) %>% 
+#   select(-title, -selftext)
+# 
+# et$text <- textclean::replace_emoji(et$text, emoji_dt = lexicon::hash_emojis_identifier)
+# 
+# emos_id <- lexicon::hash_emojis_identifier
+# 
+# emos_id <- emos_id %>% 
+#   mutate(word = y)
+# 
+# 
+# et2 <- et %>% 
+#   unnest_tokens(word, text) %>% 
+#   inner_join(emos_id) %>% 
+#   untidy_text()
+# 
+# 
+# unique(et2$word)
+# 
+# textclean::replace_emoji(et$text[2], emoji_dt = emos)
+# 
+# 
+# textclean::replace_emoticon(et$text[2])
+# 
+# replace_emoji('\U0001f1fa')
+# 
+# 
+# c <- et$text[et$id == 'ji44as']
+# textclean::replace_contraction(c)
+# 
+# 
+# 
+# 

@@ -39,7 +39,13 @@ load_nlp_data <- function(source, topic, set = 1, level = 0, stage = '1b'){
   } else if(level == 2){
     data_path <- glue('Methods/Data/{source}/NLP/Lexicon/c{stage}') 
     df_name <- glue('{topic_short}_{set}.rds')
-  }
+  } 
+  
+  # # Getting manually labelled data.
+  # else if(level == 3){
+  #   data_path1 <- glue('Methods/Data/{source}/NLP/Lexicon/c{stage}')
+  #   df_name1 <- glue('{topic_short}_{set}.rds')
+  # }
   
   df_path <- file.path(
     root_dir,
@@ -59,40 +65,44 @@ load_nlp_data <- function(source, topic, set = 1, level = 0, stage = '1b'){
   
   return(df)
   
-}
+} 
 
-val_ids <- function(df){
+val_ids <- function(df, score, neutral = F){
   # Choose a random sample of observations, at least n from each day/week.
   
   set.seed(13)
   
   pos_ids <- df %>% 
-    filter(bing_score > 0) %>% 
+    filter(get(score) > 0) %>% 
     select(id, date) %>% 
-    mutate(week = week(date)) %>% 
-    group_by(week) %>% 
-    sample_n(50) %>% 
+    mutate(day = day(date)) %>% 
+    group_by(day) %>% 
+    sample_n(10) %>% 
     ungroup()
+  
   
   neg_ids <- df %>% 
-    filter(bing_score < 0) %>% 
+    filter(get(score) < 0) %>% 
     select(id, date) %>% 
-    mutate(week = week(date)) %>% 
-    group_by(week) %>% 
-    sample_n(50) %>% 
+    mutate(day = day(date)) %>% 
+    group_by(day) %>% 
+    sample_n(10) %>% 
     ungroup()
   
-  ids <- rbind(pos_ids, neg_ids)
-  
-  # test_ids <- df %>% 
-  #   select(id, date) %>% 
-  #   filter(!(id %in% train_ids$id)) %>% 
-  #   mutate(week = week(date)) %>% 
-  #   group_by(week) %>% 
-  #   sample_n(20) %>% 
-  #   ungroup()
-  
-  # return(list(train_ids$id, test_ids$id))
+  if(neutral){
+    
+    neutral_ids <- df %>% 
+      filter(get(score) == 0) %>% 
+      select(id, date) %>% 
+      mutate(day = day(date)) %>% 
+      group_by(day) %>% 
+      sample_n(10) %>% 
+      ungroup()
+    
+    ids <- rbind(pos_ids, neutral_ids, neg_ids)
+  } else{
+    ids <- rbind(pos_ids, neg_ids)  
+  }
   
   return(ids$id)
 }
@@ -104,26 +114,91 @@ reddit_emp_4_c1b_lex <- load_nlp_data('Reddit', 'Employment', set = 4, level = 2
 
 ids <- val_ids(reddit_emp_4_c1b_lex)
 
-s <- reddit_emp_4_c1b_lex %>% 
-  filter(id %in% ids) %>% 
-  mutate(sent = ifelse(bing_score < 0, 'negative', 'positive'))
 
-dtm <- create_matrix(
-  s$text,
-  language = 'english',
-  removeStopwords = F,
-  removeNumbers = F,
-  stemWords = F)
+create_dtm <- function(df, ids, score){
+  
+  # Score 
+  
 
-freq <- findFreqTerms(dtm, lowfreq = 20)
-length(freq)/dtm$ncol
+  df <- df %>% 
+    filter(id %in% ids) %>% 
+    mutate(sentiment = ifelse(score < 0, 'negative', 'positive'))
+  
+  
+  dtm <- create_matrix(
+      df$text,
+      language = 'english',
+      removeStopwords = F,
+      removeNumbers = F,
+      stemWords = F
+    ) %>% 
+    removeSparseTerms(., 0.995)
+  
+  sparse_df <- as.data.frame(as.matrix(dtm))
+  colnames(sparse_df) <- make.names(colnames(sparse_df))
+  sparse_df$sentiment <- as.factor(df$sentiment)
+  
+  
+  
+  
+}
 
-sparse_dtm <- removeSparseTerms(dtm, 0.995)
 
-sparse_df <- as.data.frame(as.matrix(sparse_dtm))
-colnames(sparse_df) <- make.names(colnames(sparse_df))
+do_nb <- function(df){
+  
+  set.seed(13)
+  
+  train_idx <- sample.split(df$sentiment, SplitRatio = 0.8)
+  
+  train <- subset(df, train_idx ==T)
+  test <- subset(df, train_idx == F)
+  
+  classifier = naiveBayes(
+    train[,!names(train) %in% 'sentiment'],
+    train$sentiment)
+  
+  train_pred = predict(classifier, train[,!names(train) %in% 'sentiment'])
+  test_pred = predict(classifier, test[,!names(test) %in% 'sentiment'])
+  
+  train_cm <- confusionMatrix(train_pred, reference = train$sentiment)
+  test_cm <- confusionMatrix(test_pred, reference = test$sentiment)
+  
+  
+  return(c(train_pred, test_pred))
+}
 
-sparse_df$sentiment <- as.factor(s$sent)
+
+get_cm <- function(train_pred, test_pred){
+  
+  
+  
+}
+
+
+
+
+# s <- reddit_emp_4_c1b_lex %>% 
+#   filter(id %in% ids) %>% 
+#   mutate(sent = ifelse(bing_score < 0, 'negative', 'positive'))
+# 
+# dtm <- create_matrix(
+#   s$text,
+#   language = 'english',
+#   removeStopwords = F,
+#   removeNumbers = F,
+#   stemWords = F)
+# 
+# freq <- findFreqTerms(dtm, lowfreq = 20)
+# length(freq)/dtm$ncol
+# 
+# sparse_dtm <- removeSparseTerms(dtm, 0.995)
+# 
+# sparse_df <- as.data.frame(as.matrix(sparse_dtm))
+# colnames(sparse_df) <- make.names(colnames(sparse_df))
+# 
+# sparse_df$sentiment <- as.factor(s$sent)
+
+
 
 set.seed(13)
 
