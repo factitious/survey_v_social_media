@@ -148,9 +148,9 @@ save_lex <- function(df, source, topic, set, stage){
     3
   )
   
-  data_path <- glue('Methods/Data/{source}/NLP/Lexicon')
+  data_path <- glue('Methods/Data/{source}/NLP/Lexicon/c{stage}')
   
-  df_name <- glue('{topic_short}_{set}_c{stage}.rds')
+  df_name <- glue('{topic_short}_{set}.rds')
   
   df_path <- file.path(root_dir,
                        data_path,

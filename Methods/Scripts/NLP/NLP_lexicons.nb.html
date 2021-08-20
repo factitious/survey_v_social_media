@@ -1822,200 +1822,250 @@ summary {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBFbXAgMVxuZW1wXzFfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbmVtcF8xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMV9jMWIpXG5gYGAifQ== -->
-<pre class="r"><code># Emp 1
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBFbXAgMVxuZW1wXzFfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbmVtcF8xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMV9jMWIpXG5gYGBcbmBgYCJ9 -->
+<pre class="r"><code>```r
+# Emp 1
 emp_1_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
 emp_1_c1b_lex &lt;- gsc_all_lexicons(emp_1_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzFfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnJtKGVtcF8xX2MxYilcblxuZW1wXzFfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG5lbXBfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMV9jMixzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(emp_1_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzFfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnJtKGVtcF8xX2MxYilcblxuZW1wXzFfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG5lbXBfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMV9jMixzdGVtbWVkID0gVClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+save_lex(emp_1_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
 rm(emp_1_c1b)
 
 emp_1_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
 emp_1_c2_lex &lt;- gsc_all_lexicons(emp_1_c2,stemmed = T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzFfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG5ybShlbXBfMV9jMilcblxuIyBFbXAgMlxuZW1wXzJfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJylcbmVtcF8yX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMl9jMWIpXG5gYGAifQ== -->
-<pre class="r"><code>save_lex(emp_1_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzFfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG5ybShlbXBfMV9jMilcblxuIyBFbXAgMlxuZW1wXzJfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJylcbmVtcF8yX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMl9jMWIpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+save_lex(emp_1_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
 rm(emp_1_c2)
 
 # Emp 2
 emp_2_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;1b&#39;)
 emp_2_c1b_lex &lt;- gsc_all_lexicons(emp_2_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzJfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJylcbnJtKGVtcF8yX2MxYilcblxuZW1wXzJfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpXG5lbXBfMl9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMl9jMixzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(emp_2_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;1b&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzJfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMiwgJzFiJylcbnJtKGVtcF8yX2MxYilcblxuZW1wXzJfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpXG5lbXBfMl9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfMl9jMixzdGVtbWVkID0gVClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+save_lex(emp_2_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;1b&#39;)
 rm(emp_2_c1b)
 
 emp_2_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;2&#39;)
 emp_2_c2_lex &lt;- gsc_all_lexicons(emp_2_c2,stemmed = T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzJfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpXG5ybShlbXBfMl9jMilcblxuIyBFbXAgM1xuZW1wXzNfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzFiJylcbmVtcF8zX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMWIpXG5gYGAifQ== -->
-<pre class="r"><code>save_lex(emp_2_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;2&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzJfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAyLCAnMicpXG5ybShlbXBfMl9jMilcblxuIyBFbXAgM1xuZW1wXzNfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzFiJylcbmVtcF8zX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMWIpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+save_lex(emp_2_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 2, &#39;2&#39;)
 rm(emp_2_c2)
 
 # Emp 3
 emp_3_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;1b&#39;)
 emp_3_c1b_lex &lt;- gsc_all_lexicons(emp_3_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzNfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzFiJylcbnJtKGVtcF8zX2MxYilcblxuZW1wXzNfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMicpXG5lbXBfM19jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMixzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(emp_3_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;1b&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzNfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgMywgJzFiJylcbnJtKGVtcF8zX2MxYilcblxuZW1wXzNfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMicpXG5lbXBfM19jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfM19jMixzdGVtbWVkID0gVClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+save_lex(emp_3_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;1b&#39;)
 rm(emp_3_c1b)
 
 emp_3_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;2&#39;)
 emp_3_c2_lex &lt;- gsc_all_lexicons(emp_3_c2,stemmed = T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzNfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMicpXG5ybShlbXBfM19jMilcblxuIyBFbXAgNFxuZW1wXzRfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzFiJylcbmVtcF80X2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfNF9jMWIpXG5gYGAifQ== -->
-<pre class="r"><code>save_lex(emp_3_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;2&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzNfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCAzLCAnMicpXG5ybShlbXBfM19jMilcblxuIyBFbXAgNFxuZW1wXzRfYzFiIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzFiJylcbmVtcF80X2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfNF9jMWIpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+save_lex(emp_3_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 3, &#39;2&#39;)
 rm(emp_3_c2)
 
 # Emp 4
 emp_4_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;1b&#39;)
 emp_4_c1b_lex &lt;- gsc_all_lexicons(emp_4_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzRfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzFiJylcbnJtKGVtcF80X2MxYilcblxuZW1wXzRfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMicpXG5lbXBfNF9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfNF9jMixzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(emp_4_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;1b&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzRfYzFiX2xleCwgJ1JlZGRpdCcsICdFbXBsb3ltZW50JywgNCwgJzFiJylcbnJtKGVtcF80X2MxYilcblxuZW1wXzRfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMicpXG5lbXBfNF9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyhlbXBfNF9jMixzdGVtbWVkID0gVClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+save_lex(emp_4_c1b_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;1b&#39;)
 rm(emp_4_c1b)
 
 emp_4_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;2&#39;)
 emp_4_c2_lex &lt;- gsc_all_lexicons(emp_4_c2,stemmed = T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgoZW1wXzRfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMicpXG5ybShlbXBfNF9jMilcblxuYGBgIn0= -->
-<pre class="r"><code>save_lex(emp_4_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;2&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcXHdvcmRcXFxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcXGlkXFwsIFxcbnVtX2NvbW1lbnRzXFwsIFxcc2NvcmVcXCwgXFxzdWJyZWRkaXRcXCwgXFx1cHZvdGVfcmF0aW9cXCwgXFxkYXRlXFwpXG5Kb2luaW5nLCBieSA9IFxcd29yZFxcXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcKVxuSm9pbmluZywgYnkgPSBjKFxcaWRcXCwgXFxudW1fY29tbWVudHNcXCwgXFxzY29yZVxcLCBcXHN1YnJlZGRpdFxcLCBcXHVwdm90ZV9yYXRpb1xcLCBcXGRhdGVcXCwgXFx0ZXh0XFwpXG5Kb2luaW5nLCBieSA9IGMoXFxpZFxcLCBcXG51bV9jb21tZW50c1xcLCBcXHNjb3JlXFwsIFxcc3VicmVkZGl0XFwsIFxcdXB2b3RlX3JhdGlvXFwsIFxcZGF0ZVxcLCBcXHRleHRcXClcbiJ9 --&gt;
+</code></pre>
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘bing_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘afinn_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = <br />
+<code>summarise()</code> has grouped output by ‘id’, ‘num_comments’, ‘score’, ‘subreddit’, ‘upvote_ratio’, ‘date’, ‘nrc_words’. You can override using the <code>.groups</code> argument. Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+Joining, by = c(, _comments, , , _ratio,
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2F2ZV9sZXgoZW1wXzRfYzJfbGV4LCAnUmVkZGl0JywgJ0VtcGxveW1lbnQnLCA0LCAnMicpXG5ybShlbXBfNF9jMilcblxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+save_lex(emp_4_c2_lex, &#39;Reddit&#39;, &#39;Employment&#39;, 4, &#39;2&#39;)
 rm(emp_4_c2)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmFjXG52YWNfMV9jMWIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzFiJylcbnZhY18xX2MxYl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh2YWNfMV9jMWIpXG5gYGAifQ== -->
-<pre class="r"><code>## Vac
-vac_1_c1b &lt;- load_cdata(&#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
-vac_1_c1b_lex &lt;- gsc_all_lexicons(vac_1_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;num_comments&#39;, &#39;score&#39;, &#39;subreddit&#39;, &#39;upvote_ratio&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;num_comments&quot;, &quot;score&quot;, &quot;subreddit&quot;, &quot;upvote_ratio&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodmFjXzFfYzFiX2xleCwgJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcxYicpXG5ybSh2YWNfMV9jMWIpXG5cbnZhY18xX2MyIDwtIGxvYWRfY2RhdGEoJ1JlZGRpdCcsICdWYWNjaW5hdGlvbicsIDEsICcyJylcbnZhY18xX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHZhY18xX2MyLCBzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(vac_1_c1b_lex, &#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
-rm(vac_1_c1b)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
 
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudmFjXzFfYzIgPC0gbG9hZF9jZGF0YSgnUmVkZGl0JywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxudmFjXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModmFjXzFfYzIsIHN0ZW1tZWQgPSBUKVxuXG5gYGAifQ== --&gt;
+
+```r
 vac_1_c2 &lt;- load_cdata(&#39;Reddit&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
-vac_1_c2_lex &lt;- gsc_all_lexicons(vac_1_c2, stemmed = T)</code></pre>
+vac_1_c2_lex &lt;- gsc_all_lexicons(vac_1_c2, stemmed = T)
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ251bV9jb21tZW50cycsICdzY29yZScsICdzdWJyZWRkaXQnLCAndXB2b3RlX3JhdGlvJywgJ2RhdGUnLCAnYmluZ193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwibnVtX2NvbW1lbnRzXCIsIFwic2NvcmVcIiwgXCJzdWJyZWRkaXRcIiwgXCJ1cHZvdGVfcmF0aW9cIiwgXCJkYXRlXCIpXG5Kb2luaW5nLCBieSA9IFwid29yZFwiXG5gc3VtbWFyaXNlKClgIGhhcyBncm91cGVkIG91dHB1dCBieSAnaWQnLCAnbnVtX2NvbW1lbnRzJywgJ3Njb3JlJywgJ3N1YnJlZGRpdCcsICd1cHZvdGVfcmF0aW8nLCAnZGF0ZScsICducmNfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJudW1fY29tbWVudHNcIiwgXCJzY29yZVwiLCBcInN1YnJlZGRpdFwiLCBcInVwdm90ZV9yYXRpb1wiLCBcImRhdGVcIiwgXCJ0ZXh0XCIpXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcIm51bV9jb21tZW50c1wiLCBcInNjb3JlXCIsIFwic3VicmVkZGl0XCIsIFwidXB2b3RlX3JhdGlvXCIsIFwiZGF0ZVwiLCBcInRleHRcIilcbiJ9 -->
 <pre><code>Joining, by = &quot;word&quot;
@@ -2038,77 +2088,36 @@ rm(vac_1_c2)</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgRW1wbG95bWVudFxudHdpdHRlcl9lbXBfMV9jMWIgPC0gbG9hZF9jZGF0YSgnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnR3aXR0ZXJfZW1wXzFfYzFiX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHR3aXR0ZXJfZW1wXzFfYzFiKVxuYGBgIn0= -->
-<pre class="r"><code>## Employment
-twitter_emp_1_c1b &lt;- load_cdata(&#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
-twitter_emp_1_c1b_lex &lt;- gsc_all_lexicons(twitter_emp_1_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ2Jpbmdfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiLCBcImRhdGVcIilcbkpvaW5pbmcsIGJ5ID0gXCJ3b3JkXCJcbmBzdW1tYXJpc2UoKWAgaGFzIGdyb3VwZWQgb3V0cHV0IGJ5ICdpZCcsICdyZXR3ZWV0X2NvdW50JywgJ3JlcGx5X2NvdW50JywgJ2xpa2VfY291bnQnLCAncXVvdGVfY291bnQnLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ25yY193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuIn0= -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMWJfbGV4LCAnVHdpdHRlcicsICdFbXBsb3ltZW50JywgMSwgJzFiJylcbnJtKHR3aXR0ZXJfZW1wXzFfYzFiKVxuXG50d2l0dGVyX2VtcF8xX2MyIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnRW1wbG95bWVudCcsIDEsICcyJylcbnR3aXR0ZXJfZW1wXzFfYzJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl9lbXBfMV9jMiwgc3RlbW1lZCA9IFQpXG5gYGAifQ== -->
-<pre class="r"><code>save_lex(twitter_emp_1_c1b_lex, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;1b&#39;)
-rm(twitter_emp_1_c1b)
-
-twitter_emp_1_c2 &lt;- load_cdata(&#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
-twitter_emp_1_c2_lex &lt;- gsc_all_lexicons(twitter_emp_1_c2, stemmed = T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ2Jpbmdfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiLCBcImRhdGVcIilcbkpvaW5pbmcsIGJ5ID0gXCJ3b3JkXCJcbmBzdW1tYXJpc2UoKWAgaGFzIGdyb3VwZWQgb3V0cHV0IGJ5ICdpZCcsICdyZXR3ZWV0X2NvdW50JywgJ3JlcGx5X2NvdW50JywgJ2xpa2VfY291bnQnLCAncXVvdGVfY291bnQnLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ25yY193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuIn0= -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMl9sZXgsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG5ybSh0d2l0dGVyX2VtcF8xX2MyKVxuXG5gYGAifQ== -->
-<pre class="r"><code>save_lex(twitter_emp_1_c2_lex, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
-rm(twitter_emp_1_c2)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHdpdHRlcl9lbXBfMV9jMiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG50d2l0dGVyX2VtcF8xX2MyX2xleCA8LSBnc2NfYWxsX2xleGljb25zKHR3aXR0ZXJfZW1wXzFfYzIsIHN0ZW1tZWQgPSBUKVxuXG5gYGAifQ== -->
+<pre class="r"><code>twitter_emp_1_c2 &lt;- load_cdata(&#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+twitter_emp_1_c2_lex &lt;- gsc_all_lexicons(twitter_emp_1_c2, stemmed = T)
 </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ2Jpbmdfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiLCBcImRhdGVcIilcbkpvaW5pbmcsIGJ5ID0gXCJ3b3JkXCJcbmBzdW1tYXJpc2UoKWAgaGFzIGdyb3VwZWQgb3V0cHV0IGJ5ICdpZCcsICdyZXR3ZWV0X2NvdW50JywgJ3JlcGx5X2NvdW50JywgJ2xpa2VfY291bnQnLCAncXVvdGVfY291bnQnLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ25yY193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuIn0= -->
+<pre><code>Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
+Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
+Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
+Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
+Joining, by = &quot;word&quot;
+`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
+Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
+Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)
+Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodHdpdHRlcl9lbXBfMV9jMl9sZXgsICdUd2l0dGVyJywgJ0VtcGxveW1lbnQnLCAxLCAnMicpXG5ybSh0d2l0dGVyX2VtcF8xX2MyKVxuYGBgIn0= -->
+<pre class="r"><code>save_lex(twitter_emp_1_c2_lex, &#39;Twitter&#39;, &#39;Employment&#39;, 1, &#39;2&#39;)
+rm(twitter_emp_1_c2)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgVmFjY2luYXRpb25cbnR3aXR0ZXJfdmFjXzFfYzFiIDwtIGxvYWRfY2RhdGEoJ1R3aXR0ZXInLCAnVmFjY2luYXRpb24nLCAxLCAnMWInKVxudHdpdHRlcl92YWNfMV9jMWJfbGV4IDwtIGdzY19hbGxfbGV4aWNvbnModHdpdHRlcl92YWNfMV9jMWIpXG5gYGAifQ== -->
-<pre class="r"><code>## Vaccination
-twitter_vac_1_c1b &lt;- load_cdata(&#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
-twitter_vac_1_c1b_lex &lt;- gsc_all_lexicons(twitter_vac_1_c1b)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ2Jpbmdfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiLCBcImRhdGVcIilcbkpvaW5pbmcsIGJ5ID0gXCJ3b3JkXCJcbmBzdW1tYXJpc2UoKWAgaGFzIGdyb3VwZWQgb3V0cHV0IGJ5ICdpZCcsICdyZXR3ZWV0X2NvdW50JywgJ3JlcGx5X2NvdW50JywgJ2xpa2VfY291bnQnLCAncXVvdGVfY291bnQnLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ25yY193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuIn0= -->
-<pre><code>Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;bing_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;afinn_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = &quot;word&quot;
-`summarise()` has grouped output by &#39;id&#39;, &#39;retweet_count&#39;, &#39;reply_count&#39;, &#39;like_count&#39;, &#39;quote_count&#39;, &#39;date&#39;, &#39;nrc_words&#39;. You can override using the `.groups` argument.
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;)
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)
-Joining, by = c(&quot;id&quot;, &quot;retweet_count&quot;, &quot;reply_count&quot;, &quot;like_count&quot;, &quot;quote_count&quot;, &quot;date&quot;, &quot;text&quot;)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZV9sZXgodHdpdHRlcl92YWNfMV9jMWJfbGV4LCAnVHdpdHRlcicsICdWYWNjaW5hdGlvbicsIDEsICcxYicpXG5ybSh0d2l0dGVyX3ZhY18xX2MxYilcblxudHdpdHRlcl92YWNfMV9jMiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxudHdpdHRlcl92YWNfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX3ZhY18xX2MyLCBzdGVtbWVkID0gVClcbmBgYCJ9 -->
-<pre class="r"><code>save_lex(twitter_vac_1_c1b_lex, &#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;1b&#39;)
-rm(twitter_vac_1_c1b)
-
-twitter_vac_1_c2 &lt;- load_cdata(&#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
-twitter_vac_1_c2_lex &lt;- gsc_all_lexicons(twitter_vac_1_c2, stemmed = T)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHdpdHRlcl92YWNfMV9jMiA8LSBsb2FkX2NkYXRhKCdUd2l0dGVyJywgJ1ZhY2NpbmF0aW9uJywgMSwgJzInKVxudHdpdHRlcl92YWNfMV9jMl9sZXggPC0gZ3NjX2FsbF9sZXhpY29ucyh0d2l0dGVyX3ZhY18xX2MyLCBzdGVtbWVkID0gVClcblxuYGBgIn0= -->
+<pre class="r"><code>twitter_vac_1_c2 &lt;- load_cdata(&#39;Twitter&#39;, &#39;Vaccination&#39;, 1, &#39;2&#39;)
+twitter_vac_1_c2_lex &lt;- gsc_all_lexicons(twitter_vac_1_c2, stemmed = T)
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ2Jpbmdfd29yZHMnLiBZb3UgY2FuIG92ZXJyaWRlIHVzaW5nIHRoZSBgLmdyb3Vwc2AgYXJndW1lbnQuXG5Kb2luaW5nLCBieSA9IGMoXCJpZFwiLCBcInJldHdlZXRfY291bnRcIiwgXCJyZXBseV9jb3VudFwiLCBcImxpa2VfY291bnRcIiwgXCJxdW90ZV9jb3VudFwiLCBcImRhdGVcIilcbkpvaW5pbmcsIGJ5ID0gXCJ3b3JkXCJcbmBzdW1tYXJpc2UoKWAgaGFzIGdyb3VwZWQgb3V0cHV0IGJ5ICdpZCcsICdyZXR3ZWV0X2NvdW50JywgJ3JlcGx5X2NvdW50JywgJ2xpa2VfY291bnQnLCAncXVvdGVfY291bnQnLCAnZGF0ZScsICdhZmlubl93b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBcIndvcmRcIlxuYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ2lkJywgJ3JldHdlZXRfY291bnQnLCAncmVwbHlfY291bnQnLCAnbGlrZV9jb3VudCcsICdxdW90ZV9jb3VudCcsICdkYXRlJywgJ25yY193b3JkcycuIFlvdSBjYW4gb3ZlcnJpZGUgdXNpbmcgdGhlIGAuZ3JvdXBzYCBhcmd1bWVudC5cbkpvaW5pbmcsIGJ5ID0gYyhcImlkXCIsIFwicmV0d2VldF9jb3VudFwiLCBcInJlcGx5X2NvdW50XCIsIFwibGlrZV9jb3VudFwiLCBcInF1b3RlX2NvdW50XCIsIFwiZGF0ZVwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuSm9pbmluZywgYnkgPSBjKFwiaWRcIiwgXCJyZXR3ZWV0X2NvdW50XCIsIFwicmVwbHlfY291bnRcIiwgXCJsaWtlX2NvdW50XCIsIFwicXVvdGVfY291bnRcIiwgXCJkYXRlXCIsIFwidGV4dFwiKVxuIn0= -->
 <pre><code>Joining, by = &quot;word&quot;
