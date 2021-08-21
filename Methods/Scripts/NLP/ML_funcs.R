@@ -19,6 +19,18 @@ library(SnowballC)
 library(caTools)
 library(caret)
 
+list <- structure(NA,class="result")
+"[<-.result" <- function(x,...,value) {
+  args <- as.list(match.call())
+  args <- args[-c(1:2,length(args))]
+  length(value) <- length(args)
+  for(i in seq(along=args)) {
+    a <- args[[i]]
+    if(!missing(a)) eval.parent(substitute(a <- v,list(a=a,v=value[[i]])))
+  }
+  x
+}
+
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 setwd(root_dir)
 
@@ -176,7 +188,7 @@ get_subset <- function(source, topic, set = 1){
   df_c2 <- df_c2 %>% 
     group_by(day = as.Date(date)) %>% 
     inner_join(obs_count) %>% 
-    sample_n(., size = min(30, obs_n)) %>% 
+    sample_n(., size = min(5, obs_n)) %>% 
     select(id)
   
   df <- df_orig[df_orig$id %in% df_c2$id,]
@@ -192,6 +204,9 @@ get_subset <- function(source, topic, set = 1){
       mutate(orig_text = text) %>% 
       select(-text)
   }
+  
+  df <- df %>% 
+    add_column(man_sentiment = NA)
   
   return(df)
   
@@ -217,51 +232,192 @@ save_subset <- function(df, source, topic, set){
   
 }
 
+MLannotate <- function(df_annotated){
 
-MLannotate <- function(source, topic, set = 1){
+  completed <- is.na(df_annotated$man_sentiment)
+  cat(completed)
   
-  # df_orig <- load_nlp_data(source, topic, set)
-  # 
-  # df_c2 <- load_nlp_data(souce, topic, level = 1, stage = '2')
-  # 
-  # df_c2 <- df_c2 %>% 
-  #   group_by(day = as.Date(date)) %>% 
-  #   sample_n(., size = 30) %>% 
-  #   select(id)
-  # 
-  # df_annotated <- df_c2
-  # 
-  # 
-  # df <- df_orig[df_orig$id %in% df_c2$id,]
-  
-  df_annotated <- get_subset(source, topic, set) %>% 
-    add_column(man_sentiment = NA)
-  
-  for(idx in 1:3){
+  if(all(completed == T)){
+    start_idx <- 1
+  } else {
+    start_idx <- min(which(is.na(df_annotated$man_sentiment) == T))
+  }
+
+  for(idx in start_idx:nrow(df_annotated)){
     cat("\014")
+    print(idx)
     print(df_annotated$orig_text[idx])
     input <- readline(prompt = "Sentiment: ")
-    input <- ifelse(input == 'p', 1, ifelse(input == 'n', -1, 0))
+    input <- ifelse(input == 'p', 1,
+                    ifelse(input == 'n', -1,
+                           ifelse(input == 'i', -99,
+                                  ifelse(input == 'break', -1000, 0))))
+    if(input == -1000){
+      break
+    }
+
     df_annotated$man_sentiment[idx] <- input
   }
-  
-  save_subset(df_annotated, source, topic, set)
-  
+
   return(df_annotated)
+}
+
+change_scores <- function(df){
+  
+  df <- df %>% 
+    mutate(bing_score = bing_score/bing_words,
+           afinn_score = afinn_score/afinn_words,
+           nrc_score = nrc_score/nrc_words) %>% 
+    mutate(bing_score = ifelse(is.na(bing_score), 0,
+                               ifelse(bing_score < 0, -1, 
+                                      1)),
+           afinn_score = ifelse(is.na(afinn_score), 0,
+                               ifelse(afinn_score < 0, -1, 
+                                      1)),
+           nrc_score = ifelse(is.na(nrc_score), 0,
+                               ifelse(nrc_score < 0, -1, 
+                                      1))) %>% 
+    select(-bing_words,
+           -afinn_words,
+           -nrc_words)
+    
+  return(df)
+    
+}
+
+get_sparse_df <- function(df, useMetrics = FALSE){
+  
+  dtm <- create_matrix(
+    df$text,
+    language = 'english',
+    removeStopwords = F,
+    removeNumbers = F,
+    stemWords = F)
+  
+  sparse_dtm <- removeSparseTerms(dtm, 0.995)
+  
+  sparse_df <- as.data.frame(as.matrix(sparse_dtm)) %>% 
+    add_column(man_sentiment = df$man_sentiment)
+  
+  
+  if(useMetrics){
+    
+    sparse_df <- sparse_df %>% 
+      add_column(text = rownames(sparse_df)) %>% 
+      inner_join(df %>% 
+                   mutate(text = gsub(' ', '.', text))) %>% 
+      select(
+             -orig_text,
+             -created_at,
+             -id,
+             -date,
+             -text)
+  }
+  
+  return(sparse_df)
   
 }
 
+do_nb <- function(df){
 
-t_emp <- MLannotate('Twitter', 'Employment')
-t_vac <- MLannotate('Twitter', 'Vaccine')
+  set.seed(13)
+  
+  train_idx <- sample.split(df$man_sentiment, SplitRatio = 0.8)
+  
+  train <- subset(df, train_idx ==T)
+  test <- subset(df, train_idx == F)
+  
+  classifier = naiveBayes(
+    train[,!names(train) %in% 'man_sentiment'],
+    train$man_sentiment)
+  
+  train_pred = predict(classifier, train[,!names(train) %in% 'man_sentiment'])
+  test_pred = predict(classifier, test[,!names(test) %in% 'man_sentiment'])
+  
+  train_cm <- confusionMatrix(train_pred, reference = train$man_sentiment)
+  test_cm <- confusionMatrix(test_pred, reference = test$man_sentiment)
 
-r_emp_1 <- MLannotate('Reddit', 'Employment', set = 1)
-r_emp_2 <- MLannotate('Reddit', 'Employment', set = 2)
-r_emp_3 <- MLannotate('Reddit', 'Employment', set = 3)
-r_emp_4 <- MLannotate('Reddit', 'Employment', set = 4)
-r_vac_1 <- MLannotate('Reddit', 'Vaccine', set = 1)
+  return(c(train_cm, test_cm))
+}
 
-# # Tests
+twitter_emp_subset <- load_nlp_data('Twitter', 'Employment', level = 3, set = 1) %>% 
+  filter(man_sentiment != -99)
+
+twitter_emp_lex_c1b <- load_nlp_data('Twitter', 'Employment', level = 2, set = 1, stage = '1b') %>% 
+  inner_join(twitter_emp_subset)
+
+twitter_emp_lex_c2 <- load_nlp_data('Twitter', 'Employment', level = 2, set = 1, stage = '2') %>% 
+  inner_join(twitter_emp_subset)
+
+c1b <- change_scores(twitter_emp_lex_c1b)
+c2 <- change_scores(twitter_emp_lex_c2)
+
+table(manual = c1b$man_sentiment, 
+      bing = c1b$bing_score)
+
+cor(c1b$man_sentiment, c1b$bing_score)
+cor(c1b$man_sentiment, c1b$afinn_score)
+cor(c1b$man_sentiment, c1b$nrc_score)
+
+cor(c2$man_sentiment, c2$bing_score)
+cor(c2$man_sentiment, c2$afinn_score)
+cor(c2$man_sentiment, c2$nrc_score)
+
+c1b <- c1b %>% 
+  filter(man_sentiment != 0) %>% 
+  mutate(man_sentiment = as.factor(man_sentiment))
+
+c2 <- c2 %>% 
+  filter(man_sentiment != 0) %>% 
+  mutate(man_sentiment = as.factor(man_sentiment))
+
+df <- get_sparse_df(c1b, useMetrics = T)
+
+
+# set.seed(13)
+# 
+# train_idx <- sample.split(df$man_sentiment, SplitRatio = 0.8)
+# 
+# train <- subset(df, train_idx ==T)
+# test <- subset(df, train_idx == F)
+# 
+# classifier = naiveBayes(
+#   train[,!names(train) %in% 'man_sentiment'],
+#   train$man_sentiment)
+# 
+# train_pred = predict(classifier, train[,!names(train) %in% 'man_sentiment'])
+# test_pred = predict(classifier, test[,!names(test) %in% 'man_sentiment'])
+# 
+# train_cm <- confusionMatrix(train_pred, reference = train$man_sentiment)
+# test_cm <- confusionMatrix(test_pred, reference = test$man_sentiment)
+
+
+# colnames(sparse_df) <- make.names(colnames(sparse_df))
+#
+# sparse_df$sentiment <- as.factor(s$sent)
+
+
+
+
+# t_emp <- get_subset('Twitter', 'Employment')
+# t_emp<- MLannotate(t_emp)
+# save_subset(t_emp, 'Twitter', 'Employment', set = 1)
+# 
+
+# t_vac <- MLannotate('Twitter', 'Vaccine')
+# t_vac <- MLannotate(t_vac)
+# save_subset(t_vac, 'Twitter', 'Vaccine', set = 1)
+# 
+# 
+# r_emp_1 <- MLannotate('Reddit', 'Employment', set = 1)
+# r_emp_2 <- MLannotate('Reddit', 'Employment', set = 2)
+# r_emp_3 <- MLannotate('Reddit', 'Employment', set = 3)
+# r_emp_4 <- MLannotate('Reddit', 'Employment', set = 4)
+# r_vac_1 <- MLannotate('Reddit', 'Vaccine', set = 1)
+
+
+####### Tests
+
 # man_t_emp <- load_nlp_data('Twitter','Employment',level = 3,set = 1)
 # man_t_vac <- load_nlp_data('Twitter','Vaccine',level = 3,set = 1)
 # 
@@ -463,26 +619,26 @@ r_vac_1 <- MLannotate('Reddit', 'Vaccine', set = 1)
 # 
 # 
 # 
-# # s <- reddit_emp_4_c1b_lex %>% 
-# #   filter(id %in% ids) %>% 
-# #   mutate(sent = ifelse(bing_score < 0, 'negative', 'positive'))
-# # 
-# # dtm <- create_matrix(
-# #   s$text,
-# #   language = 'english',
-# #   removeStopwords = F,
-# #   removeNumbers = F,
-# #   stemWords = F)
-# # 
-# # freq <- findFreqTerms(dtm, lowfreq = 20)
-# # length(freq)/dtm$ncol
-# # 
-# # sparse_dtm <- removeSparseTerms(dtm, 0.995)
-# # 
-# # sparse_df <- as.data.frame(as.matrix(sparse_dtm))
-# # colnames(sparse_df) <- make.names(colnames(sparse_df))
-# # 
-# # sparse_df$sentiment <- as.factor(s$sent)
+# s <- reddit_emp_4_c1b_lex %>%
+#   filter(id %in% ids) %>%
+#   mutate(sent = ifelse(bing_score < 0, 'negative', 'positive'))
+#
+# dtm <- create_matrix(
+#   s$text,
+#   language = 'english',
+#   removeStopwords = F,
+#   removeNumbers = F,
+#   stemWords = F)
+#
+# freq <- findFreqTerms(dtm, lowfreq = 20)
+# length(freq)/dtm$ncol
+#
+# sparse_dtm <- removeSparseTerms(dtm, 0.995)
+#
+# sparse_df <- as.data.frame(as.matrix(sparse_dtm))
+# colnames(sparse_df) <- make.names(colnames(sparse_df))
+#
+# sparse_df$sentiment <- as.factor(s$sent)
 # 
 # 
 # 
