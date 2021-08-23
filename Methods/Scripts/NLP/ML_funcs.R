@@ -78,6 +78,29 @@ load_nlp_data <- function(source, topic, set = 1, level = 0, stage = '1b'){
   
 } 
 
+save_ml <- function(df, topic, stage = '1b', subsets = T){
+  
+  topic_short <- substr(
+    tolower(topic),
+    1,
+    3
+  )
+  
+  if(subsets){
+    data_path <- glue('Methods/Data/{source}/NLP/ML/Subsets')
+  } else{
+    data_path <- glue('Methods/Data/{source}/NLP/ML/c{stage}')
+  }
+  
+  df_name <- glue('{topic_short}_{set}.rds')
+  
+  df_path <- file.path(root_dir,
+                       data_path,
+                       df_name)
+  
+  saveRDS(df, df_path)
+}
+
 val_ids <- function(df, neutral = F){
   # Choose a random sample of observations, at least n from each day/week.
   
@@ -212,26 +235,6 @@ get_subset <- function(source, topic, set = 1){
   
 }
 
-save_subset <- function(df, source, topic, set){
-  
-  topic_short <- substr(
-    tolower(topic),
-    1,
-    3
-  )
-  
-  data_path <- glue('Methods/Data/{source}/NLP/ML/Subsets')
-  
-  df_name <- glue('{topic_short}_{set}.rds')
-  
-  df_path <- file.path(root_dir,
-                       data_path,
-                       df_name)
-  
-  saveRDS(df, df_path)
-  
-}
-
 MLannotate <- function(df_annotated){
 
   completed <- is.na(df_annotated$man_sentiment)
@@ -288,7 +291,7 @@ change_scores <- function(df){
 get_sparse_df <- function(df, train_dtm = NA, useMetrics = FALSE){
   
   
-  if(is.na(train_dtm)){
+  if(all(is.na(train_dtm))){
     
     dtm <- create_matrix(
       df$text,
@@ -323,7 +326,7 @@ get_sparse_df <- function(df, train_dtm = NA, useMetrics = FALSE){
       inner_join(df %>% 
                    mutate(text = gsub(' ', '.', text))) %>% 
       select(
-             -orig_text,
+             
              -id,
              -date,
              -text,
@@ -373,7 +376,12 @@ do_pred_val <- function(classifier, train, val){
 
 do_pred_all <- function(classifier, df, train_dtm, useMetrics = F){
   
-  df <- df[sample(nrow(df), 100),]
+  df <- df[sample(nrow(df), 100),] %>% 
+    mutate(
+           bing_score = as.factor(bing_score),
+           afinn_score = as.factor(afinn_score),
+           nrc_score = as.factor(nrc_score)
+           )
   
   sparse_df <- get_sparse_df(df, train_dtm, useMetrics = useMetrics)
   
@@ -438,12 +446,12 @@ do_pred_all <- function(classifier, df, train_dtm, useMetrics = F){
 
 # t_emp <- get_subset('Twitter', 'Employment')
 # t_emp<- MLannotate(t_emp)
-# save_subset(t_emp, 'Twitter', 'Employment', set = 1)
+# save_ml(t_emp, 'Employment')
 # 
 
 # t_vac <- MLannotate('Twitter', 'Vaccine')
 # t_vac <- MLannotate(t_vac)
-# save_subset(t_vac, 'Twitter', 'Vaccine', set = 1)
+# save_subset(t_vac, 'Vaccine')
 # 
 # 
 # r_emp_1 <- MLannotate('Reddit', 'Employment', set = 1)
