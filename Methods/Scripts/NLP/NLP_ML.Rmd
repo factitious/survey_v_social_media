@@ -32,3 +32,155 @@ output: html_notebook
 
 2:
 * Stemming
+
+```{r}
+source("ML_funcs.R", local = knitr::knit_global())
+```
+
+
+```{r}
+twitter_emp_subset <- load_nlp_data('Twitter', 'Employment', level = 3, set = 1) %>% 
+  filter(man_sentiment != -99) %>% 
+  mutate(date = created_at) %>% 
+  select(-created_at,
+         -date)
+
+twitter_emp_lex_c1b <- load_nlp_data('Twitter', 'Employment', level = 2, set = 1, stage = '1b')
+
+twitter_emp_lex_c2 <- load_nlp_data('Twitter', 'Employment', level = 2, set = 1, stage = '2')
+```
+
+```{r}
+c1b <- twitter_emp_lex_c1b %>% 
+  inner_join(twitter_emp_subset) %>% 
+  change_scores(.)
+
+c2 <- twitter_emp_lex_c2 %>% 
+  inner_join(twitter_emp_subset) %>% 
+  change_scores(.)
+```
+
+```{r}
+table(manual = c1b$man_sentiment, 
+      bing = c1b$bing_score)
+
+cor(c1b$man_sentiment, c1b$bing_score)
+cor(c1b$man_sentiment, c1b$afinn_score)
+cor(c1b$man_sentiment, c1b$nrc_score)
+
+cor(c2$man_sentiment, c2$bing_score)
+cor(c2$man_sentiment, c2$afinn_score)
+cor(c2$man_sentiment, c2$nrc_score)
+```
+
+```{r}
+c1b <- c1b %>% 
+  filter(man_sentiment != 0) %>% 
+  mutate(man_sentiment = as.factor(man_sentiment,
+         bing_score = as.factor(bing_score),
+         afinn_score = as.factor(afinn_score),
+         nrc_score = as.factor(nrc_score)))
+# %>% 
+#   mutate(bing_score = as.factor(bing_score),
+#          afinn_score = as.factor(afinn_score),
+#          nrc_score = as.factor(nrc_score))
+  
+
+c2 <- c2 %>% 
+  filter(man_sentiment != 0) %>% 
+  mutate(man_sentiment = as.factor(man_sentiment,
+         bing_score = as.factor(bing_score),
+         afinn_score = as.factor(afinn_score),
+         nrc_score = as.factor(nrc_score)))
+```
+
+
+## Predictions based on orig features
+
+* Lexicon scores + source + location
+
+```{r}
+c1b_og <- c1b %>% 
+    select(bing_score,
+         afinn_score,
+         nrc_score,
+         source,
+         location,
+         man_sentiment)
+
+# %>% 
+#   mutate(bing_score = as.factor(bing_score),
+#          afinn_score = as.factor(afinn_score),
+#          nrc_score = as.factor(nrc_score))
+  
+
+
+list[c1b_train_og, c1b_val_og] <- get_split(c1b_og)
+
+# c1b_train_og <- c1b_train_og %>% 
+#   select(bing_score,
+#          afinn_score,
+#          nrc_score,
+#          source,
+#          location,
+#          man_sentiment) %>% 
+#   mutate(bing_score = as.factor(bing_score))
+# # %>% 
+# #   mutate(man_sentiment = as.factor(man_sentiment))
+# 
+# c1b_val_og <- c1b_val_og %>% 
+#   select(bing_score,
+#          afinn_score,
+#          nrc_score,
+#          source,
+#          location,
+#          man_sentiment) 
+# # %>% 
+# #   mutate(man_sentiment = as.factor(man_sentiment))
+  
+
+nb <- train_classifier(c1b_train_og, c1b_val_og)
+list[c1b_train_cm_og, c1b_val_cm_og] <- do_pred_val(nb, c1b_train_og, c1b_val_og)
+
+c1b_train_cm_og$overall[['Accuracy']]
+c1b_val_cm_og$overall[['Accuracy']]
+```
+
+
+## Predictions based on text
+
+* Using document term matrix
+
+```{r}
+list[c1b_train_dtm_t, sparse_c1b_t] <- get_sparse_df(c1b, useMetrics = F)
+list[c1b_train_t, c1b_val_t] <- get_split(sparse_c1b_t)
+nb <- train_classifier(c1b_train_t, c1b_val_t)
+list[c1b_train_cm_t, c1b_val_cm_t] <- do_pred_val(nb, c1b_train_t, c1b_val_t)
+c1b_train_cm_t$overall[['Accuracy']]
+c1b_val_cm_t$overall[['Accuracy']]
+```
+
+
+## Predictions based on text + original features
+
+* Using document term matrix + lexicon scores + source + location.
+
+```{r}
+list[c1b_train_dtm_t_og, sparse_c1b_t_og] <- get_sparse_df(c1b, useMetrics = T)
+list[c1b_train_t_og, c1b_val_t_og] <- get_split(sparse_c1b_t_og)
+nb <- train_classifier(c1b_train_t_og, c1b_val_t_og)
+list[c1b_train_cm_t_og, c1b_val_cm_t_og] <- do_pred_val(nb, c1b_train_t_og, c1b_val_t_og)
+c1b_train_cm_t_og$overall[['Accuracy']]
+c1b_val_cm_t_og$overall[['Accuracy']]
+```
+
+
+
+
+
+
+
+
+
+
+

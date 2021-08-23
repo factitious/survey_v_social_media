@@ -285,19 +285,35 @@ change_scores <- function(df){
     
 }
 
-get_sparse_df <- function(df, useMetrics = FALSE){
+get_sparse_df <- function(df, train_dtm = NA, useMetrics = FALSE){
   
-  dtm <- create_matrix(
-    df$text,
-    language = 'english',
-    removeStopwords = F,
-    removeNumbers = F,
-    stemWords = F)
   
-  sparse_dtm <- removeSparseTerms(dtm, 0.995)
-  
-  sparse_df <- as.data.frame(as.matrix(sparse_dtm)) %>% 
-    add_column(man_sentiment = df$man_sentiment)
+  if(is.na(train_dtm)){
+    
+    dtm <- create_matrix(
+      df$text,
+      language = 'english',
+      removeStopwords = F,
+      removeNumbers = F,
+      stemWords = F)
+    
+    train_dtm <- removeSparseTerms(dtm, 0.995)
+    
+    sparse_df <- as.data.frame(as.matrix(train_dtm)) %>% 
+      add_column(man_sentiment = df$man_sentiment) %>% 
+      mutate_if(is.numeric, as.factor)
+    
+
+  } else {
+    
+    dtm <- DocumentTermMatrix(
+      Corpus(VectorSource(df$text)),
+      control = list(dictionary = Terms(train_dtm) )
+    )
+    
+    sparse_df <- as.data.frame(as.matrix(dtm))
+
+  }
   
   
   if(useMetrics){
@@ -308,70 +324,91 @@ get_sparse_df <- function(df, useMetrics = FALSE){
                    mutate(text = gsub(' ', '.', text))) %>% 
       select(
              -orig_text,
-             -created_at,
              -id,
              -date,
-             -text)
+             -text,
+             -retweet_count,
+             -reply_count,
+             -like_count,
+             -quote_count)
   }
   
-  return(sparse_df)
+  return(list(train_dtm,sparse_df))
   
 }
 
-do_nb <- function(df){
-
+get_split <- function(df){
+  
   set.seed(13)
   
   train_idx <- sample.split(df$man_sentiment, SplitRatio = 0.8)
   
   train <- subset(df, train_idx ==T)
-  test <- subset(df, train_idx == F)
+  val <- subset(df, train_idx == F)
+  
+  return(list(train, val))
+  
+}
+
+train_classifier <- function(train, val){
   
   classifier = naiveBayes(
     train[,!names(train) %in% 'man_sentiment'],
     train$man_sentiment)
   
-  train_pred = predict(classifier, train[,!names(train) %in% 'man_sentiment'])
-  test_pred = predict(classifier, test[,!names(test) %in% 'man_sentiment'])
-  
-  train_cm <- confusionMatrix(train_pred, reference = train$man_sentiment)
-  test_cm <- confusionMatrix(test_pred, reference = test$man_sentiment)
-
-  return(c(train_cm, test_cm))
+  return(classifier)
 }
 
-twitter_emp_subset <- load_nlp_data('Twitter', 'Employment', level = 3, set = 1) %>% 
-  filter(man_sentiment != -99)
+do_pred_val <- function(classifier, train, val){
+  
+  train_pred = predict(classifier, train[,!names(train) %in% 'man_sentiment'])
+  val_pred = predict(classifier, val[,!names(val) %in% 'man_sentiment'])
+    
+  train_cm <- confusionMatrix(train_pred, reference = train$man_sentiment)
+  test_cm <- confusionMatrix(val_pred, reference = val$man_sentiment)
+  
+  return(list(train_cm, test_cm))
 
-twitter_emp_lex_c1b <- load_nlp_data('Twitter', 'Employment', level = 2, set = 1, stage = '1b') %>% 
-  inner_join(twitter_emp_subset)
+}
 
-twitter_emp_lex_c2 <- load_nlp_data('Twitter', 'Employment', level = 2, set = 1, stage = '2') %>% 
-  inner_join(twitter_emp_subset)
+do_pred_all <- function(classifier, df, train_dtm, useMetrics = F){
+  
+  df <- df[sample(nrow(df), 100),]
+  
+  sparse_df <- get_sparse_df(df, train_dtm, useMetrics = useMetrics)
+  
+  sparse_df <- df %>% 
+    add_column(man_sentiment = NA)
+  
+  sparse_df$man_sentiment = predict(classifier, sparse_df)
+  
+  return(sparse_df)
+  
+}
 
-c1b <- change_scores(twitter_emp_lex_c1b)
-c2 <- change_scores(twitter_emp_lex_c2)
+# sparse_c1b <- get_sparse_df(c1b, useMetrics = T)
+# sparse_c2  <- get_sparse_df(c2, useMetrics = T)
+# 
+# list[c1b_train_cm, c1b_test_cm] <- do_nb(sparse_c1b)
+# list[c2_train_cm, c2_test_cm] <- do_nb(sparse_c2)
 
-table(manual = c1b$man_sentiment, 
-      bing = c1b$bing_score)
+# o <- reddit_emp_4_c1b_lex[sample(nrow(reddit_emp_4_c1b_lex), 10000),] 
+# 
+# o <- o %>% 
+#   mutate(sent = as.factor(ifelse(bing_score < 0, 'negative', 'positive')))
+# 
+# o_dtm <- DocumentTermMatrix(
+#   Corpus(VectorSource(o$text)), 
+#   control = list(dictionary = Terms(sparse_dtm))
+# )
+# 
+# o_df <- as.data.frame(as.matrix(o_dtm))
+# 
+# o_pred = predict(classifier, o_df)
+# 
+# o_cm <- confusionMatrix(o_pred, reference = o$sent)
 
-cor(c1b$man_sentiment, c1b$bing_score)
-cor(c1b$man_sentiment, c1b$afinn_score)
-cor(c1b$man_sentiment, c1b$nrc_score)
 
-cor(c2$man_sentiment, c2$bing_score)
-cor(c2$man_sentiment, c2$afinn_score)
-cor(c2$man_sentiment, c2$nrc_score)
-
-c1b <- c1b %>% 
-  filter(man_sentiment != 0) %>% 
-  mutate(man_sentiment = as.factor(man_sentiment))
-
-c2 <- c2 %>% 
-  filter(man_sentiment != 0) %>% 
-  mutate(man_sentiment = as.factor(man_sentiment))
-
-df <- get_sparse_df(c1b, useMetrics = T)
 
 
 # set.seed(13)
@@ -478,7 +515,7 @@ df <- get_sparse_df(c1b, useMetrics = T)
 # 
 # 
 # 
-#   # Code dump
+# # Code dump
 # 
 # df_agg <- temp_name('Twitter', 'Employment')
 # 
