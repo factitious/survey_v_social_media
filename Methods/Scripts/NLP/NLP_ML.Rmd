@@ -76,105 +76,87 @@ cor(c2$man_sentiment, c2$nrc_score)
 ```{r}
 c1b <- c1b %>% 
   filter(man_sentiment != 0) %>% 
-  mutate(man_sentiment = as.factor(man_sentiment,
+  mutate(man_sentiment = as.factor(man_sentiment),
          bing_score = as.factor(bing_score),
          afinn_score = as.factor(afinn_score),
-         nrc_score = as.factor(nrc_score)))
-# %>% 
-#   mutate(bing_score = as.factor(bing_score),
-#          afinn_score = as.factor(afinn_score),
-#          nrc_score = as.factor(nrc_score))
-  
+         nrc_score = as.factor(nrc_score))
 
 c2 <- c2 %>% 
   filter(man_sentiment != 0) %>% 
-  mutate(man_sentiment = as.factor(man_sentiment,
+  mutate(man_sentiment = as.factor(man_sentiment),
          bing_score = as.factor(bing_score),
          afinn_score = as.factor(afinn_score),
-         nrc_score = as.factor(nrc_score)))
+         nrc_score = as.factor(nrc_score))
 ```
 
 
-## Predictions based on orig features
+## 1. Predictions based on orig features
 
 * Lexicon scores + source + location
+*!!NB: Not doing this anymore.
 
 ```{r}
-c1b_og <- c1b %>% 
-    select(bing_score,
-         afinn_score,
-         nrc_score,
-         source,
-         location,
-         man_sentiment)
-
-# %>% 
-#   mutate(bing_score = as.factor(bing_score),
-#          afinn_score = as.factor(afinn_score),
-#          nrc_score = as.factor(nrc_score))
-  
-
-
-list[c1b_train_og, c1b_val_og] <- get_split(c1b_og)
-
-# c1b_train_og <- c1b_train_og %>% 
-#   select(bing_score,
+# c1b_og <- c1b %>% 
+#     select(bing_score,
 #          afinn_score,
 #          nrc_score,
 #          source,
 #          location,
-#          man_sentiment) %>% 
-#   mutate(bing_score = as.factor(bing_score))
-# # %>% 
-# #   mutate(man_sentiment = as.factor(man_sentiment))
+#          man_sentiment)
 # 
-# c1b_val_og <- c1b_val_og %>% 
-#   select(bing_score,
-#          afinn_score,
-#          nrc_score,
-#          source,
-#          location,
-#          man_sentiment) 
-# # %>% 
-# #   mutate(man_sentiment = as.factor(man_sentiment))
-  
-
-nb <- train_classifier(c1b_train_og, c1b_val_og)
-list[c1b_train_cm_og, c1b_val_cm_og] <- do_pred_val(nb, c1b_train_og, c1b_val_og)
-
-c1b_train_cm_og$overall[['Accuracy']]
-c1b_val_cm_og$overall[['Accuracy']]
+# 
+# list[c1b_train_og, c1b_val_og] <- get_split(c1b_og)
+# 
+# nb <- train_nb(c1b_train_og, c1b_val_og)
+# list[c1b_train_cm_og, c1b_val_cm_og] <- do_pred_val(nb, c1b_train_og, c1b_val_og)
+# 
+# c1b_train_cm_og$overall[['Accuracy']]
+# c1b_val_cm_og$overall[['Accuracy']]
 ```
 
 
-## Predictions based on text
+## 2. Predictions based on text
 
 * Using document term matrix
 
 ```{r}
 list[c1b_train_dtm_t, sparse_c1b_t] <- get_sparse_df(c1b, useMetrics = F)
 list[c1b_train_t, c1b_val_t] <- get_split(sparse_c1b_t)
-nb <- train_classifier(c1b_train_t, c1b_val_t)
+nb <- train_nb(c1b_train_t, c1b_val_t)
 list[c1b_train_cm_t, c1b_val_cm_t] <- do_pred_val(nb, c1b_train_t, c1b_val_t)
-c1b_train_cm_t$overall[['Accuracy']]
-c1b_val_cm_t$overall[['Accuracy']]
+# c1b_train_cm_t$overall[['Accuracy']]
+# c1b_val_cm_t$overall[['Accuracy']]
 ```
 
 
-## Predictions based on text + original features
+## 3. Predictions based on text + original features
 
 * Using document term matrix + lexicon scores + source + location.
 
 ```{r}
 list[c1b_train_dtm_t_og, sparse_c1b_t_og] <- get_sparse_df(c1b, useMetrics = T)
 list[c1b_train_t_og, c1b_val_t_og] <- get_split(sparse_c1b_t_og)
-nb <- train_classifier(c1b_train_t_og, c1b_val_t_og)
+nb <- train_nb(c1b_train_t_og, c1b_val_t_og)
 list[c1b_train_cm_t_og, c1b_val_cm_t_og] <- do_pred_val(nb, c1b_train_t_og, c1b_val_t_og)
 c1b_train_cm_t_og$overall[['Accuracy']]
 c1b_val_cm_t_og$overall[['Accuracy']]
 ```
 
 
+## Getting predictions for unseen data
+
+```{r}
+
+start <- Sys.time()
+c1b_pred <- do_pred_all(
+  nb,
+  twitter_emp_lex_c1b,
+  train_dtm = c1b_train_dtm_t_og,
+  useMetrics = T
+)
+end <- Sys.time()
+(elapsed <- end - start)
+```
 
 
 
