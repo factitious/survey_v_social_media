@@ -18,6 +18,7 @@ library(RTextTools)
 library(SnowballC)
 library(caTools)
 library(caret)
+# library(klaR)
 
 list <- structure(NA,class="result")
 "[<-.result" <- function(x,...,value) {
@@ -353,78 +354,6 @@ get_split <- function(df){
   
 }
 
-train_classifiers <- function(df, useMetrics = F){
-    
-  list[df_dtm, df_sparse] <- get_sparse_df(df, useMetrics = useMetrics)
-  list[train, val] <- get_split(df_sparse)
-  
-  classifiers <- list()
-  
-  # classifiers$nb$train <- train
-  # classifiers$nb$val <- val
-  
-  classifiers$nb <- train_nb(train, val)
-  
-  # return(classifiers)
-  
-  classifiers$nb$pred <- predict(
-    classifiers$nb,
-    val[,!names(val) %in% 'man_sentiment']
-  )
-  
-  # return(classifiers)
-  
-  classifiers$nb$cm <- confusionMatrix(
-    classifiers$nb$pred,
-    reference = val$man_sentiment
-  )
-  
-  algos=c(
-    "BAGGING",
-    "BOOSTING",
-    "GLMNET",
-    "RF",
-    "SLDA",
-    "SVM",
-    "TREE"   
-  )
-  
-  list[other_models, other_pred] <- train_other(df, dtm)
-  
-  classifiers[["BAGGING"]]<- other_models[["BAGGING"]]
-  classifiers[["BAGGING"]][["pred"]] <- other_pred[["BAGGING_LABEL"]]
-  
-  # return(classifiers)
-  
-  classifiers[["BAGGING"]][['cm']] <- confusionMatrix(
-    as.factor(classifiers[["BAGGING"]][['pred']]),
-    reference = df$man_sentiment[593:740]
-  )
-
-  
-  for(alg in algos){
-
-    lname = glue("{alg}_LABEL")
-
-    classifiers[[alg]] = other_models[[alg]]
-    classifiers[[alg]][['pred']] = other_pred[[lname]]
-
-    classifiers[[alg]][['cm']] <- confusionMatrix(
-      as.factor(other_pred[[lname]]),
-      reference = df$man_sentiment[593:740]
-    )
-
-  }
-  
-  res <- list(
-    dtm = df_dtm,
-    df_sparse = df_sparse,
-    classifiers = classifiers
-  )
-  
-  return(res)
-}
-
 train_nb <- function(train, val){
   
   classifier = naiveBayes(
@@ -448,7 +377,6 @@ train_other <- function(df, dtm){
     algorithms=c(
       "BAGGING",
       "BOOSTING",
-      "GLMNET",
       "RF",
       "SLDA",
       "SVM",
@@ -458,7 +386,7 @@ train_other <- function(df, dtm){
   
   results = classify_models(container, models)
   
-  return(list(models, results))
+  return(list(container, models, results))
 }
 
 do_pred_nb <- function(classifier, train, val){
@@ -471,6 +399,104 @@ do_pred_nb <- function(classifier, train, val){
   
   return(list(train_cm, test_cm))
 
+}
+
+train_classifiers <- function(df, useMetrics = F){
+  
+  set.seed(13)
+  
+  list[dtm, df_sparse] <- get_sparse_df(
+    df, 
+    useMetrics = useMetrics)
+  
+  list[train, val] <- get_split(df_sparse)
+  
+  classifiers <- list()
+  
+  classifiers$NB <- train(
+    train[,!names(train) %in% 'man_sentiment'],
+    train$man_sentiment,
+    'nb',
+    trControl=trainControl(
+      method='cv',
+      number=5)
+  ) %>% suppressWarnings()
+  
+  classifiers$NB$pred <- predict(
+    classifiers$NB, 
+    newdata = val[,!names(val) %in% 'man_sentiment']) %>% 
+    suppressWarnings()
+  
+  classifiers$NB$cm <- confusionMatrix(
+    classifiers$NB$pred, 
+    reference = val$man_sentiment)
+  
+  classifiers$NB$cm$overall[['Accuracy']] <- classifiers$NB$results[['Accuracy']][1]
+  classifiers$NB$cm$overall[['AccuracySD']] <- classifiers$NB$results[['AccuracySD']][1]
+  
+  # classifiers$NB <- train_nb(train, val)
+
+  # classifiers$NB$pred <- predict(
+  #   classifiers$NB,
+  #   val[,!names(val) %in% 'man_sentiment']
+  # )
+  
+  # classifiers$NB$cm <- confusionMatrix(
+  #   classifiers$NB$pred,
+  #   reference = val$man_sentiment
+  # )
+  
+  # nb3$results$Accuracy
+  
+  algos=c(
+    "BAGGING",
+    "BOOSTING",
+    "RF",
+    "SLDA",
+    "SVM",
+    "TREE"   
+  )
+  
+  list[container, other_models, other_pred] <- train_other(df, dtm)
+  
+  for(alg in algos){
+    
+    if(alg == "BOOSTING"){
+      
+      lname = "LOGITBOOST_LABEL"
+    } else if(alg == "RF"){
+      
+      lname = "FORESTS_LABEL"
+    } else{
+      lname = glue("{alg}_LABEL")
+    }
+
+    classifiers[[alg]] = other_models[[alg]]
+    classifiers[[alg]][['pred']] = other_pred[[lname]]
+
+    classifiers[[alg]][['cm']] <- confusionMatrix(
+      as.factor(other_pred[[lname]]),
+      reference = df$man_sentiment[593:740]
+    )
+
+    cv_acc <- cross_validate(
+      container,
+      5,
+      alg,
+      seed = 13)
+
+    classifiers[[alg]][['cm']][['overall']][['Accuracy']] <- cv_acc$meanAccuracy
+    classifiers[[alg]][['cm']][['overall']][['AccuracySD']] <- sd(cv_acc[[1]])
+
+  }
+  
+  res <- list(
+    dtm = dtm,
+    df_sparse = df_sparse,
+    classifiers = classifiers
+  )
+  
+  return(res)
 }
 
 
@@ -559,21 +585,128 @@ draw_confusion_matrix <- function(cm, model) {
   text(70, 20, round(as.numeric(cm$overall[2]), 3), cex=1.4)
 }
 
+get_performance <- function(res){
+  
+  cnames=c(
+    "NB",
+    "BAGGING",
+    "BOOSTING",
+    "RF",
+    "SLDA",
+    "SVM",
+    "TREE"   
+  )
+  
+  perf_df <- data.frame(
+    Classifier = cnames,
+    Accuracy = NA,
+    AccuracySD = NA,
+    Sensitivity = NA,
+    Specificity = NA,
+    Precision = NA,
+    Recall = NA,
+    F1 = NA,
+    Kappa = NA
+  )
+  
+  
+  for(cname in cnames){
 
-# bla <- list(
-#   dtm = NA,
-#   sparse_df = NA,
-#   val = NA,
-#   nb = NA,
-#   other = NA,
-#   cm = NA
+    perf_df$Accuracy[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$overall[['Accuracy']]
+    perf_df$AccuracySD[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$overall[['AccuracySD']]
+    perf_df$Sensitivity[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$byClass[['Sensitivity']]
+    perf_df$Specificity[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$byClass[['Specificity']]
+    perf_df$Precision[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$byClass[['Precision']]
+    perf_df$Recall[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$byClass[['Recall']]
+    perf_df$F1[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$byClass[['F1']]
+    perf_df$Kappa[perf_df$Classifier == cname] <-
+      res$classifiers[[cname]]$cm$overall[['Kappa']]
+
+    # perf_df <- perf_df %>%
+    #   filter(Classifier == cname) %>%
+    #   mutate(
+    #     Accuracy = res$classifiers[[cname]]$cm$overall[['Accuracy']],
+    #     Accuracy_std = res$classifiers[[cname]]$cm$overall[['Accuracy_std']],
+    #     Sensitivity = res$classifiers[[cname]]$cm$byClass[['Sensitivity']],
+    #     Specificity = res$classifiers[[cname]]$cm$byClass[['Specificity']],
+    #     Precision = res$classifiers[[cname]]$cm$byClass[['Precision']],
+    #     Recall = res$classifiers[[cname]]$cm$byClass[['Recall']],
+    #     F1 = res$classifiers[[cname]]$cm$byClass[['F1']],
+    #     Kappa = res$classifiers[[cname]]$cm$overall[['Kappa']]
+    #   )
+
+
+    # acc <- res$classifiers[[cname]]$cm$overall[['Accuracy']]
+    # acc_std <- res$classifiers[[cname]]$cm$overall[['Accuracy_std']]
+    # ss <- res$classifiers[[cname]]$cm$byClass[['Sensitivity']]
+    # sc <- res$classifiers[[cname]]$cm$byClass[['Specificity']]
+    # pr <- res$classifiers[[cname]]$cm$byClass[['Precision']]
+    # rc <- res$classifiers[[cname]]$cm$byClass[['Recall']]
+    # f1 <- res$classifiers[[cname]]$cm$byClass[['F1']]
+    # kp <- res$classifiers[[cname]]$cm$overall[['Kappa']]
+  }
+  
+  # cm_plot <- draw_confusion_matrix(res$classifiers[[cname]]$cm)
+  
+  
+  return(perf_df)
+
+}
+
+
+# t_control = tune.control(
+#   random = F,
+#   nrepeat = 5,
+#   sampling = c("cross"),
+#   cross = 5,
+#   performances = T
 # )
 # 
+# nb2 <- naiveBayes(
+#   c1b_train_t[,!names(c1b_train_t) %in% 'man_sentiment'],
+#   c1b_train_t$man_sentiment,
+#   t_control
+#   )
+
+# nb3 <- train(
+#   c1b_train_t[,!names(c1b_train_t) %in% 'man_sentiment'],
+#   c1b_train_t$man_sentiment,
+#   'nb',
+#   trControl=trainControl(
+#     method='cv',
+#     number=5)
+# )
+# 
+# nb3_pred <- predict(
+#   nb3, 
+#   newdata = c1b_val_t[,!names(c1b_val_t) %in% 'man_sentiment'])
+# 
+# nb3_cm <- confusionMatrix(
+#   nb3_pred, 
+#   reference = c1b_val_t$man_sentiment)
 # 
 # 
+# nb <- naiveBayes(
+#   c1b_train_t[,!names(c1b_train_t) %in% 'man_sentiment'],
+#   c1b_train_t$man_sentiment)
 # 
+# nb_pred <- predict(
+#   nb,
+#   c1b_val_t[,!names(c1b_val_t) %in% 'man_sentiment']
+# )
 # 
-# 
+# nb_cm <- confusionMatrix(
+#   nb_pred,
+#   reference = c1b_val_t$man_sentiment
+# )
+
 # container = create_container(
 #   c1b_train_dtm_t,
 #   c1b$man_sentiment,
@@ -590,9 +723,23 @@ draw_confusion_matrix <- function(cm, model) {
 #     "RF",
 #     "SLDA",
 #     "SVM",
-#     "TREE"   
+#     "TREE"
 #     )
 # )
+# 
+# 
+# cv_acc <- cross_validate(container, 
+#                5,
+#                algorithm=c(
+#                  "BAGGING",
+#                  "BOOSTING",
+#                  "GLMNET",
+#                  "RF",
+#                  "SLDA",
+#                  "SVM",
+#                  "TREE"   
+#                ))
+
 # 
 # results = classify_models(container, models)
 # 

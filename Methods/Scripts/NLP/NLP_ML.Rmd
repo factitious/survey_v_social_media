@@ -19,7 +19,8 @@ output: html_notebook
   * 1. Query: all
 
 
-## Cleaning
+
+Cleaning stages.
 1a:
 * Remove useless columns
 * Done in python scripts (Reddit/main and Twitter/main)
@@ -108,11 +109,12 @@ c2 <- c2 %>%
 # list[c1b_train_og, c1b_val_og] <- get_split(c1b_og)
 # 
 # nb <- train_nb(c1b_train_og, c1b_val_og)
-# list[c1b_train_cm_og, c1b_val_cm_og] <- do_pred_val(nb, c1b_train_og, c1b_val_og)
+# list[c1b_train_cm_og, c1b_val_cm_og] <- do_pred_nb(nb, c1b_train_og, c1b_val_og)
 # 
 # c1b_train_cm_og$overall[['Accuracy']]
 # c1b_val_cm_og$overall[['Accuracy']]
 ```
+
 
 
 ## 2. Predictions based on text
@@ -123,9 +125,15 @@ c2 <- c2 %>%
 list[c1b_train_dtm_t, sparse_c1b_t] <- get_sparse_df(c1b, useMetrics = F)
 list[c1b_train_t, c1b_val_t] <- get_split(sparse_c1b_t)
 nb <- train_nb(c1b_train_t, c1b_val_t)
-list[c1b_train_cm_t, c1b_val_cm_t] <- do_pred_val(nb, c1b_train_t, c1b_val_t)
+list[c1b_train_cm_t, c1b_val_cm_t] <- do_pred_nb(nb, c1b_train_t, c1b_val_t)
 # c1b_train_cm_t$overall[['Accuracy']]
 # c1b_val_cm_t$overall[['Accuracy']]
+```
+
+```{r}
+c1b_res <- train_classifiers(c1b, useMetrics = F)
+c2_res <- train_classifiers(c2, useMetrics = F)
+
 ```
 
 
@@ -134,12 +142,23 @@ list[c1b_train_cm_t, c1b_val_cm_t] <- do_pred_val(nb, c1b_train_t, c1b_val_t)
 * Using document term matrix + lexicon scores + source + location.
 
 ```{r}
-list[c1b_train_dtm_t_og, sparse_c1b_t_og] <- get_sparse_df(c1b, useMetrics = T)
-list[c1b_train_t_og, c1b_val_t_og] <- get_split(sparse_c1b_t_og)
-nb <- train_nb(c1b_train_t_og, c1b_val_t_og)
-list[c1b_train_cm_t_og, c1b_val_cm_t_og] <- do_pred_val(nb, c1b_train_t_og, c1b_val_t_og)
-c1b_train_cm_t_og$overall[['Accuracy']]
-c1b_val_cm_t_og$overall[['Accuracy']]
+# list[c1b_train_dtm_t_og, sparse_c1b_t_og] <- get_sparse_df(c1b, useMetrics = T)
+# list[c1b_train_t_og, c1b_val_t_og] <- get_split(sparse_c1b_t_og)
+# nb <- train_nb(c1b_train_t_og, c1b_val_t_og)
+# list[c1b_train_cm_t_og, c1b_val_cm_t_og] <- do_pred_nb(nb, c1b_train_t_og, c1b_val_t_og)
+# c1b_train_cm_t_og$overall[['Accuracy']]
+# c1b_val_cm_t_og$overall[['Accuracy']]
+```
+
+```{r}
+c1b_res_metrics <- train_classifiers(c1b, useMetrics = T)
+c2_res_metrics <- train_classifiers(c2, useMetrics = T)
+```
+
+## Metrics
+
+```{r}
+c1b_perf <- get_performance(c1b_res)
 ```
 
 
