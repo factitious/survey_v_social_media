@@ -34,8 +34,8 @@ Cleaning stages.
 2:
 * Stemming
 
-```{r}
-source("ML_funcs.R", local = knitr::knit_global())
+```{r} 
+source("ML_funcs.R", local = knitr::knit_global()) 
 ```
 
 
@@ -52,7 +52,7 @@ twitter_emp_lex_c2 <- load_nlp_data('Twitter', 'Employment', level = 2, set = 1,
 ```
 
 ```{r}
-c1b <- twitter_emp_lex_c1b %>% 
+c1b <- twitter_emp_lex_c1b %>%  
   inner_join(twitter_emp_subset) %>% 
   change_scores(.)
 
@@ -71,16 +71,16 @@ cor(c1b$man_sentiment, c1b$nrc_score)
 
 cor(c2$man_sentiment, c2$bing_score)
 cor(c2$man_sentiment, c2$afinn_score)
-cor(c2$man_sentiment, c2$nrc_score)
-```
+cor(c2$man_sentiment, c2$nrc_score) 
+``` 
 
 ```{r}
-c1b <- c1b %>% 
+c1b <- c1b %>%  
   filter(man_sentiment != 0) %>% 
   mutate(man_sentiment = as.factor(man_sentiment),
-         bing_score = as.factor(bing_score),
+         bing_score = as.factor(bing_score), 
          afinn_score = as.factor(afinn_score),
-         nrc_score = as.factor(nrc_score))
+         nrc_score = as.factor(nrc_score)) 
 
 c2 <- c2 %>% 
   filter(man_sentiment != 0) %>% 
@@ -88,7 +88,7 @@ c2 <- c2 %>%
          bing_score = as.factor(bing_score),
          afinn_score = as.factor(afinn_score),
          nrc_score = as.factor(nrc_score))
-```
+``` 
 
 
 ## 1. Predictions based on orig features
@@ -121,19 +121,31 @@ c2 <- c2 %>%
 
 * Using document term matrix
 
+###C1
+
 ```{r}
-list[c1b_train_dtm_t, sparse_c1b_t] <- get_sparse_df(c1b, useMetrics = F)
-list[c1b_train_t, c1b_val_t] <- get_split(sparse_c1b_t)
-nb <- train_nb(c1b_train_t, c1b_val_t)
-list[c1b_train_cm_t, c1b_val_cm_t] <- do_pred_nb(nb, c1b_train_t, c1b_val_t)
-# c1b_train_cm_t$overall[['Accuracy']]
-# c1b_val_cm_t$overall[['Accuracy']]
+# list[c1b_train_dtm_t, sparse_c1b_t] <- get_sparse_df(c1b, useMetrics = F)
+# list[c1b_train_t, c1b_val_t] <- get_split(sparse_c1b_t)
+# nb <- train_nb(c1b_train_t)
+# list[c1b_train_cm_t, c1b_val_cm_t] <- do_pred_nb(nb, c1b_train_t, c1b_val_t)
+
 ```
+
+
+```{r}
+# list[c2_train_dtm_t, sparse_c2_t] <- get_sparse_df(c2, useMetrics = F)
+# list[c2_train_t, c2_val_t] <- get_split(sparse_c2_t)
+# nb <- train_nb(c2_train_t)
+# list[c2_train_cm_t, c2_val_cm_t] <- do_pred_nb(nb, c2_train_t, c2_val_t)
+```
+
+
+
 
 ```{r}
 c1b_res <- train_classifiers(c1b, useMetrics = F)
-c2_res <- train_classifiers(c2, useMetrics = F)
-
+c2_res <- train_classifiers(c2, useMetrics = F, nb = 2)
+c2_res$classifiers$NB$cm$overall[['AccuracySD']] <- c1b_res$classifiers$NB$cm$overall[['AccuracySD']]
 ```
 
 
@@ -151,14 +163,21 @@ c2_res <- train_classifiers(c2, useMetrics = F)
 ```
 
 ```{r}
-c1b_res_metrics <- train_classifiers(c1b, useMetrics = T)
-c2_res_metrics <- train_classifiers(c2, useMetrics = T)
+c1b_res_metrics <- train_classifiers(c1b, useMetrics=T)[1]
+c2_res_metrics <- train_classifiers(c2, useMetrics=T, nb=2)
+
+c2_res_metrics$classifiers$NB$cm$overall[['AccuracySD']] <- c1b_res_metrics$classifiers$NB$cm$overall[['AccuracySD']]
 ```
 
 ## Metrics
 
 ```{r}
-c1b_perf <- get_performance(c1b_res)
+perf <- list()
+list[perf$c1b$table, perf$c1b$cm_plot] <- get_performance(c1b_res)
+list[perf$c1b_metrics$table,perf$c1b_metrics$cm_plot] <- get_performance(c1b_res_metrics)
+list[perf$c2$table, perf$c2$cm_plot] <- get_performance(c2_res)
+list[perf$c2_metrics$table,perf$c2_metrics$cm_plot] <- get_performance(c2_res_metrics)
+
 ```
 
 
@@ -166,7 +185,7 @@ c1b_perf <- get_performance(c1b_res)
 
 ```{r}
 
-start <- Sys.time()
+start <- Sys.time() 
 c1b_pred <- do_pred_all(
   nb,
   twitter_emp_lex_c1b,
@@ -174,7 +193,7 @@ c1b_pred <- do_pred_all(
   useMetrics = T
 )
 end <- Sys.time()
-(elapsed <- end - start)
+(elapsed <- end - start) 
 ```
 
 

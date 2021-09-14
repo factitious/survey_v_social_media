@@ -1,12 +1,3 @@
-# For testing purposes
-
-# t <- load_data('Twitter', 'Employment', 1) %>%
-#   mutate(sentiment = ifelse(runif(nrow(.)) > 0.5, 'Positive', 'Negative'))
-# 
-# t_sent <- t %>% 
-#   select(text, sentiment) %>% 
-#   slice(1:15000)
-
 library(tidyverse)
 library(tidytext)
 library(lubridate)
@@ -18,7 +9,8 @@ library(RTextTools)
 library(SnowballC)
 library(caTools)
 library(caret)
-# library(klaR)
+library(data.table)
+library(formattable)
 
 list <- structure(NA,class="result")
 "[<-.result" <- function(x,...,value) {
@@ -289,8 +281,7 @@ change_scores <- function(df){
     
 }
 
-get_sparse_df <- function(df, train_dtm = NA, useMetrics = FALSE){
-  
+get_sparse_df <- function(df, train_dtm = NA, useMetrics = FALSE, stemIt = F){
   
   if(all(is.na(train_dtm))){
     
@@ -299,7 +290,7 @@ get_sparse_df <- function(df, train_dtm = NA, useMetrics = FALSE){
       language = 'english',
       removeStopwords = F,
       removeNumbers = F,
-      stemWords = F)
+      stemWords = stemIt)
     
     train_dtm <- removeSparseTerms(dtm, 0.995)
     
@@ -347,18 +338,18 @@ get_split <- function(df){
   
   train_idx <- sample.split(df$man_sentiment, SplitRatio = 0.8)
   
-  train <- subset(df, train_idx ==T)
-  val <- subset(df, train_idx == F)
+  train_df <- subset(df, train_idx ==T)
+  val_df <- subset(df, train_idx == F)
   
-  return(list(train, val))
+  return(list(train_df, val_df))
   
 }
 
-train_nb <- function(train, val){
+train_nb <- function(train_df){
   
   classifier = naiveBayes(
-    train[,!names(train) %in% 'man_sentiment'],
-    train$man_sentiment)
+    train_df[,!names(train_df) %in% 'man_sentiment'],
+    train_df$man_sentiment)
   
   return(classifier)
 }
@@ -389,64 +380,71 @@ train_other <- function(df, dtm){
   return(list(container, models, results))
 }
 
-do_pred_nb <- function(classifier, train, val){
+do_pred_nb <- function(classifier, train_df, val_df){
   
-  train_pred = predict(classifier, train[,!names(train) %in% 'man_sentiment'])
-  val_pred = predict(classifier, val[,!names(val) %in% 'man_sentiment'])
+  train_pred = predict(classifier, train_df[,!names(train_df) %in% 'man_sentiment'])
+  val_pred = predict(classifier, val_df[,!names(val_df) %in% 'man_sentiment'])
     
-  train_cm <- confusionMatrix(train_pred, reference = train$man_sentiment)
-  test_cm <- confusionMatrix(val_pred, reference = val$man_sentiment)
+  train_cm <- confusionMatrix(train_pred, reference = train_df$man_sentiment)
+  test_cm <- confusionMatrix(val_pred, reference = val_df$man_sentiment)
   
   return(list(train_cm, test_cm))
 
 }
 
-train_classifiers <- function(df, useMetrics = F){
+train_classifiers <- function(df, useMetrics = F, stemIt = F, nb = 1){
   
   set.seed(13)
   
   list[dtm, df_sparse] <- get_sparse_df(
     df, 
-    useMetrics = useMetrics)
+    useMetrics = useMetrics,
+    stemIt = stemIt
+    )
   
-  list[train, val] <- get_split(df_sparse)
+  list[train_df, val_df] <- get_split(df_sparse)
   
   classifiers <- list()
   
-  classifiers$NB <- train(
-    train[,!names(train) %in% 'man_sentiment'],
-    train$man_sentiment,
-    'nb',
-    trControl=trainControl(
-      method='cv',
-      number=5)
-  ) %>% suppressWarnings()
-  
-  classifiers$NB$pred <- predict(
-    classifiers$NB, 
-    newdata = val[,!names(val) %in% 'man_sentiment']) %>% 
-    suppressWarnings()
-  
-  classifiers$NB$cm <- confusionMatrix(
-    classifiers$NB$pred, 
-    reference = val$man_sentiment)
-  
-  classifiers$NB$cm$overall[['Accuracy']] <- classifiers$NB$results[['Accuracy']][1]
-  classifiers$NB$cm$overall[['AccuracySD']] <- classifiers$NB$results[['AccuracySD']][1]
-  
-  # classifiers$NB <- train_nb(train, val)
+  if(nb == 1){
+    
+    classifiers$NB <- train(
+      train_df[,!names(train_df) %in% 'man_sentiment'],
+      train_df$man_sentiment,
+      'nb',
+      trControl=trainControl(
+        method='cv',
+        number=5,
+        allowParallel = FALSE,
+        sampling = "up")
+    ) %>% suppressWarnings()
 
-  # classifiers$NB$pred <- predict(
-  #   classifiers$NB,
-  #   val[,!names(val) %in% 'man_sentiment']
-  # )
+    classifiers$NB$pred <- predict(
+      classifiers$NB,
+      newdata = val_df[,!names(val_df) %in% 'man_sentiment']) %>%
+      suppressWarnings()
+    
+    classifiers$NB$cm <- confusionMatrix(
+      classifiers$NB$pred,
+      reference = val_df$man_sentiment)
+    
+    classifiers$NB$cm$overall[['Accuracy']] <- classifiers$NB$results[['Accuracy']][1]
+    classifiers$NB$cm$overall[['AccuracySD']] <- classifiers$NB$results[['AccuracySD']][1]
+
+  } else if(nb == 2){
+    
+    classifiers$NB <- train_nb(train_df)
   
-  # classifiers$NB$cm <- confusionMatrix(
-  #   classifiers$NB$pred,
-  #   reference = val$man_sentiment
-  # )
+    classifiers$NB$pred <- predict(
+      classifiers$NB,
+      val_df[,!names(val_df) %in% 'man_sentiment']
+    )
   
-  # nb3$results$Accuracy
+    classifiers$NB$cm <- confusionMatrix(
+      classifiers$NB$pred,
+      reference = val_df$man_sentiment
+    )
+  }
   
   algos=c(
     "BAGGING",
@@ -496,9 +494,9 @@ train_classifiers <- function(df, useMetrics = F){
     classifiers = classifiers
   )
   
-  return(res)
+  # TODO: Return dtm here as well. 
+  return(list(res,dtm))
 }
-
 
 # Need to updated this if NaiveBauyes is not the best model.
 do_pred_all <- function(classifier, df, train_dtm, useMetrics = F){
@@ -583,6 +581,10 @@ draw_confusion_matrix <- function(cm, model) {
   text(30, 20, round(as.numeric(cm$overall[1]), 3), cex=1.4)
   text(70, 35, names(cm$overall[2]), cex=1.5, font=2)
   text(70, 20, round(as.numeric(cm$overall[2]), 3), cex=1.4)
+  
+  p <- recordPlot()
+  
+  return(p)
 }
 
 get_performance <- function(res){
@@ -609,6 +611,7 @@ get_performance <- function(res){
     Kappa = NA
   )
   
+  cm_plot <- list()
   
   for(cname in cnames){
 
@@ -628,38 +631,14 @@ get_performance <- function(res){
       res$classifiers[[cname]]$cm$byClass[['F1']]
     perf_df$Kappa[perf_df$Classifier == cname] <-
       res$classifiers[[cname]]$cm$overall[['Kappa']]
-
-    # perf_df <- perf_df %>%
-    #   filter(Classifier == cname) %>%
-    #   mutate(
-    #     Accuracy = res$classifiers[[cname]]$cm$overall[['Accuracy']],
-    #     Accuracy_std = res$classifiers[[cname]]$cm$overall[['Accuracy_std']],
-    #     Sensitivity = res$classifiers[[cname]]$cm$byClass[['Sensitivity']],
-    #     Specificity = res$classifiers[[cname]]$cm$byClass[['Specificity']],
-    #     Precision = res$classifiers[[cname]]$cm$byClass[['Precision']],
-    #     Recall = res$classifiers[[cname]]$cm$byClass[['Recall']],
-    #     F1 = res$classifiers[[cname]]$cm$byClass[['F1']],
-    #     Kappa = res$classifiers[[cname]]$cm$overall[['Kappa']]
-    #   )
-
-
-    # acc <- res$classifiers[[cname]]$cm$overall[['Accuracy']]
-    # acc_std <- res$classifiers[[cname]]$cm$overall[['Accuracy_std']]
-    # ss <- res$classifiers[[cname]]$cm$byClass[['Sensitivity']]
-    # sc <- res$classifiers[[cname]]$cm$byClass[['Specificity']]
-    # pr <- res$classifiers[[cname]]$cm$byClass[['Precision']]
-    # rc <- res$classifiers[[cname]]$cm$byClass[['Recall']]
-    # f1 <- res$classifiers[[cname]]$cm$byClass[['F1']]
-    # kp <- res$classifiers[[cname]]$cm$overall[['Kappa']]
+    
+    cm_plot[[cname]] <- draw_confusion_matrix(res$classifiers[[cname]]$cm, cname)
   }
   
-  # cm_plot <- draw_confusion_matrix(res$classifiers[[cname]]$cm)
   
-  
-  return(perf_df)
+  return(list(perf_df, cm_plot))
 
 }
-
 
 # t_control = tune.control(
 #   random = F,
@@ -1087,4 +1066,83 @@ get_performance <- function(res){
 # o_pred = predict(classifier, o_df)
 # 
 # o_cm <- confusionMatrix(o_pred, reference = o$sent)
+# 
+
+# 
+# set.seed(13)
+# 
+# dtm <- 
+#   
+#   
+# list[c1b_dtm, c1b_df] <- get_sparse_df(
+#   c1b,
+#   useMetrics = F)
+# 
+# list[c1b_dtm_s, c1b_df_s] <- get_sparse_df(
+#   c1b,
+#   useMetrics = F,
+#   stemIt = TRUE)
+# 
+# list[c2_dtm, c2_df] <- get_sparse_df(
+#   c2,
+#   useMetrics = F)
+# 
+# list[dtm_stem, df_sparse_stem] <- get_sparse_df(
+#   c1b,
+#   useMetrics = F,
+#   stemIt = T
+# )
+# 
+# 
+# list[train_df, val_df] <- get_split(df_sparse)
+# 
+# 
+# 
+# list[train_df_c1b, val_df_c1b] <- get_split(df_sparse_c1b)
+# 
+# classifiers <- list()
+# # 
+# classifiers$NB_c1b <- train(
+#   # train_df[,!names(train_df) %in% 'man_sentiment'],
+#   man_sentiment ~ .,
+#   data = c1b_df,
+#   method = 'nb')
+# 
+# classifiers$NB_c2 <- train(
+#   c2_df[,!names(c2_df) %in% 'man_sentiment'],
+#   c2_df[['man_sentiment']],
+#   method = 'nb',
+#   trControl=trainControl(
+#     method='cv',
+#     number=5,
+#     allowParallel = FALSE,
+#     sampling = "up"))
+# 
+# 
+# dtm1 <- create_matrix(
+#   c2$text,
+#   language = 'english',
+#   stemWords = TRUE)
+# 
+# dtm2 <- create_matrix(
+#   c1b$text,
+#   language = 'english',
+#   stemWords = FALSE)
+# 
+
+# 
+# classifiers$NB_c2 <- train(
+#   # train_df[,!names(train_df) %in% 'man_sentiment'],
+#   man_sentiment ~ ., 
+#   data = train_df,
+#   method = 'nb')
+# 
+# 
+# ,
+#   'nb',
+#   trControl=trainControl(
+#     method='cv',
+#     number=5)
+# ) %>% suppressWarnings()
+# 
 # 
