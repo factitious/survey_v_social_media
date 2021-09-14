@@ -163,13 +163,13 @@ c2_res$classifiers$NB$cm$overall[['AccuracySD']] <- c1b_res$classifiers$NB$cm$ov
 ```
 
 ```{r}
-c1b_res_metrics <- train_classifiers(c1b, useMetrics=T)[1]
+c1b_res_metrics <- train_classifiers(c1b, useMetrics=T)
 c2_res_metrics <- train_classifiers(c2, useMetrics=T, nb=2)
 
 c2_res_metrics$classifiers$NB$cm$overall[['AccuracySD']] <- c1b_res_metrics$classifiers$NB$cm$overall[['AccuracySD']]
 ```
 
-## Metrics
+## Performances
 
 ```{r}
 perf <- list()
@@ -177,6 +177,13 @@ list[perf$c1b$table, perf$c1b$cm_plot] <- get_performance(c1b_res)
 list[perf$c1b_metrics$table,perf$c1b_metrics$cm_plot] <- get_performance(c1b_res_metrics)
 list[perf$c2$table, perf$c2$cm_plot] <- get_performance(c2_res)
 list[perf$c2_metrics$table,perf$c2_metrics$cm_plot] <- get_performance(c2_res_metrics)
+
+```
+
+## Format tables for report.
+
+```{r}
+# formattable(perf$c1b$table)
 
 ```
 

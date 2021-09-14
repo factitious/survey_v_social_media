@@ -80,12 +80,12 @@ save_ml <- function(df, topic, stage = '1b', subsets = T){
   )
   
   if(subsets){
-    data_path <- glue('Methods/Data/{source}/NLP/ML/Subsets')
+    data_path <- glue('Methods/Data/Twitter/NLP/ML/Subsets')
   } else{
-    data_path <- glue('Methods/Data/{source}/NLP/ML/c{stage}')
+    data_path <- glue('Methods/Data/Twitter/NLP/ML/c{stage}')
   }
   
-  df_name <- glue('{topic_short}_{set}.rds')
+  df_name <- glue('{topic_short}_1.rds')
   
   df_path <- file.path(root_dir,
                        data_path,
@@ -303,10 +303,11 @@ get_sparse_df <- function(df, train_dtm = NA, useMetrics = FALSE, stemIt = F){
     
     dtm <- DocumentTermMatrix(
       Corpus(VectorSource(df$text)),
-      control = list(dictionary = Terms(train_dtm) )
+      control = list(dictionary = Terms(train_dtm))
     )
     
     sparse_df <- as.data.frame(as.matrix(dtm))
+    sparse_df <- sparse_df[, order(colnames(sparse_df))]
 
   }
   
@@ -494,31 +495,7 @@ train_classifiers <- function(df, useMetrics = F, stemIt = F, nb = 1){
     classifiers = classifiers
   )
   
-  # TODO: Return dtm here as well. 
-  return(list(res,dtm))
-}
-
-# Need to updated this if NaiveBauyes is not the best model.
-do_pred_all <- function(classifier, df, train_dtm, useMetrics = F){
-  
-  # df <- df[sample(nrow(df), 100),] 
-  
-  df <- df %>% 
-    mutate(
-           bing_score = as.factor(bing_score),
-           afinn_score = as.factor(afinn_score),
-           nrc_score = as.factor(nrc_score)
-           )
-  
-  sparse_df <- get_sparse_df(df, train_dtm, useMetrics = useMetrics)
-  
-  sparse_df <- df %>% 
-    add_column(man_sentiment = NA)
-  
-  sparse_df$man_sentiment = predict(classifier, sparse_df)
-  
-  return(sparse_df)
-  
+  return(res)
 }
 
 draw_confusion_matrix <- function(cm, model) {
@@ -614,7 +591,7 @@ get_performance <- function(res){
   cm_plot <- list()
   
   for(cname in cnames){
-
+    
     perf_df$Accuracy[perf_df$Classifier == cname] <-
       res$classifiers[[cname]]$cm$overall[['Accuracy']]
     perf_df$AccuracySD[perf_df$Classifier == cname] <-
@@ -636,9 +613,71 @@ get_performance <- function(res){
   }
   
   
-  return(list(perf_df, cm_plot))
-
+  return(list(table = perf_df, cm_plot = cm_plot))
+  
 }
+
+# Need to updated this if NaiveBauyes is not the best model.
+do_pred_all <- function(classifier, df, train_dtm, useMetrics = F){
+  
+  # df <- df[sample(nrow(df), 100),] 
+  
+  df <- df %>% 
+    mutate(
+           bing_score = as.factor(bing_score),
+           afinn_score = as.factor(afinn_score),
+           nrc_score = as.factor(nrc_score)
+           )
+  
+  list[dtm, sparse_df] <- get_sparse_df(
+    df, 
+    train_dtm, 
+    useMetrics = useMetrics)
+  
+  sparse_df <- sparse_df %>%
+    add_column(man_sentiment = NA) %>% 
+    mutate_if(is.numeric, as.factor)
+  
+  # return(sparse_df)
+  
+  sparse_df$man_sentiment = predict(classifier, sparse_df)
+  
+  return(sparse_df)
+  
+}
+
+
+# df <- twitter_emp_lex_c1b
+# 
+# df <- df %>%
+#   mutate(
+#     bing_score = as.factor(bing_score),
+#     afinn_score = as.factor(afinn_score),
+#     nrc_score = as.factor(nrc_score)
+#   )
+# 
+# 
+# list[dtm, sparse_df] <- get_sparse_df(
+#   df,
+#   c1b_res$dtm,
+#   useMetrics = F)
+# 
+# 
+# dtm <- DocumentTermMatrix(
+#   Corpus(VectorSource(df$text)),
+#   control = list(dictionary = Terms(c1b_res$dtm))
+# )
+# 
+# sparse_df <- as.data.frame(as.matrix(dtm))
+# sparse_df <- sparse_df[, order(colnames(sparse_df))]
+# 
+# sparse_df <- sparse_df %>%
+#   add_column(man_sentiment = NA) %>%
+#   mutate_if(is.numeric, as.factor)
+# 
+# bla <- predict(
+#   c1b_res$classifiers$NB, 
+#   sparse_df[,!names(sparse_df) %in% 'man_sentiment'])
 
 # t_control = tune.control(
 #   random = F,
