@@ -1,0 +1,11 @@
+---
+title: "Final analysis"
+output: html_notebook
+---
+
+# Objective measures
+
+```{r}
+source("manalysis_funcs.R", local = knitr::knit_global())
+```
+

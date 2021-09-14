@@ -172,6 +172,12 @@ load('/Volumes/Survey_Social_Media_Compare/Methods/Data/Surveys/HPS/Proc/HPS_dat
 load('/Volumes/Survey_Social_Media_Compare/Methods/Data/Surveys/HPS/Proc/clean_HPS_data.RData')
 ```
 
+
+```{r}
+
+```
+
+
 ### Employment1
 
 Employment Status and Sector of Employment, by Select Characteristics: United States
@@ -307,6 +313,59 @@ hps_vaccData[['P11_vacc']]
 ```{r}
 hps_cleanVacc[['P11_vacc']]
 ```
+
+
+## Aggregate
+
+```{r}
+# allPeriods <- function(var_names, table){
+#   
+#   
+#   for (i in 1:length(var_names)){
+#     
+#     # Clean df corresponding to each period.
+#     
+#     if (table == "emp1"){
+#       df_i = cleanEmp1(get(var_names[[i]]))
+#     }
+#     
+#     if (table == "emp2"){
+#       df_i = cleanEmp2(get(var_names[[i]]))
+#     }
+#     
+#     if (table == "vacc"){
+#       if (i > 6){
+#         df_i = cleanVcc(get(var_names[[i]]), phase = "3.0")
+#       } else {
+#         df_i = cleanVcc(get(var_names[[i]]), phase = "3.1")
+#       }
+#       
+#     }
+#     
+#     
+#     # Get period from name.
+#     p <- sub("\\_.*", "", var_names[[i]])
+#     
+#     # Add a column corresponding to the period
+#     df_i <- df_i %>% 
+#       add_column(Period = p, .before = 1)
+#     
+#     # Initialize df for storing all periods on the first iteration, bind rows on subsequent iterations.
+#     if (i == 1){
+#       df_all_periods <- df_i
+#     } else {
+#       df_all_periods <- bind_rows(df_all_periods, df_i)
+#     }
+#     
+#   }
+#   
+#   return(df_all_periods)
+#   
+# }
+
+```
+
+
 
 ### Notes:
 

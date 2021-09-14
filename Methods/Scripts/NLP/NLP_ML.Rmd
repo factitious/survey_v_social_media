@@ -173,11 +173,11 @@ c2_res_metrics$classifiers$NB$cm$overall[['AccuracySD']] <- c1b_res_metrics$clas
 
 ```{r}
 perf <- list()
-list[perf$c1b$table, perf$c1b$cm_plot] <- get_performance(c1b_res)
-list[perf$c1b_metrics$table,perf$c1b_metrics$cm_plot] <- get_performance(c1b_res_metrics)
-list[perf$c2$table, perf$c2$cm_plot] <- get_performance(c2_res)
-list[perf$c2_metrics$table,perf$c2_metrics$cm_plot] <- get_performance(c2_res_metrics)
 
+perf$c1b <- get_performance(c1b_res);
+perf$c1b_metrics <- get_performance(c1b_res_metrics)
+perf$c2 <- get_performance(c2_res)
+perf$c2_metrics <- get_performance(c2_res_metrics)
 ```
 
 ## Format tables for report.
@@ -194,13 +194,36 @@ list[perf$c2_metrics$table,perf$c2_metrics$cm_plot] <- get_performance(c2_res_me
 
 start <- Sys.time() 
 c1b_pred <- do_pred_all(
-  nb,
-  twitter_emp_lex_c1b,
-  train_dtm = c1b_train_dtm_t_og,
-  useMetrics = T
+  classifier = c1b_res$classifiers$NB,
+  df = twitter_emp_lex_c1b,
+  train_dtm = c1b_res$dtm,
+  useMetrics = F
 )
 end <- Sys.time()
 (elapsed <- end - start) 
+
+start <- Sys.time() 
+c2_pred <- do_pred_all(
+  classifier = c2_res$classifiers$NB,
+  df = twitter_emp_lex_c2,
+  train_dtm = c2_res$dtm,
+  useMetrics = F
+)
+end <- Sys.time()
+(elapsed <- end - start) 
+
+c2_final <- twitter_emp_lex_c2%>% 
+  add_column(man_sentiment = c2_pred$man_sentiment)
+
+save_ml(
+  df = c2_final,
+  topic = 'Employment',
+  stage = '2',
+  subsets = Fr
+)
+
+
+  
 ```
 
 

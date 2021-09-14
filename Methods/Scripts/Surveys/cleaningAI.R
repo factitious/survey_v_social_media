@@ -97,7 +97,6 @@ cleanVacc <- function(df, period){
 }
 
 
-
 cleanAI <- function(empData, vaccData){
   
   cleanEmpData <- vector("list", length = length(empData))
