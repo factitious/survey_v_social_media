@@ -22,7 +22,9 @@ list <- structure(NA,class="result")
 }
 
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
-data_path <- 'Methods/Data/Objective'
+oj_data_path <- 'Methods/Data/Objective'
+ai_data_path <- 'Methods/Data/Surveys/Axios-Ipsos/Aggregate'
+hps_data_path <- 'Methods/Data/Surveys/HPS/Aggregate'
 setwd(root_dir)
 
 ################################################
@@ -33,7 +35,7 @@ setwd(root_dir)
 sp500 <- read.csv(
   file.path(
     root_dir,
-    data_path,
+    oj_data_path,
     'sp500.csv'
   )
 )
@@ -58,7 +60,53 @@ ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
 
 
 ################################################
-###Setup funcs
+### Load survey data
+
+ai <- list()
+hps <- list()
+
+ai$emp <- readRDS(
+  file.path(
+    root_dir, 
+    ai_data_path,
+    'emp.rds'
+    )
+)
+  
+ai$vac <- readRDS(
+  file.path(
+    root_dir, 
+    ai_data_path,
+    'vac.rds'
+  )
+)
+
+hps$emp <- readRDS(
+  file.path(
+    root_dir, 
+    hps_data_path,
+    'emp.rds'
+  )
+)
+
+hps$vac_s1 <- readRDS(
+  file.path(
+    root_dir, 
+    hps_data_path,
+    'vac_s1.rds'
+  )
+)
+
+hps$vac_s2 <- readRDS(
+  file.path(
+    root_dir, 
+    hps_data_path,
+    'vac_s2.rds'
+  )
+)
+
+################################################
+### Load social media data.
 
 load_nlp_data <- function(
   source, 

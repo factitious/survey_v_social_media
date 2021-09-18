@@ -173,11 +173,6 @@ load('/Volumes/Survey_Social_Media_Compare/Methods/Data/Surveys/HPS/Proc/clean_H
 ```
 
 
-```{r}
-
-```
-
-
 ### Employment1
 
 Employment Status and Sector of Employment, by Select Characteristics: United States

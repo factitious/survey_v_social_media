@@ -2,7 +2,7 @@ library(readxl)
 library(tidyverse)
 library(data.table)
 library(glue)
-
+ 
 
 rootDir <- '/Volumes/Survey_Social_Media_Compare'
 proc_data_path <- file.path(rootDir,"Methods/Data/Surveys/HPS/Proc")
@@ -36,18 +36,20 @@ cleanEmp1 <- function(df){
   # These will include total counts, as well as counts based on age and sex.
   df <- df %>% 
     slice(1:10) %>% 
-    filter(demog != "Age" & demog != "Sex")
+    filter(demog != "Age" & demog != "Sex")=
   
   # Calculate the ratio we're interested in based on total counts, as well as for each age group and sex in part
   # Ratio: Proportion of individuals that experienced loss of income out of all respondents (that reported on this measure)
-  # df <- df %>% 
-  #   mutate(income_loss = income_loss_yes/(income_loss_yes + income_loss_no)) %>% 
+  # df <- df %>%
+  #   mutate(income_loss = income_loss_yes/(income_loss_yes + income_loss_no)) %>%
   #   select(demog, income_loss)
   
-  # # Convert to wide (this makes more sense for combining all the periods)
+  # Convert to wide (this makes more sense for combining all the periods)
   # df_wide <- spread(df, demog, income_loss)
   
   return (df)
+  
+  # NB: No longer using this one, so not worth aggregating.
 }
 
 cleanEmp2 <- function(df){
@@ -65,28 +67,32 @@ cleanEmp2 <- function(df){
     # Change var names
     mutate(demog = ...1, 
            emp_loss_total = ...2,
-           emp_loss_yes = Yes,
-           emp_loss_no = No) %>% 
-    select(demog, emp_loss_total, emp_loss_yes, emp_loss_no)
+           employed = Yes,
+           unemployed = No) %>% 
+    select(demog, emp_loss_total, employed, unemployed) 
   
-  # %>%
-  #   mutate(unemployed = emp_loss_yes/(emp_loss_yes + emp_loss_no)) %>% # Calculate ratio
-  #   select(demog, unemployed)
   
-  # # # Convert to wide (this makes more sense for combining all the periods)
-  # df_wide <- spread(df, demog, emp)
+  df_wide <- df %>% 
+    mutate(perc_employed = employed/(employed + unemployed)) %>% 
+    select(demog, perc_employed) 
   
-  return (df)
+  df_wide <- spread(df_wide, demog, perc_employed)
+  
+  return (df_wide)
 }
 
-cleanVacc <- function(df, phase){
+cleanVacc <- function(df, phase, type = 1){
+  
+  # Type 1 returns a list of dataframes with clean data for each period.
+  # Type 2 returns a list of lists, with each element containing a tibble with
+  #   with demographic characteristics in each column and a single row, i.e. score.
   
   df <- df %>% 
     filter_all(any_vars(complete.cases(.))) 
   
   df <- df %>% 
     slice(2:11) %>% 
-    filter(...1 != "Age" & ...1 != "Sex")
+    filter(...1 != "Age" & ...1 != "Sex") 
   
   if (phase == "3.0"){
     df <- df %>% 
@@ -103,7 +109,8 @@ cleanVacc <- function(df, phase){
              no_def_not = No...11,
              no_nr = No...12,
              total_nr = `Did not report`
-      )
+      ) %>% 
+      mutate(across(r_total:total_nr, as.double))
     
   }
   
@@ -124,17 +131,39 @@ cleanVacc <- function(df, phase){
              no_def_not = No...12,
              no_nr = No...13,
              total_nr = `Did not report`
-      )
-  }  
+      ) %>% 
+      mutate(across(r_total:total_nr, as.double))
+      
+  }      
   
-  
-  df <- df %>% 
-    mutate(across(r_total:total_nr, as.double))
-  
-  return (df)
+  if(type == 1){
+    return(df)
+  } else if(type ==2){
+    
+    df_s1 <- df %>% 
+      mutate(s1 = yes_total/(yes_total + no_total)) %>% 
+      select(demog, s1)
+    
+    
+    df_s2 <- df %>% 
+      mutate(
+        s2 = (
+          1  * (yes_all + no_def_will) + 
+            0.5 * (yes_some + no_prob_will) + 
+            # 0  * (yes_nr + no_nr) +
+            -0.5 * no_prob_not + 
+            -1  * no_def_not)/
+          r_total
+      ) %>% 
+      select(demog, s2)
+    
+    df_s1 <- spread(df_s1, demog, s1)
+    df_s2 <- spread(df_s2, demog, s2)
+    return(list(s1 = df_s1, s2 = df_s2))
+  }
 }
 
-allPeriods <- function(dataList, table, bind = "False"){
+all_periods <- function(dataList, table, bind = "False", vac_ctype = 1){
   
   cleanData <- vector('list', length = length(dataList))
   
@@ -152,9 +181,9 @@ allPeriods <- function(dataList, table, bind = "False"){
     
     if (table == "vacc"){
       if (i > 6){
-        cleanData[[i]] <- cleanVacc(dataList[[i]], phase = "3.1")
+        cleanData[[i]] <- cleanVacc(dataList[[i]], phase = "3.1", type = vac_ctype)
       } else {
-        cleanData[[i]] <- cleanVacc(dataList[[i]], phase = "3.0")
+        cleanData[[i]] <- cleanVacc(dataList[[i]], phase = "3.0", type = vac_ctype)
       }
       
     }
@@ -167,13 +196,88 @@ allPeriods <- function(dataList, table, bind = "False"){
   
 }
 
-hps_cleanEmp1 <- allPeriods(hps_emp1Data, "emp1")
-hps_cleanEmp2 <- allPeriods(hps_emp2Data, "emp2")
-hps_cleanVacc <- allPeriods(hps_vaccData, "vacc")
+agg_all_periods <- function(cdl, table = 'emp'){
+  
+  p_names <- names(cdl)
+  
+  for(i in 1:length(cdl)){
+    
+    p <- str_extract(
+      sub('\\_.*', '', p_names[i]),
+      "[[:digit:]]+")
+    
+    if(table == "emp"){
+        
+          df_i <- cdl[[i]] %>% 
+            add_column(Period = p, .before = 1)
+          
+          if(i==1){
+            agg_df <- df_i
+          } else{
+             agg_df <- bind_rows(agg_df, df_i)
+             }
+    } else if(table == "vac"){
+      
+          p <- sub('\\_.*', '', p_names[i])
+          
+          df_i_s1 <- cdl[[i]]$s1 %>% 
+            add_column(Period = p, .before = 1)
+          
+          df_i_s2 <- cdl[[i]]$s2 %>% 
+            add_column(Period = p, .before = 1)
+          
+          if(i==1){
+            agg_df_s1 <- df_i_s1
+            agg_df_s2 <- df_i_s2
+          } else{
+            agg_df_s1 <- bind_rows(agg_df_s1, df_i_s1)
+            agg_df_s2 <- bind_rows(agg_df_s2, df_i_s2)
+          }
+          
+        }
+  }
+  
+  if(table == 'emp'){
+    return(agg_df)
+  } else if(table == 'vac'){
+    return(list(s1 = agg_df_s1, s2 = agg_df_s2))
+  }
+  
+}
 
-# Where to save the data? 
+hps_cleanEmp1 <- all_periods(hps_emp1Data, "emp1")
+hps_cleanEmp2 <- all_periods(hps_emp2Data, "emp2")
+hps_cleanVacc <- all_periods(hps_vaccData, "vacc", vac_ctype = 1)
+hps_cleanVacc2 <- all_periods(hps_vaccData, "vacc", vac_ctype = 2)
+
+hps_cleanEmp2_agg <- agg_all_periods(hps_cleanEmp2)
+hps_cleanVacc_agg <- agg_all_periods(hps_cleanVacc2, 'vac')
+
+
+# Save the data.
 proc_data_path <- file.path(rootDir,"Methods/Data/Surveys/HPS/Proc")
 fname_clean <- "clean_HPS_data.RData"
 save(hps_cleanEmp1, hps_cleanEmp2, hps_cleanVacc, file = file.path(proc_data_path, fname_clean))
+
+agg_data_path <- file.path(rootDir, 'Methods/Data/Surveys/HPS/Aggregate')
+saveRDS(hps_cleanEmp2_agg,
+        file.path(
+          agg_data_path,
+          'emp.rds'
+        ))
+
+saveRDS(hps_cleanVacc_agg$s1,
+        file.path(
+          agg_data_path,
+          'vac_s1.rds'
+        ))
+
+saveRDS(hps_cleanVacc_agg$s2,
+        file.path(
+          agg_data_path,
+          'vac_s2.rds'
+        ))
+
+
 
 

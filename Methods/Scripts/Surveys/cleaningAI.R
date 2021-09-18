@@ -46,20 +46,11 @@ cleanEmp <- function(df, period){
                `Not working - other`) %>% 
       select(Working, `Not working`) 
     
-    # %>% 
-    #   mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
-    #   select(unemployed)
-    
   } else{
     
     cDF <- cDF %>% 
       mutate(Working = `Working full-time` + `Working part-time`) %>% 
       select(Working, `Not working`) 
-    
-    # %>% # Calculate unemployment rate.
-    #   mutate(unemployed = `Not working`/(`Not working` + Working)) %>% 
-    #   select(unemployed)
-    
   } 
   
   cDF <- cDF %>% 
@@ -67,14 +58,19 @@ cleanEmp <- function(df, period){
   
   rownames(cDF) <- NULL
   
-  return(cDF)
+  cDF_wide <- cDF %>% 
+    mutate(perc_employed = Working/(Working + `Not working`)) %>% 
+    select(Demog, perc_employed)
+  
+  cDF_wide <- spread(cDF_wide, Demog, perc_employed)
+  
+  
+  return(cDF_wide)
   
 }
 
-
 cleanVacc <- function(df, period){
   #' Clean vaccination dataframe
-  
   
   df[] <- lapply(df, gsub, pattern='\\*', replacement='')
   
@@ -92,7 +88,43 @@ cleanVacc <- function(df, period){
   cDF <- cDF %>% 
     select(!contains(c("Mentions", "Skipped", "Top", "Base", "(net)")))
   
-  return(cDF)
+  cDF <- cDF %>%
+    add_column(demog = rownames(cDF), .before = 1)
+
+  rownames(cDF) <- NULL
+  
+  
+  if('Received vaccine' %in% names(cDF)){
+    cDF_wide <- cDF %>%
+      mutate(across(`Received vaccine`:`Not at all likely`, as.double)) %>% 
+      mutate(
+        s = (
+          1  * `Received vaccine` +
+          1  * `Very likely` +
+         0.5 * `Somewhat likely` +
+        -0.5 * `Not very likely` +
+         -1  * `Not at all likely`
+        ) /  rowSums(cDF %>% select(-demog)) 
+      ) %>% 
+      select(demog, s)
+  } else {
+    cDF_wide <- cDF %>%
+      mutate(across(`Very likely`:`Not at all likely`, as.double)) %>% 
+      mutate(
+        s = (
+            1  * `Very likely` +
+           0.5 * `Somewhat likely` +
+          -0.5 * `Not very likely` +
+           -1  * `Not at all likely`
+        ) /  rowSums(cDF %>% select(-demog))
+      ) %>% 
+      select(demog, s)
+  }
+
+
+  cDF_wide <- spread(cDF_wide, demog, s)
+  
+  return(cDF_wide)
   
 }
 
@@ -127,9 +159,58 @@ cleanAI <- function(empData, vaccData){
   
 }
 
+
+agg_all_periods <- function(cdl){
+  
+  p_names <- names(cdl)
+  
+  for(i in 1:length(cdl)){
+    
+    p <- str_extract(
+      sub('\\_.*', '', p_names[i]),
+      "[[:digit:]]+"
+    )
+    
+    df_i <- cdl[[i]] %>% 
+      add_column(Period = p, .before = 1)
+    
+    if(i==1){
+      agg_df <- df_i
+    } else{
+      agg_df <- bind_rows(agg_df, df_i)
+    }
+    
+  }
+  
+  agg_df$Period <- as.double(agg_df$Period)
+  
+  agg_df <- agg_df[order(agg_df$Period), ]
+  
+  return(agg_df)
+  
+}
+
 allDataClean <- cleanAI(empData, vaccData)
 cleanEmpData <- allDataClean[['empData']]
 cleanVaccData <- allDataClean[['vaccData']]
 
+ai_cleanEmp_agg <- agg_all_periods(cleanEmpData)
+ai_cleanVac_agg <- agg_all_periods(cleanVaccData)
+
 fname_clean <- "clean_AI_data.RData"
 save(cleanEmpData, cleanVaccData, file = file.path(proc_data_path,fname_clean))
+
+agg_data_path <- file.path(rootDir,"Methods/Data/Surveys/Axios-Ipsos/Aggregate")
+
+saveRDS(ai_cleanEmp_agg,
+        file.path(
+          agg_data_path,
+          'emp.rds'
+        ))
+
+saveRDS(ai_cleanVac_agg,
+        file.path(
+          agg_data_path,
+          'vac.rds'
+        ))
+

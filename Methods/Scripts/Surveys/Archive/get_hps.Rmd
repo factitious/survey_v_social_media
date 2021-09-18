@@ -174,14 +174,14 @@ cleanEmp1 <- function(df){
   
   # Calculate the ratio we're interested in based on total counts, as well as for each age group and sex in part
   # Ratio: Proportion of individuals that experienced loss of income out of all respondents (that reported on this measure)
-  df <- df %>% 
-    mutate(income_loss = income_loss_yes/(income_loss_yes + income_loss_no)) %>% 
-    select(demog, income_loss)
+  # df <- df %>% 
+  #   mutate(income_loss = income_loss_yes/(income_loss_yes + income_loss_no)) %>% 
+  #   select(demog, income_loss)
   
   # Convert to wide (this makes more sense for combining all the periods)
-  df_wide <- spread(df, demog, income_loss)
+  # df_wide <- spread(df, demog, income_loss)
   
-  return (df_wide)
+  return (df)
 }
 
 allPeriods <- function(var_names, table){

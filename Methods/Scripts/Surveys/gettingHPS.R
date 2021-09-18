@@ -3,7 +3,7 @@ library(readxl)
 library(tidyverse)
 library(data.table)
 library(glue)
-
+ 
 rootDir <- '/Volumes/Survey_Social_Media_Compare'
 data_path <- file.path(rootDir, 'Methods/Data/Surveys/HPS/Raw/')
 
@@ -19,7 +19,7 @@ vars_emp1 <- character(length(hps_weeks))
 
 url_emp2 <- vector(mode = "list", length = length(hps_weeks))
 dest_emp2 <- vector(mode = "list", length = length(hps_weeks))
-vars_emp2 <- character(length(hps_weeks))
+vars_emp2 <- character(length(hps_weeks)) 
 
 url_vacc <- vector(mode = "list", length = length(hps_weeks) - 4)
 dest_vacc <- vector(mode = "list", length = length(hps_weeks) - 4)
