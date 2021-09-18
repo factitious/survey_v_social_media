@@ -1,8 +1,6 @@
 library(tidyverse)
-library(tidytext)
 library(lubridate)
 library(glue)
-library(e1071)
 library(gsubfn)
 library(caTools)
 library(caret)
@@ -57,6 +55,39 @@ ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
   select(Date, Index) %>% 
   slice(2:14) %>% 
   mutate(Date = ym(Date))
+
+
+# CDC Vaccination statistics 
+# (https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc)
+cdc_vac <- read.csv(
+  file.path(
+    root_dir,
+    oj_data_path,
+    'COVID-19_Vaccinations_in_the_United_States_Jurisdiction.csv'
+  )
+) %>% 
+  select(
+    Date,
+    Distributed,
+    Administered,
+    Dist_Per_100K,
+    Admin_Per_100K,
+    ) %>% 
+  mutate(Date = mdy(Date)) %>% 
+  filter(
+    # Date > ymd('2021-01-04'),
+    Date < ymd('2021-05-24'))
+
+cdc_vac_s <- cdc_vac %>% 
+  mutate(
+    day_uptake_per_100 = Admin_Per_100K/Dist_Per_100K
+  ) %>% 
+  group_by(Date) %>% 
+  summarize(
+    uptake = sum(Administered)/sum(Distributed),
+    uptake_per_100 = mean(day_uptake_per_100, na.rm = T)
+    )
+  
 
 
 ################################################
