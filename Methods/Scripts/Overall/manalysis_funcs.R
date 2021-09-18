@@ -284,7 +284,11 @@ summarize_days <- function(df, source){
           rt_l_bing = sum(rt_l_bing),
           rt_l_afinn = sum(rt_l_afinn),
           rt_l_nrc = sum(rt_l_nrc)
-        )
+        ) %>% 
+        mutate(
+          across(where(is.numeric), scale)
+        ) %>% 
+        mutate(obs = as.double(obs))
         
     
   }
@@ -415,71 +419,52 @@ load_all_twitter <- function(){
   twitter_emp <- list()
   twitter_vac <- list()
   
-  twitter_emp$c1b$set_1 <- load_nlp_data(
-    source = "Reddit",
+  twitter_emp$c1b <- load_nlp_data(
+    source = "Twitter",
     topic = "Employment",
     set = 1,
     level = 2,
     stage = '1b'
   ) %>% 
-    change_scores(.) %>% 
-    summarize_days(.)
+    change_scores(., source = "Twitter") %>% 
+    summarize_days(., source = "Twitter")
   
-  return(twitter_emp)
+  twitter_emp$c2 <- load_nlp_data(
+    source = "Twitter",
+    topic = "Employment",
+    set = 1,
+    level = 2,
+    stage = '2'
+  ) %>% 
+    change_scores(., source = "Twitter") %>% 
+    summarize_days(., source = "Twitter")
+  
+  twitter_vac$c1b <- load_nlp_data(
+    source = "Twitter",
+    topic = "Vaccination",
+    set = 1,
+    level = 2,
+    stage = '1b'
+  ) %>% 
+    mutate(like_count = as.numeric(like_count)) %>% 
+    change_scores(., source = "Twitter") %>% 
+    summarize_days(., source = "Twitter")
+  
+  twitter_vac$c2 <- load_nlp_data(
+    source = "Twitter",
+    topic = "Vaccination",
+    set = 1,
+    level = 2,
+    stage = '2'
+  ) %>% 
+    mutate(like_count = as.numeric(like_count)) %>% 
+    change_scores(., source = "Twitter") %>% 
+    summarize_days(., source = "Twitter")
+  
+  return(list(twitter_emp, twitter_vac))
   
 }
 
 list[reddit_emp, reddit_vac] <- load_all_reddit()
+list[twitter_emp, twitter_vac] <- load_all_twitter()
 
-bla <- load_nlp_data(
-  source = "Twitter",
-  topic = "Employment",
-  set = 1,
-  level = 2,
-  stage = '1b'
-)
-
-
-bla <- load_all_twitter()
-
-# 
-# reddit_emp_1_c1b <- load_nlp_data(
-#   source = "Reddit",
-#   topic = "Employment",
-#   set = 1,
-#   level = 2,
-#   stage = '1b'
-# ) %>% change_scores(.)
-# 
-# reddit_emp_1_c1b_s <- reddit_emp_1_c1b %>% 
-#   select(
-#     -text,
-#     -upvote_ratio,
-#     -id) %>% 
-#   mutate(date = as.Date(date)) %>% 
-#   mutate(score = score -1) %>% 
-#   mutate(
-#     nc_bing = num_comments * bing_score,
-#     nc_afinn = num_comments * afinn_score,
-#     nc_nrc = num_comments * nrc_score,
-#     sc_bing = score * bing_score,
-#     sc_afinn = score * afinn_score,
-#     sc_nrc = score * nrc_score
-#   ) %>% 
-#   group_by(date) %>% 
-#   summarize(
-#     bing = sum(bing_score),
-#     nc_bing = sum(nc_bing),
-#     sc_bing = sum(sc_bing),
-#     afinn = sum(afinn_score),
-#     nc_afinn = sum(nc_afinn),
-#     sc_afinn = sum(sc_afinn),
-#     nrc = sum(nrc_score),
-#     nc_nrc = sum(nc_nrc),
-#     sc_nrc = sum(sc_nrc)
-#   ) %>% 
-#   mutate(
-#     across(where(is.numeric), scale)
-#   )
-#   
-# 
