@@ -36,9 +36,7 @@ sp500 <- read.csv(
     oj_data_path,
     'sp500.csv'
   )
-)
-
-sp500 <- sp500 %>% 
+) %>% 
   select(-Volume) %>% 
   mutate(Date = mdy(Date),
   ) %>% 
@@ -75,18 +73,12 @@ cdc_vac <- read.csv(
     ) %>% 
   mutate(Date = mdy(Date)) %>% 
   filter(
-    # Date > ymd('2021-01-04'),
-    Date < ymd('2021-05-24'))
-
-cdc_vac_s <- cdc_vac %>% 
-  mutate(
-    day_uptake_per_100 = Admin_Per_100K/Dist_Per_100K
-  ) %>% 
+    Date < ymd('2021-05-24')
+    ) %>% 
   group_by(Date) %>% 
   summarize(
-    uptake = sum(Administered)/sum(Distributed),
-    uptake_per_100 = mean(day_uptake_per_100, na.rm = T)
-    )
+    uptake = sum(Administered)/sum(Distributed)
+  )
   
 
 
@@ -188,4 +180,306 @@ load_nlp_data <- function(
   
 } 
 
+change_scores <- function(df, source){
+  
+  df <- df %>% 
+    mutate(bing_score = bing_score/bing_words,
+           afinn_score = afinn_score/afinn_words,
+           nrc_score = nrc_score/nrc_words) %>% 
+    mutate(bing_score = ifelse(is.na(bing_score), 0,
+                               ifelse(bing_score < 0, -1, 
+                                      1)),
+           afinn_score = ifelse(is.na(afinn_score), 0,
+                                ifelse(afinn_score < 0, -1, 
+                                       1)),
+           nrc_score = ifelse(is.na(nrc_score), 0,
+                              ifelse(nrc_score < 0, -1, 
+                                     1))) %>% 
+    select(-bing_words,
+           -afinn_words,
+           -nrc_words)
+  
+  if(source == "Reddit"){
+  
+    df <- df %>% 
+      mutate(
+          nc_bing = num_comments * bing_score,
+          nc_afinn = num_comments * afinn_score,
+          nc_nrc = num_comments * nrc_score,
+          sc_bing = score * bing_score,
+          sc_afinn = score * afinn_score,
+          sc_nrc = score * nrc_score,
+          nc_sc_bing = num_comments * score * bing_score,
+          nc_sc_afinn = num_comments * score * afinn_score,
+          nc_sc_nrc = num_comments * score * nrc_score
+        )
+  
+  } else if(source == "Twitter"){
+    
+    df <- df %>% 
+      mutate(
+         rt_bing = (retweet_count + quote_count) * bing_score,
+         rt_afinn = (retweet_count + quote_count) * afinn_score,
+         rt_nrc = (retweet_count + quote_count) * nrc_score,
+         l_bing = (reply_count + like_count) * bing_score,
+         l_afinn = (reply_count + like_count) * afinn_score,
+         l_nrc = (reply_count + like_count) * nrc_score,
+         rt_l_bing = (retweet_count + quote_count) * (reply_count + like_count) * bing_score,
+         rt_l_afinn = (retweet_count + quote_count) * (reply_count + like_count) * afinn_score,
+         rt_l_nrc = (retweet_count + quote_count) * (reply_count + like_count) * nrc_score
+      ) 
+      
+    
+  }
+  
+  return(df)
+  
+}
 
+
+summarize_days <- function(df, source){
+  
+  if(source == "Reddit"){
+  
+      df <- df %>% 
+        mutate(date = as.Date(date)) %>% 
+        mutate(score = score -1) %>% 
+        group_by(date) %>% 
+        summarize(
+          obs = as.character(n()),
+          bing = sum(bing_score),
+          nc_bing = sum(nc_bing),
+          sc_bing = sum(sc_bing),
+          nc_sc_bing = sum(nc_sc_bing),
+          afinn = sum(afinn_score),
+          nc_afinn = sum(nc_afinn),
+          sc_afinn = sum(sc_afinn),
+          nc_sc_afinn = sum(nc_sc_afinn),
+          nrc = sum(nrc_score),
+          nc_nrc = sum(nc_nrc),
+          sc_nrc = sum(sc_nrc),
+          nc_sc_nrc = sum(nc_sc_nrc)
+        ) %>% 
+        mutate(
+          across(where(is.numeric), scale)
+        ) %>% 
+        mutate(obs = as.double(obs))
+  
+  } else if(source == "Twitter"){
+    
+      df <- df %>% 
+        mutate(date = as.Date(date)) %>% 
+        group_by(date) %>% 
+        summarize(
+          obs = as.character(n()),
+          bing = sum(bing_score),
+          afinn = sum(afinn_score),
+          nrc = sum(nrc_score),
+          rt_bing = sum(rt_bing),
+          rt_afinn = sum(rt_afinn),
+          rt_nrc = sum(rt_nrc),
+          l_bing = sum(l_bing),
+          l_afinn = sum(l_afinn),
+          l_nrc = sum(l_nrc),
+          rt_l_bing = sum(rt_l_bing),
+          rt_l_afinn = sum(rt_l_afinn),
+          rt_l_nrc = sum(rt_l_nrc)
+        )
+        
+    
+  }
+      
+  return(df)
+}
+
+
+
+
+load_all_reddit <- function(){
+  
+  reddit_emp <- list()
+  reddit_vac <- list()
+  
+  # Employment
+  # Set 1
+  reddit_emp$c1b$set_1 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 1,
+    level = 2,
+    stage = '1b'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  reddit_emp$c2$set_1 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 1,
+    level = 2,
+    stage = '2'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  # Set 2
+  reddit_emp$c1b$set_2 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 2,
+    level = 2,
+    stage = '1b'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  reddit_emp$c2$set_2 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 2,
+    level = 2,
+    stage = '2'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  # Set 3
+  reddit_emp$c1b$set_3 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 3,
+    level = 2,
+    stage = '1b'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  reddit_emp$c2$set_3 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 3,
+    level = 2,
+    stage = '2'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  # Set 4
+  reddit_emp$c1b$set_4 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 4,
+    level = 2,
+    stage = '1b'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  reddit_emp$c2$set_4 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 4,
+    level = 2,
+    stage = '2'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  # Vaccination
+  reddit_vac$c1b <- load_nlp_data(
+    source = "Reddit",
+    topic = "Vaccination",
+    set = 1,
+    level = 2,
+    stage = '1b'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  # Vaccination
+  reddit_vac$c2 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Vaccination",
+    set = 1,
+    level = 2,
+    stage = '2'
+  ) %>% 
+    change_scores(., source = "Reddit") %>% 
+    summarize_days(., source = "Reddit")
+  
+  return(list(reddit_emp, reddit_vac))
+}
+
+load_all_twitter <- function(){
+  
+  twitter_emp <- list()
+  twitter_vac <- list()
+  
+  twitter_emp$c1b$set_1 <- load_nlp_data(
+    source = "Reddit",
+    topic = "Employment",
+    set = 1,
+    level = 2,
+    stage = '1b'
+  ) %>% 
+    change_scores(.) %>% 
+    summarize_days(.)
+  
+  return(twitter_emp)
+  
+}
+
+list[reddit_emp, reddit_vac] <- load_all_reddit()
+
+bla <- load_nlp_data(
+  source = "Twitter",
+  topic = "Employment",
+  set = 1,
+  level = 2,
+  stage = '1b'
+)
+
+
+bla <- load_all_twitter()
+
+# 
+# reddit_emp_1_c1b <- load_nlp_data(
+#   source = "Reddit",
+#   topic = "Employment",
+#   set = 1,
+#   level = 2,
+#   stage = '1b'
+# ) %>% change_scores(.)
+# 
+# reddit_emp_1_c1b_s <- reddit_emp_1_c1b %>% 
+#   select(
+#     -text,
+#     -upvote_ratio,
+#     -id) %>% 
+#   mutate(date = as.Date(date)) %>% 
+#   mutate(score = score -1) %>% 
+#   mutate(
+#     nc_bing = num_comments * bing_score,
+#     nc_afinn = num_comments * afinn_score,
+#     nc_nrc = num_comments * nrc_score,
+#     sc_bing = score * bing_score,
+#     sc_afinn = score * afinn_score,
+#     sc_nrc = score * nrc_score
+#   ) %>% 
+#   group_by(date) %>% 
+#   summarize(
+#     bing = sum(bing_score),
+#     nc_bing = sum(nc_bing),
+#     sc_bing = sum(sc_bing),
+#     afinn = sum(afinn_score),
+#     nc_afinn = sum(nc_afinn),
+#     sc_afinn = sum(sc_afinn),
+#     nrc = sum(nrc_score),
+#     nc_nrc = sum(nc_nrc),
+#     sc_nrc = sum(sc_nrc)
+#   ) %>% 
+#   mutate(
+#     across(where(is.numeric), scale)
+#   )
+#   
+# 
