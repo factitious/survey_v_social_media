@@ -154,7 +154,7 @@ load_nlp_data <- function(
     data_path <- glue('Methods/Data/{source}/NLP/Lexicon/c{stage}') 
     df_name <- glue('{topic_short}_{set}.rds')
   } else if(level == 3){
-    data_path <- glue('Methods/Data/{source}/NLP/ML/Subsets')
+    data_path <- glue('Methods/Data/{source}/NLP/ML/c{stage}')
     df_name <- glue('{topic_short}_{set}.rds')
   }
   
@@ -297,8 +297,6 @@ summarize_days <- function(df, source){
 }
 
 
-
-
 load_all_reddit <- function(){
   
   reddit_emp <- list()
@@ -419,7 +417,7 @@ load_all_twitter <- function(){
   twitter_emp <- list()
   twitter_vac <- list()
   
-  twitter_emp$c1b <- load_nlp_data(
+  twitter_emp$c1b$lex <- load_nlp_data(
     source = "Twitter",
     topic = "Employment",
     set = 1,
@@ -429,7 +427,7 @@ load_all_twitter <- function(){
     change_scores(., source = "Twitter") %>% 
     summarize_days(., source = "Twitter")
   
-  twitter_emp$c2 <- load_nlp_data(
+  twitter_emp$c2$lex <- load_nlp_data(
     source = "Twitter",
     topic = "Employment",
     set = 1,
@@ -438,6 +436,22 @@ load_all_twitter <- function(){
   ) %>% 
     change_scores(., source = "Twitter") %>% 
     summarize_days(., source = "Twitter")
+  
+  # twitter_emp$c1b$ml <- load_nlp_data(
+  #   source = "Twitter",
+  #   topic = "Employment",
+  #   set = 1,
+  #   level = 3,
+  #   stage = '1b'
+  # )
+  
+  twitter_emp$c2$ml <- load_nlp_data(
+    source = "Twitter",
+    topic = "Employment",
+    set = 1,
+    level = 3,
+    stage = '2'
+  )
   
   twitter_vac$c1b <- load_nlp_data(
     source = "Twitter",
