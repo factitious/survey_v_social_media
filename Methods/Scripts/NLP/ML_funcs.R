@@ -368,7 +368,7 @@ train_other <- function(df, dtm){
     container,
     algorithms=c(
       "BAGGING",
-      "BOOSTING",
+      # "BOOSTING",
       "RF",
       "SLDA",
       "SVM",
@@ -449,7 +449,7 @@ train_classifiers <- function(df, useMetrics = F, stemIt = F, nb = 1){
   
   algos=c(
     "BAGGING",
-    "BOOSTING",
+    # "BOOSTING",
     "RF",
     "SLDA",
     "SVM",
@@ -569,7 +569,7 @@ get_performance <- function(res){
   cnames=c(
     "NB",
     "BAGGING",
-    "BOOSTING",
+    # "BOOSTING",
     "RF",
     "SLDA",
     "SVM",
@@ -579,7 +579,6 @@ get_performance <- function(res){
   perf_df <- data.frame(
     Classifier = cnames,
     Accuracy = NA,
-    AccuracySD = NA,
     Sensitivity = NA,
     Specificity = NA,
     Precision = NA,
@@ -593,21 +592,24 @@ get_performance <- function(res){
   for(cname in cnames){
     
     perf_df$Accuracy[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$overall[['Accuracy']]
-    perf_df$AccuracySD[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$overall[['AccuracySD']]
+      glue(
+        "{round(res$classifiers[[cname]]$cm$overall[['Accuracy']], 3)} 
+        ({round(res$classifiers[[cname]]$cm$overall[['AccuracySD']], 2)})"
+      )
+    # perf_df$AccuracySD[perf_df$Classifier == cname] <-
+    #   round(res$classifiers[[cname]]$cm$overall[['AccuracySD']], 2)
     perf_df$Sensitivity[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$byClass[['Sensitivity']]
+      round(res$classifiers[[cname]]$cm$byClass[['Sensitivity']], 3)
     perf_df$Specificity[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$byClass[['Specificity']]
+      round(res$classifiers[[cname]]$cm$byClass[['Specificity']], 3)
     perf_df$Precision[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$byClass[['Precision']]
+      round(res$classifiers[[cname]]$cm$byClass[['Precision']], 3)
     perf_df$Recall[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$byClass[['Recall']]
+      round(res$classifiers[[cname]]$cm$byClass[['Recall']], 3)
     perf_df$F1[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$byClass[['F1']]
+      round(res$classifiers[[cname]]$cm$byClass[['F1']], 3)
     perf_df$Kappa[perf_df$Classifier == cname] <-
-      res$classifiers[[cname]]$cm$overall[['Kappa']]
+      round(res$classifiers[[cname]]$cm$overall[['Kappa']], 3)
     
     cm_plot[[cname]] <- draw_confusion_matrix(res$classifiers[[cname]]$cm, cname)
   }

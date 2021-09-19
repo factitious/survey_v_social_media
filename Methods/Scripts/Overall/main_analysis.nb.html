@@ -1766,6 +1766,30 @@ summary {
 <h1>Objective measures</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc291cmNlKFwibWFuYWx5c2lzX2Z1bmNzLlJcIiwgbG9jYWwgPSBrbml0cjo6a25pdF9nbG9iYWwoKSlcbmBgYCJ9 -->
+<pre class="r"><code>source(&quot;manalysis_funcs.R&quot;, local = knitr::knit_global())</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyAvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1JlZGRpdC9OTFAvTGV4aWNvbi9jMWIvZW1wXzEucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvUmVkZGl0L05MUC9MZXhpY29uL2MyL2VtcF8xLnJkc1xuTG9hZGluZyAvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1JlZGRpdC9OTFAvTGV4aWNvbi9jMWIvZW1wXzIucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvUmVkZGl0L05MUC9MZXhpY29uL2MyL2VtcF8yLnJkc1xuTG9hZGluZyAvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1JlZGRpdC9OTFAvTGV4aWNvbi9jMWIvZW1wXzMucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvUmVkZGl0L05MUC9MZXhpY29uL2MyL2VtcF8zLnJkc1xuTG9hZGluZyAvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1JlZGRpdC9OTFAvTGV4aWNvbi9jMWIvZW1wXzQucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvUmVkZGl0L05MUC9MZXhpY29uL2MyL2VtcF80LnJkc1xuTG9hZGluZyAvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1JlZGRpdC9OTFAvTGV4aWNvbi9jMWIvdmFjXzEucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvUmVkZGl0L05MUC9MZXhpY29uL2MyL3ZhY18xLnJkc1xuTG9hZGluZyAvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1R3aXR0ZXIvTkxQL0xleGljb24vYzFiL2VtcF8xLnJkc1xuTG9hZGluZyAvVm9sdW1lcy9TdXJ2ZXlfU29jaWFsX01lZGlhX0NvbXBhcmUvTWV0aG9kcy9EYXRhL1R3aXR0ZXIvTkxQL0xleGljb24vYzIvZW1wXzEucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvVHdpdHRlci9OTFAvTUwvYzIvZW1wXzEucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvVHdpdHRlci9OTFAvTGV4aWNvbi9jMWIvdmFjXzEucmRzXG5Mb2FkaW5nIC9Wb2x1bWVzL1N1cnZleV9Tb2NpYWxfTWVkaWFfQ29tcGFyZS9NZXRob2RzL0RhdGEvVHdpdHRlci9OTFAvTGV4aWNvbi9jMi92YWNfMS5yZHNcbiJ9 -->
+<pre><code>Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c1b/emp_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c2/emp_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c1b/emp_2.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c2/emp_2.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c1b/emp_3.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c2/emp_3.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c1b/emp_4.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c2/emp_4.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c1b/vac_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Reddit/NLP/Lexicon/c2/vac_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Twitter/NLP/Lexicon/c1b/emp_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Twitter/NLP/Lexicon/c2/emp_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Twitter/NLP/ML/c2/emp_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Twitter/NLP/Lexicon/c1b/vac_1.rds
+Loading /Volumes/Survey_Social_Media_Compare/Methods/Data/Twitter/NLP/Lexicon/c2/vac_1.rds</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiVGhlcmUgd2VyZSAzMCB3YXJuaW5ncyAodXNlIHdhcm5pbmdzKCkgdG8gc2VlIHRoZW0pXG5UaGUgd29ya2luZyBkaXJlY3Rvcnkgd2FzIGNoYW5nZWQgdG8gL1ZvbHVtZXMvU3VydmV5X1NvY2lhbF9NZWRpYV9Db21wYXJlIGluc2lkZSBhIG5vdGVib29rIGNodW5rLiBUaGUgd29ya2luZyBkaXJlY3Rvcnkgd2lsbCBiZSByZXNldCB3aGVuIHRoZSBjaHVuayBpcyBmaW5pc2hlZCBydW5uaW5nLiBVc2UgdGhlIGtuaXRyIHJvb3QuZGlyIG9wdGlvbiBpbiB0aGUgc2V0dXAgY2h1bmsgdG8gY2hhbmdlIHRoZSB3b3JraW5nIGRpcmVjdG9yeSBmb3Igbm90ZWJvb2sgY2h1bmtzLlxuIn0= -->
+<pre><code>There were 30 warnings (use warnings() to see them)
+The working directory was changed to /Volumes/Survey_Social_Media_Compare inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks.</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->

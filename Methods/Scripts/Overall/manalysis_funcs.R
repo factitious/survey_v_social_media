@@ -23,14 +23,17 @@ root_dir <- '/Volumes/Survey_Social_Media_Compare'
 oj_data_path <- 'Methods/Data/Objective'
 ai_data_path <- 'Methods/Data/Surveys/Axios-Ipsos/Aggregate'
 hps_data_path <- 'Methods/Data/Surveys/HPS/Aggregate'
+overall_path <- 'Methods/Data/Overall'
 setwd(root_dir)
 
 ################################################
 ###Objective measures
 
+objective <- list()
+
 # S&P data from https://www.nasdaq.com/market-activity/index/spx/historical.
 # Downloaded at:
-sp500 <- read.csv(
+objective$sp500 <- read.csv(
   file.path(
     root_dir,
     oj_data_path,
@@ -44,7 +47,7 @@ sp500 <- read.csv(
 
 # UoM Index of Consumer Sentiment from http://www.sca.isr.umich.edu/tables.html
 # Downloaded at:
-ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
+objective$ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
                 skip = 3, 
                 header = TRUE) %>% 
   Filter(function(x)!all(is.na(x)), .) %>% 
@@ -57,7 +60,7 @@ ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
 
 # CDC Vaccination statistics 
 # (https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc)
-cdc_vac <- read.csv(
+objective$cdc_vac <- read.csv(
   file.path(
     root_dir,
     oj_data_path,
@@ -85,10 +88,9 @@ cdc_vac <- read.csv(
 ################################################
 ### Load survey data
 
-ai <- list()
-hps <- list()
+surveys <- list()
 
-ai$emp <- readRDS(
+surveys$ai$emp <- readRDS(
   file.path(
     root_dir, 
     ai_data_path,
@@ -96,7 +98,7 @@ ai$emp <- readRDS(
     )
 )
   
-ai$vac <- readRDS(
+surveys$ai$vac <- readRDS(
   file.path(
     root_dir, 
     ai_data_path,
@@ -104,7 +106,7 @@ ai$vac <- readRDS(
   )
 )
 
-hps$emp <- readRDS(
+surveys$hps$emp <- readRDS(
   file.path(
     root_dir, 
     hps_data_path,
@@ -112,7 +114,7 @@ hps$emp <- readRDS(
   )
 )
 
-hps$vac_s1 <- readRDS(
+surveys$hps$vac_s1 <- readRDS(
   file.path(
     root_dir, 
     hps_data_path,
@@ -120,7 +122,7 @@ hps$vac_s1 <- readRDS(
   )
 )
 
-hps$vac_s2 <- readRDS(
+surveys$hps$vac_s2 <- readRDS(
   file.path(
     root_dir, 
     hps_data_path,
@@ -297,188 +299,250 @@ summarize_days <- function(df, source){
 }
 
 
-load_all_reddit <- function(){
+load_all_reddit <- function(proc = F){
   
-  reddit_emp <- list()
-  reddit_vac <- list()
+  if(proc == F){
   
-  # Employment
-  # Set 1
-  reddit_emp$c1b$set_1 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 1,
-    level = 2,
-    stage = '1b'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
+      reddit <- list()
+      
+      # Employment
+      # Set 1
+      reddit$emp$c1b$set_1 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 1,
+        level = 2,
+        stage = '1b'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      reddit$emp$c2$set_1 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 1,
+        level = 2,
+        stage = '2'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      # Set 2
+      reddit$emp$c1b$set_2 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 2,
+        level = 2,
+        stage = '1b'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      reddit$emp$c2$set_2 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 2,
+        level = 2,
+        stage = '2'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      # Set 3
+      reddit$emp$c1b$set_3 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 3,
+        level = 2,
+        stage = '1b'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      reddit$emp$c2$set_3 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 3,
+        level = 2,
+        stage = '2'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      # Set 4
+      reddit$emp$c1b$set_4 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 4,
+        level = 2,
+        stage = '1b'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      reddit$emp$c2$set_4 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Employment",
+        set = 4,
+        level = 2,
+        stage = '2'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      # Vaccination
+      reddit$vac$c1b <- load_nlp_data(
+        source = "Reddit",
+        topic = "Vaccination",
+        set = 1,
+        level = 2,
+        stage = '1b'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+      # Vaccination
+      reddit$vac$c2 <- load_nlp_data(
+        source = "Reddit",
+        topic = "Vaccination",
+        set = 1,
+        level = 2,
+        stage = '2'
+      ) %>% 
+        change_scores(., source = "Reddit") %>% 
+        summarize_days(., source = "Reddit")
+      
+  } else if(proc == T){
+    
+      reddit <- readRDS(
+        file.path(
+          root_dir, 
+          overall_path,
+          'reddit.rds'
+        )
+      )
+    
+  }
   
-  reddit_emp$c2$set_1 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 1,
-    level = 2,
-    stage = '2'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  # Set 2
-  reddit_emp$c1b$set_2 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 2,
-    level = 2,
-    stage = '1b'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  reddit_emp$c2$set_2 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 2,
-    level = 2,
-    stage = '2'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  # Set 3
-  reddit_emp$c1b$set_3 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 3,
-    level = 2,
-    stage = '1b'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  reddit_emp$c2$set_3 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 3,
-    level = 2,
-    stage = '2'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  # Set 4
-  reddit_emp$c1b$set_4 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 4,
-    level = 2,
-    stage = '1b'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  reddit_emp$c2$set_4 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Employment",
-    set = 4,
-    level = 2,
-    stage = '2'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  # Vaccination
-  reddit_vac$c1b <- load_nlp_data(
-    source = "Reddit",
-    topic = "Vaccination",
-    set = 1,
-    level = 2,
-    stage = '1b'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  # Vaccination
-  reddit_vac$c2 <- load_nlp_data(
-    source = "Reddit",
-    topic = "Vaccination",
-    set = 1,
-    level = 2,
-    stage = '2'
-  ) %>% 
-    change_scores(., source = "Reddit") %>% 
-    summarize_days(., source = "Reddit")
-  
-  return(list(reddit_emp, reddit_vac))
+  return(reddit)
 }
 
-load_all_twitter <- function(){
+load_all_twitter <- function(proc = F){
   
-  twitter_emp <- list()
-  twitter_vac <- list()
+  if(proc == F){
   
-  twitter_emp$c1b$lex <- load_nlp_data(
-    source = "Twitter",
-    topic = "Employment",
-    set = 1,
-    level = 2,
-    stage = '1b'
-  ) %>% 
-    change_scores(., source = "Twitter") %>% 
-    summarize_days(., source = "Twitter")
+      twitter_emp <- list()
+      twitter_vac <- list()
+      
+      twitter <- list()
+      
+      twitter$emp$c1b$lex <- load_nlp_data(
+        source = "Twitter",
+        topic = "Employment",
+        set = 1,
+        level = 2,
+        stage = '1b'
+      ) %>% 
+        change_scores(., source = "Twitter") %>% 
+        summarize_days(., source = "Twitter")
+      
+      twitter$emp$c2$lex <- load_nlp_data(
+        source = "Twitter",
+        topic = "Employment",
+        set = 1,
+        level = 2,
+        stage = '2'
+      ) %>% 
+        change_scores(., source = "Twitter") %>% 
+        summarize_days(., source = "Twitter")
+      
+      twitter$emp$c2$ml <- load_nlp_data(
+        source = "Twitter",
+        topic = "Employment",
+        set = 1,
+        level = 3,
+        stage = '2'
+      ) %>% 
+        change_scores(., source = "Twitter") %>% 
+        summarize_days(., source = "Twitter")
+      
+      twitter$vac$c1b <- load_nlp_data(
+        source = "Twitter",
+        topic = "Vaccination",
+        set = 1,
+        level = 2,
+        stage = '1b'
+      ) %>% 
+        mutate(like_count = as.numeric(like_count)) %>% 
+        change_scores(., source = "Twitter") %>% 
+        summarize_days(., source = "Twitter")
+      
+      twitter$vac$c2 <- load_nlp_data(
+        source = "Twitter",
+        topic = "Vaccination",
+        set = 1,
+        level = 2,
+        stage = '2'
+      ) %>% 
+        mutate(like_count = as.numeric(like_count)) %>% 
+        change_scores(., source = "Twitter") %>% 
+        summarize_days(., source = "Twitter")
+  } else if(proc == T){
+      
+      twitter <- readRDS(
+        file.path(
+          root_dir, 
+          overall_path,
+          'twitter.rds'
+        )
+      )
+      
+  }
   
-  twitter_emp$c2$lex <- load_nlp_data(
-    source = "Twitter",
-    topic = "Employment",
-    set = 1,
-    level = 2,
-    stage = '2'
-  ) %>% 
-    change_scores(., source = "Twitter") %>% 
-    summarize_days(., source = "Twitter")
-  
-  # twitter_emp$c1b$ml <- load_nlp_data(
-  #   source = "Twitter",
-  #   topic = "Employment",
-  #   set = 1,
-  #   level = 3,
-  #   stage = '1b'
-  # )
-  
-  twitter_emp$c2$ml <- load_nlp_data(
-    source = "Twitter",
-    topic = "Employment",
-    set = 1,
-    level = 3,
-    stage = '2'
-  )
-  
-  twitter_vac$c1b <- load_nlp_data(
-    source = "Twitter",
-    topic = "Vaccination",
-    set = 1,
-    level = 2,
-    stage = '1b'
-  ) %>% 
-    mutate(like_count = as.numeric(like_count)) %>% 
-    change_scores(., source = "Twitter") %>% 
-    summarize_days(., source = "Twitter")
-  
-  twitter_vac$c2 <- load_nlp_data(
-    source = "Twitter",
-    topic = "Vaccination",
-    set = 1,
-    level = 2,
-    stage = '2'
-  ) %>% 
-    mutate(like_count = as.numeric(like_count)) %>% 
-    change_scores(., source = "Twitter") %>% 
-    summarize_days(., source = "Twitter")
-  
-  return(list(twitter_emp, twitter_vac))
+  return(twitter)
   
 }
 
-list[reddit_emp, reddit_vac] <- load_all_reddit()
-list[twitter_emp, twitter_vac] <- load_all_twitter()
+sm <- list()
+
+sm$reddit <- load_all_reddit(proc = T)
+sm$twitter <- load_all_twitter(proc = T)
+
+# To re-run:
+# reddit <- load_all_reddit()
+# 
+# saveRDS(
+#   reddit, 
+#   file.path(
+#     root_dir,
+#     overall_path,
+#     'reddit.rds'
+#   ))
+# 
+# 
+# reddit <- readRDS(
+#   file.path(
+#     root_dir, 
+#     overall_path,
+#     'reddit.rds'
+#   )
+# )
+# 
+# twitter <- load_all_twitter()
+# 
+# saveRDS(
+#   twitter, 
+#   file.path(
+#     root_dir,
+#     overall_path,
+#     'twitter.rds'
+#   ))
+# 
+# twitter <- readRDS(
+#   file.path(
+#     root_dir, 
+#     overall_path,
+#     'twitter.rds'
+#   )
+# )
 

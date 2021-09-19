@@ -183,7 +183,10 @@ perf$c2_metrics <- get_performance(c2_res_metrics)
 ## Format tables for report.
 
 ```{r}
-# formattable(perf$c1b$table)
+formattable(perf$c1b$table)
+formattable(perf$c2$table)
+formattable(perf$c1b_metrics$table)
+formattable(perf$c2_metrics$table)
 
 ```
 
@@ -202,6 +205,8 @@ c1b_pred <- do_pred_all(
 end <- Sys.time()
 (elapsed <- end - start) 
 
+
+
 start <- Sys.time() 
 c2_pred <- do_pred_all(
   classifier = c2_res$classifiers$NB,
@@ -211,6 +216,10 @@ c2_pred <- do_pred_all(
 )
 end <- Sys.time()
 (elapsed <- end - start) 
+
+
+
+
 
 c2_final <- twitter_emp_lex_c2%>% 
   add_column(man_sentiment = c2_pred$man_sentiment)
