@@ -6,6 +6,7 @@ library(caTools)
 library(caret)
 library(data.table)
 library(formattable)
+library(ggplot2)
 
 list <- structure(NA,class="result")
 "[<-.result" <- function(x,...,value) {
@@ -19,6 +20,9 @@ list <- structure(NA,class="result")
   x
 }
 
+
+## Loading data ###############################
+
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 oj_data_path <- 'Methods/Data/Objective'
 ai_data_path <- 'Methods/Data/Surveys/Axios-Ipsos/Aggregate'
@@ -26,7 +30,10 @@ hps_data_path <- 'Methods/Data/Surveys/HPS/Aggregate'
 overall_path <- 'Methods/Data/Overall'
 setwd(root_dir)
 
-################################################
+start_date <- '2020-10-22'
+end_date <- '2021-05-24'
+
+
 ###Objective measures
 
 objective <- list()
@@ -43,9 +50,13 @@ objective$sp500 <- read.csv(
   select(-Volume) %>% 
   mutate(Date = mdy(Date),
   ) %>% 
-  filter(Date > ymd('2020-10-26'))
+  filter(Date > ymd(start_date)) %>% 
+  filter(Date < ymd(end_date)) %>% 
+  select(Date, Close.Last) %>% 
+  mutate(sp500_Close = Close.Last) %>% 
+  select(-Close.Last)
 
-# UoM Index of Consumer Sentiment from http://www.sca.isr.umich.edu/tables.html
+ # UoM Index of Consumer Sentiment from http://www.sca.isr.umich.edu/tables.html
 # Downloaded at:
 objective$ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
                 skip = 3, 
@@ -55,7 +66,9 @@ objective$ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
          Index = `INDEX.OF.CONSUMER.SENTIMENT`) %>% 
   select(Date, Index) %>% 
   slice(2:14) %>% 
-  mutate(Date = ym(Date))
+  mutate(Date = ym(Date)) %>% 
+  filter(Date >= ym(glue("{year(start_date)}-{month(start_date)}"))) %>% 
+  filter(Date < ym(glue("{year(end_date)}-{month(end_date)}")))
 
 
 # CDC Vaccination statistics 
@@ -76,7 +89,7 @@ objective$cdc_vac <- read.csv(
     ) %>% 
   mutate(Date = mdy(Date)) %>% 
   filter(
-    Date < ymd('2021-05-24')
+    Date < ymd(end_date)
     ) %>% 
   group_by(Date) %>% 
   summarize(
@@ -85,8 +98,8 @@ objective$cdc_vac <- read.csv(
   
 
 
-################################################
-### Load survey data
+
+### Survey data
 
 surveys <- list()
 
@@ -130,8 +143,8 @@ surveys$hps$vac_s2 <- readRDS(
   )
 )
 
-################################################
-### Load social media data.
+
+### Social media data.
 
 load_nlp_data <- function(
   source, 
@@ -546,3 +559,66 @@ sm$twitter <- load_all_twitter(proc = T)
 #   )
 # )
 
+
+
+## Descriptives ###############################
+
+# EMPLOYMENT: Combine objective measures
+ts <- as.Date(seq.POSIXt(
+  as.POSIXct(start_date, tz = "UTC"),
+  as.POSIXct(end_date),
+  by = "day"))
+
+ts <- as.data.frame(ts) %>% 
+  mutate(Date = ts) %>% 
+  select(Date)
+
+obj <- ts %>% 
+  full_join(objective$sp500, by = "Date") %>% 
+  full_join(objective$ics, by = "Date") %>% 
+  mutate(ics = Index) %>% 
+  select(-Index) %>% 
+  arrange(., Date) %>% 
+  fill(ics) %>% 
+  fill(sp500_Close) %>% 
+  filter(Date > ymd('2020-10-22')) %>% 
+  mutate(
+    across(where(is.numeric), scale)
+  ) %>% 
+  mutate(Day = Date) %>% 
+  select(-Date)
+
+
+obj_t <- obj %>% 
+  mutate(Month = ym(glue("{year(Date)}-{month(Date)}"))) %>% 
+  group_by(Month) %>% 
+  summarize(
+    m_avg_sp = mean(sp500_Close),
+    m_avg_ics = mean(ics))
+ 
+obj %>% 
+  ggplot(.) + 
+    geom_line(aes(x = Date, y = sp500_Close)) +
+    geom_line(aes(x = Date, y = ics))
+
+obj_t %>% 
+  ggplot(.) + 
+  geom_line(aes(x = Month, y = m_avg_sp)) +
+  geom_line(aes(x = Month, y = m_avg_ics))
+
+
+
+m1 <- sm$reddit$emp$c1b$set_1 %>% 
+  mutate(Day = date) %>% 
+  select(-date) %>% 
+  full_join(obj, by = "Day")
+ 
+
+  objective$sp500 %>% 
+  ggplot(., mapping = aes(x = Date, y = Close.Last)) + geom_line()
+
+
+objective$ics %>% 
+  ggplot(., mapping = aes(x = Date, y = Index)) + geom_line()
+  
+ 
