@@ -727,7 +727,7 @@ ts <- as.Date(seq.POSIXt(
   by = "day"))
 
 ts <- as.data.frame(ts) %>% 
-  mutate(Day = ts) %>% 
+  mutate(Day = ts) %>%  
   select(Day)
 
 objective$emp <- ts %>% 
@@ -798,7 +798,6 @@ eg_reddit$emp_obj$toplot %>%
   
   
 # Combining surveys with sm data.
-
 eg_reddit$emp_surveys$df <- sm$reddit$emp$c1b$set_1 %>% 
   inner_join(sp$hps, by = "Day")
 
@@ -815,9 +814,62 @@ View(eg_reddit$emp_surveys$df)
 colSums(is.na(eg_reddit$emp_obj$df))
 
 # Combining surveys with sm data and objective measures.
+eg_reddit$emp_obj_surveys_hps$df <- sm$reddit$emp$c1b$set_1 %>% 
+  inner_join(sp$ai, by = "Day") %>% 
+  inner_join(objective$emp, by = "Day") %>% 
+  inner_join(surveys$hps$emp, by = "Period")
+
+bla <- sm$reddit$emp$c1b$set_1 %>% 
+  inner_join(sp$ai, by = "Day") %>% 
+  inner_join(objective$emp, by = "Day") %>% 
+  inner_join(surveys$hps$emp, by = "Period") 
+
+%>% 
+  inner_join(surveys$ai$emp, by = "ai_Period") 
+
+%>% 
+  mutate(
+    Period = Period.x,
+    Period.x = NULL,
+    Period.y = NULL)
 
 
-eg_reddit$emp_obj_surveys$df <- eg_reddit$emp_surveys$df %>% 
+bla2 <- bla %>% 
+  group_by(Period) %>% 
+  summarise(
+    sp500 = mean(sp500_Close),
+    ics = mean(ics),
+    across(
+      bing:i_nrc,
+      ~sum(.x*obs)/sum(obs))
+  )
+
+
+bla3 <- bla %>% 
+  group_by(ai_Period) %>% 
+  summarise(
+    sp500 = mean(sp500_Close),
+    ics = mean(ics),
+    across(
+      bing:i_nrc,
+      ~sum(.x*obs)/sum(obs))
+  )
+
+
+View(eg_reddit$emp_obj_surveys_ai$df)
+
+eg_reddit$emp_obj_surveys$df <- eg_reddit$emp_obj_surveys$df %>% 
+  group_by(Period) %>% 
+  summarise(
+    obs = sum(obs),
+    sp500 = mean(sp500_Close),
+    ics = mean(ics),
+    across(
+      bing:i_nrc,
+      ~sum(.x*obs)/sum(obs))
+  )
+  
+View(eg_reddit$emp_obj_surveys_hps$df)
   
 
 t <- sm$reddit$emp$c1b$set_1 %>% 

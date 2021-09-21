@@ -8,7 +8,7 @@ rootDir <- '/Volumes/Survey_Social_Media_Compare'
 data_path <- file.path(rootDir, 'Methods/Data/Surveys/HPS/Raw/')
 
 first_week <- 18
-last_week <- 28
+last_week <- 30
 
 hps_weeks <- seq(from = first_week, to = last_week, by = 1)
 # hps_periods <- seq(from = 1, to = (last_week - first_week)+1, by = 1)
