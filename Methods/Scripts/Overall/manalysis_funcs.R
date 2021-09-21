@@ -103,6 +103,78 @@ objective$cdc_vac <- read.csv(
 
 ### Survey data
 
+# Survey periods
+load_sp <- function(){
+  
+  # "/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/surveyPeriods.xlsx", 
+  
+  sp <- list()
+  
+  sp$raw <- read_excel(
+    file.path(
+      root_dir,
+      survey_periods_path,
+      'surveyPeriods.xlsx'
+    ),
+    sheet = "AI+HPS", col_types = c("text", 
+                                    "date", "date", "text", "date", "date", 
+                                    "text", "text", "text"))
+  
+  sp$proc <- sp$raw %>% 
+    select(-A_I_week, -HPS_Week, -A_I_topic, -HPS_topic) %>% 
+    mutate(ai_start = A_I_start_date,
+           ai_end = A_I_end_date,
+           hps_start = HPS_start_date,
+           hps_end = HPS_end_date) %>% 
+    select(Period, ai_start, ai_end,
+           hps_start, hps_end) %>% 
+    mutate(Period = 
+             as.numeric(
+               str_extract(
+                 Period, "[[:digit:]]+"
+               )
+             )
+    )
+  
+  sp$hps <- sp$proc %>% 
+    select(Period, hps_start, hps_end) %>% 
+    distinct()%>%
+    group_by(Period) %>% 
+    summarize(
+      Day = as.Date(seq.POSIXt(
+        as.POSIXct(hps_start, tz = "UTC"),
+        as.POSIXct(hps_end),
+        by = "day"))
+    )
+  
+  sp$ai <- sp$proc %>% 
+    mutate(
+      d = sp$proc %>% select(Period) %>% duplicated(.)) %>% 
+    mutate(
+      Period = ifelse(d == T, glue("{Period}b"), Period)
+    ) %>% 
+    select(Period, ai_start, ai_end) %>% 
+    group_by(Period) %>% 
+    summarize(
+      Day = as.Date(seq.POSIXt(
+        as.POSIXct(ai_start, tz = "UTC"),
+        as.POSIXct(ai_end),
+        by = "day"))
+    ) %>% 
+    mutate(Period = 
+             as.numeric(
+               str_extract(
+                 Period, "[[:digit:]]+")
+             )) %>% 
+    arrange(., Period)
+  
+  return(sp)
+  
+}
+
+sp <- load_sp()
+
+
 surveys <- list()
 
 surveys$ai$emp <- readRDS(
@@ -242,14 +314,14 @@ change_scores <- function(df, source){
     mutate(bing_score = bing_score/bing_words,
            afinn_score = afinn_score/afinn_words,
            nrc_score = nrc_score/nrc_words) %>% 
-    mutate(bing_score = ifelse(is.na(bing_score), 0,
-                               ifelse(bing_score < 0, -1, 
+    mutate(bing_score = ifelse(is.na(bing_score), 0.5,
+                               ifelse(bing_score < 0, 0,
                                       1)),
-           afinn_score = ifelse(is.na(afinn_score), 0,
-                                ifelse(afinn_score < 0, -1, 
+           afinn_score = ifelse(is.na(afinn_score), 0.5,
+                                ifelse(afinn_score < 0, 0,
                                        1)),
-           nrc_score = ifelse(is.na(nrc_score), 0,
-                              ifelse(nrc_score < 0, -1, 
+           nrc_score = ifelse(is.na(nrc_score), 0.5,
+                              ifelse(nrc_score < 0, 0,
                                      1))) %>% 
     select(-bing_words,
            -afinn_words,
@@ -258,26 +330,53 @@ change_scores <- function(df, source){
   if(source == "Reddit"){
   
     df <- df %>% 
+      mutate(Day = as.Date(date)) %>% select(-date) %>% 
+      group_by(Day) %>% 
       mutate(
-          nc_bing = num_comments * bing_score,
-          nc_afinn = num_comments * afinn_score,
-          nc_nrc = num_comments * nrc_score,
-          sc_bing = score * bing_score,
-          sc_afinn = score * afinn_score,
-          sc_nrc = score * nrc_score
-        )
+        comm_weight = num_comments/sum(num_comments),
+        score_weight = score/sum(score),
+        i_score = num_comments + score,
+        i_weight = i_score/sum(i_score)
+      ) %>% 
+      mutate(
+        nc_bing = bing_score*comm_weight,
+        nc_afinn = afinn_score*comm_weight,
+        nc_nrc = nrc_score*comm_weight,
+        sc_bing = bing_score*score_weight,
+        sc_afinn = afinn_score*score_weight,
+        sc_nrc = nrc_score*score_weight,
+        i_bing = bing_score*i_weight,
+        i_afinn = afinn_score*i_weight,
+        i_nrc = nrc_score*i_weight
+      )
   
   } else if(source == "Twitter"){
     
     df <- df %>% 
+      mutate(Day = as.Date(date)) %>% 
+      group_by(Day) %>% 
       mutate(
-         rt_bing = (retweet_count + quote_count) * bing_score,
-         rt_afinn = (retweet_count + quote_count) * afinn_score,
-         rt_nrc = (retweet_count + quote_count) * nrc_score,
-         l_bing = (reply_count + like_count) * bing_score,
-         l_afinn = (reply_count + like_count) * afinn_score,
-         l_nrc = (reply_count + like_count) * nrc_score
-      ) 
+        like_weight = like_count/sum(like_count),
+        reply_weight = reply_count/sum(reply_count),
+        rt_score = retweet_count + quote_count,
+        i_score = retweet_count + quote_count + like_count,
+        rt_weight = rt_score/sum(rt_score),
+        i_weight = i_score/sum(i_score),
+      ) %>% 
+      mutate(
+        l_bing = bing_score*like_weight,
+        l_afinn = afinn_score*like_weight,
+        l_nrc = nrc_score*like_weight,
+        re_bing = bing_score*reply_weight,
+        re_afinn = afinn_score*reply_weight,
+        re_nrc = nrc_score*reply_weight,
+        rt_bing = bing_score*rt_weight,
+        rt_afinn = afinn_score*rt_weight,
+        rt_nrc = nrc_score*rt_weight,
+        i_bing = bing_score*i_weight,
+        i_afinn = afinn_score*i_weight,
+        i_nrc = nrc_score*i_weight
+      )
       
     
   }
@@ -292,46 +391,39 @@ summarize_days <- function(df, source){
   if(source == "Reddit"){
   
       df <- df %>% 
-        mutate(Day = as.Date(date)) %>% 
-        group_by(Day) %>% 
-        summarize(
-          obs = as.character(n()),
-          bing = sum(bing_score)/n(),
-          nc_bing = sum(nc_bing)/(n()*mean(num_comments)),
-          sc_bing = sum(sc_bing)/(n()*mean(score)),
-          afinn = sum(afinn_score)/n(),
-          nc_afinn = sum(nc_afinn)/(n()*mean(num_comments)),
-          sc_afinn = sum(sc_afinn)/(n()*mean(score)),
-          nrc = sum(nrc_score)/n(),
-          nc_nrc = sum(nc_nrc)/(n()*mean(num_comments)),
-          sc_nrc = sum(sc_nrc)/(n()*mean(score))
-        ) %>% 
-        # mutate(
-        #   across(where(is.numeric), scale)
-        # ) %>% 
-        mutate(obs = as.double(obs))
+        group_by(Day) %>%
+        summarise(
+          obs = n(),
+          bing = mean(bing_score),
+          nc_bing = sum(nc_bing),
+          sc_bing = sum(sc_bing),
+          i_bing = sum(i_bing),
+          nrc = mean(nrc_score),
+          nc_nrc = sum(nc_nrc),
+          sc_nrc = sum(sc_nrc),
+          i_nrc = sum(i_nrc)
+        )
   
   } else if(source == "Twitter"){
     
       df <- df %>% 
-        mutate(Day = as.Date(date)) %>% 
         group_by(Day) %>% 
-        summarize(
-          obs = as.character(n()),
-          bing = sum(bing_score)/n(),
-          afinn = sum(afinn_score)/n(),
-          nrc = sum(nrc_score)/n(),
-          rt_bing = sum(rt_bing)/(n()*mean(retweet_count + quote_count)),
-          rt_afinn = sum(rt_afinn)/(n()*mean(retweet_count + quote_count)),
-          rt_nrc = sum(rt_nrc)/(n()*mean(retweet_count + quote_count)),
-          l_bing = sum(l_bing)/(n()*mean(reply_count + like_count)),
-          l_afinn = sum(l_afinn)/(n()*mean(reply_count + like_count)),
-          l_nrc = sum(l_nrc)/(n()*mean(reply_count + like_count))
-        ) %>% 
-        # mutate(
-        #   across(where(is.numeric), scale)
-        # ) %>% 
-        mutate(obs = as.double(obs))
+        summarise(
+          obs = n(),
+          bing = mean(bing_score),
+          l_bing = sum(l_bing),
+          l_afinn = sum(l_afinn),
+          l_nrc = sum(l_nrc),
+          re_bing = sum(re_bing),
+          re_afinn = sum(re_afinn),
+          re_nrc = sum(re_nrc),
+          rt_bing = sum(rt_bing),
+          rt_afinn = sum(rt_afinn),
+          rt_nrc = sum(rt_nrc),
+          i_bing = sum(i_bing),
+          i_afinn = sum(i_afinn),
+          i_nrc = sum(i_nrc)
+        )
         
     
   }
@@ -547,25 +639,25 @@ load_all_twitter <- function(proc = F){
 
 sm <- list()
 
-sm$reddit <- load_all_reddit(proc = F)
-sm$twitter <- load_all_twitter(proc = F)
+sm$reddit <- load_all_reddit(proc = T)
+sm$twitter <- load_all_twitter(proc = T)
 
-# To re-run:
-saveRDS(
-  sm$reddit,
-  file.path(
-    root_dir,
-    overall_path,
-    'reddit.rds'
-  ))
-
-saveRDS(
-  sm$twitter,
-  file.path(
-    root_dir,
-    overall_path,
-    'twitter.rds'
-  ))
+# # To re-run:
+# saveRDS(
+#   sm$reddit,
+#   file.path(
+#     root_dir,
+#     overall_path,
+#     'reddit.rds'
+#   ))
+# 
+# saveRDS(
+#   sm$twitter,
+#   file.path(
+#     root_dir,
+#     overall_path,
+#     'twitter.rds'
+#   ))
 
 
 
@@ -616,8 +708,6 @@ obj_t <- obj %>%
 
 
 m1 <- sm$reddit$emp$c1b$set_1 %>% 
-  mutate(Day = date) %>% 
-  select(-date) %>% 
   full_join(obj, by = "Day") %>% 
   filter(obs > 100) %>% 
   filter(Day > ymd(start_date))
@@ -630,8 +720,6 @@ m2 <- m1 %>%
                cols = contains("nrc"),
                names_to = "Metric",
                values_to = "Index")
-
-
 
 
 m2 %>% 
@@ -655,122 +743,6 @@ m2 %>%
   
   
 # EMPLOYMENT: Comparing surveys.
-  
-# "/Volumes/Survey_Social_Media_Compare/Methods/Scripts/Surveys/table_details/surveyPeriods.xlsx", 
-
-sp <- list()
-
-
-sp$raw <- read_excel(
-  file.path(
-    root_dir,
-    survey_periods_path,
-    'surveyPeriods.xlsx'
-    ),
-  sheet = "AI+HPS", col_types = c("text", 
-                                  "date", "date", "text", "date", "date", 
-                                  "text", "text", "text"))
-
-sp$proc <- sp$raw %>% 
-  select(-A_I_week, -HPS_Week, -A_I_topic, -HPS_topic) %>% 
-  mutate(ai_start = A_I_start_date,
-         ai_end = A_I_end_date,
-         hps_start = HPS_start_date,
-         hps_end = HPS_end_date) %>% 
-  select(Period, ai_start, ai_end,
-         hps_start, hps_end) %>% 
-  mutate(Period = 
-           as.numeric(
-             str_extract(
-               Period, "[[:digit:]]+"
-             )
-           )
-  )
-
-sp$hps <- sp$proc %>% 
-  select(Period, hps_start, hps_end) %>% 
-  distinct()%>%
-  group_by(Period) %>% 
-  summarize(
-    Day = as.Date(seq.POSIXt(
-      as.POSIXct(hps_start, tz = "UTC"),
-      as.POSIXct(hps_end),
-      by = "day"))
-  )
-
-sp$ai <- sp$proc %>% 
-  mutate(
-    d = sp$proc %>% select(Period) %>% duplicated(.)) %>% 
-  mutate(
-    Period = ifelse(d == T, glue("{Period}b"), Period)
-    ) %>% 
-  select(Period, ai_start, ai_end) %>% 
-  group_by(Period) %>% 
-  summarize(
-    Day = as.Date(seq.POSIXt(
-      as.POSIXct(ai_start, tz = "UTC"),
-      as.POSIXct(ai_end),
-      by = "day"))
-  ) %>% 
-  mutate(Period = 
-           as.numeric(
-             str_extract(
-               Period, "[[:digit:]]+")
-           )) %>% 
-  arrange(., Period)
-
-
-bla <- load_nlp_data(
-  source = "Reddit",
-  topic = "Employment",
-  set = 4,
-  level = 2,
-  stage = '1b'
-)
-
-
-bla <- bla %>%
-  mutate(bing_score = bing_score/bing_words,
-         afinn_score = afinn_score/afinn_words,
-         nrc_score = nrc_score/nrc_words) %>% 
-  mutate(bing_score = ifelse(
-    is.na(bing_score), 0, bing_score
-  ))
-
-
-# %>%
-#   mutate(bing_score = ifelse(is.na(bing_score), 0,
-#                              ifelse(bing_score < 0, -1,
-#                                     1)),
-#          afinn_score = ifelse(is.na(afinn_score), 0,
-#                               ifelse(afinn_score < 0, -1,
-#                                      1)),
-#          nrc_score = ifelse(is.na(nrc_score), 0,
-#                             ifelse(nrc_score < 0, -1,
-#                                    1)))
-
-
-
-# 
-bla2 <- bla %>%
-  select(num_comments, score, date, bing_score) %>%
-  mutate(Day = as.Date(date)) %>% select(-date) %>%
-  mutate(
-    nc_bing = bing_score * num_comments,
-    sc_bing = bing_score * score)
-#   
-#   
-bla3 <- bla2 %>%
-  group_by(Day) %>%
-  summarise(
-    obs = n(),
-    bing = sum(bing_score)/n(),
-    nc_bing = sum(nc_bing)/(n()*mean(num_comments)),
-    sc_bing = sum(sc_bing)/(n()*mean(score))
-  )
-  
-
-
 
 names(surveys$ai$emp[!(names(surveys$ai$emp) %in% "Period")]) <- paste0("ai_", names(surveys$ai$emp[!(names(surveys$ai$emp) %in% "Period")]))
 names(surveys$ai$emp) <- paste0("ai_", names(surveys$ai$vac))
@@ -805,4 +777,136 @@ t <- sm$reddit$emp$c1b$set_1 %>%
   )
 
 
-  
+
+##### Code Dump #######
+
+
+# # Changing score + summarizing days
+# bla <- load_nlp_data(
+#   source = "Reddit",
+#   topic = "Employment",
+#   set = 4,
+#   level = 2,
+#   stage = '1b'
+# )
+# 
+# 
+# bla <- bla %>%
+#   mutate(bing_score = bing_score/bing_words,
+#          afinn_score = afinn_score/afinn_words,
+#          nrc_score = nrc_score/nrc_words) %>%
+#   mutate(bing_score = ifelse(is.na(bing_score), 0.5,
+#                              ifelse(bing_score < 0, 0,
+#                                     1)),
+#          afinn_score = ifelse(is.na(afinn_score), 0.5,
+#                               ifelse(afinn_score < 0, 0,
+#                                      1)),
+#          nrc_score = ifelse(is.na(nrc_score), 0.5,
+#                             ifelse(nrc_score < 0, 0,
+#                                    1)))
+# 
+# 
+# bla2 <- bla %>%
+#   select(num_comments, score, date, bing_score, nrc_score) %>%
+#   mutate(Day = as.Date(date)) %>% select(-date) %>% 
+#   group_by(Day) %>% 
+#   mutate(
+#     comm_weight = num_comments/sum(num_comments),
+#     score_weight = score/sum(score),
+#     i_score = num_comments + score,
+#     i_weight = i_score/sum(i_score)) %>% 
+#   mutate(
+#     nc_bing = bing_score*comm_weight,
+#     sc_bing = bing_score*score_weight,
+#     i_bing = bing_score*i_weight,
+#     nc_nrc = nrc_score*comm_weight,
+#     sc_nrc = nrc_score*score_weight,
+#     i_nrc = nrc_score*i_weight
+#   )
+# 
+# bla3 <- bla2 %>% 
+#   group_by(Day) %>%
+#   summarise(
+#     bing = mean(bing_score),
+#     nc_bing = sum(nc_bing),
+#     sc_bing = sum(sc_bing),
+#     i_bing = sum(i_bing),
+#     nrc = mean(nrc_score),
+#     nc_nrc = sum(nc_nrc),
+#     sc_nrc = sum(sc_nrc),
+#     i_nrc = sum(i_nrc)
+#   )
+# 
+# 
+# b <- bla2 %>% filter(Day == ymd("2021-02-23")) 
+# 
+# 
+# t <- load_nlp_data(
+#   source = "Twitter",
+#   topic = "Employment",
+#   set = 1,
+#   level = 2,
+#   stage = '1b'
+# )
+# 
+# t <- t %>% 
+#   mutate(bing_score = bing_score/bing_words,
+#          afinn_score = afinn_score/afinn_words,
+#          nrc_score = nrc_score/nrc_words) %>%
+#   mutate(bing_score = ifelse(is.na(bing_score), 0.5,
+#                              ifelse(bing_score < 0, 0,
+#                                     1)),
+#          afinn_score = ifelse(is.na(afinn_score), 0.5,
+#                               ifelse(afinn_score < 0, 0,
+#                                      1)),
+#          nrc_score = ifelse(is.na(nrc_score), 0.5,
+#                             ifelse(nrc_score < 0, 0,
+#                                    1)))
+# 
+# 
+# t2 <- t %>% 
+#   select(-id, -text) %>% 
+#   mutate(Day = as.Date(date)) %>% 
+#   group_by(Day) %>% 
+#   mutate(
+#     like_weight = like_count/sum(like_count),
+#     reply_weight = reply_count/sum(reply_count),
+#     rt_score = retweet_count + quote_count,
+#     i_score = retweet_count + quote_count + like_count,
+#     rt_weight = rt_score/sum(rt_score),
+#     i_weight = i_score/sum(i_score),
+#   ) %>% 
+#   mutate(
+#     l_bing = bing_score*like_weight,
+#     l_afinn = afinn_score*like_weight,
+#     l_nrc = nrc_score*like_weight,
+#     re_bing = bing_score*reply_weight,
+#     re_afinn = afinn_score*reply_weight,
+#     re_nrc = nrc_score*reply_weight,
+#     rt_bing = bing_score*rt_weight,
+#     rt_afinn = afinn_score*rt_weight,
+#     rt_nrc = nrc_score*rt_weight,
+#     i_bing = bing_score*i_weight,
+#     i_afinn = afinn_score*i_weight,
+#     i_nrc = nrc_score*i_weight
+#   )
+# 
+# t3 <- t2 %>% 
+#   group_by(Day) %>% 
+#   summarise(
+#     bing = mean(bing_score),
+#     l_bing = sum(l_bing),
+#     l_afinn = sum(l_afinn),
+#     l_nrc = sum(l_nrc),
+#     re_bing = sum(re_bing),
+#     re_afinn = sum(re_afinn),
+#     re_nrc = sum(re_nrc),
+#     rt_bing = sum(rt_bing),
+#     rt_afinn = sum(rt_afinn),
+#     rt_nrc = sum(rt_nrc),
+#     i_bing = sum(i_bing),
+#     i_afinn = sum(i_afinn),
+#     i_nrc = sum(i_nrc)
+#   )
+
+
