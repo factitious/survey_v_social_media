@@ -38,68 +38,73 @@ end_date <- '2021-05-24'
 
 ###Objective measures
 
-objective <- list()
-
-# S&P data from https://www.nasdaq.com/market-activity/index/spx/historical.
-# Downloaded at:
-objective$sp500 <- read.csv(
-  file.path(
-    root_dir,
-    oj_data_path,
-    'sp500.csv'
-  )
-) %>% 
-  select(-Volume) %>% 
-  mutate(Day = mdy(Date),
-  ) %>% 
-  filter(Day > ymd(start_date)) %>% 
-  filter(Day < ymd(end_date)) %>% 
-  select(Day, Close.Last) %>% 
-  mutate(sp500_Close = Close.Last) %>% 
-  select(-Close.Last)
-
- # UoM Index of Consumer Sentiment from http://www.sca.isr.umich.edu/tables.html
-# Downloaded at:
-objective$ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
-                skip = 3, 
-                header = TRUE) %>% 
-  Filter(function(x)!all(is.na(x)), .) %>% 
-  mutate(Day = glue('{X} {DATE.OF.SURVEY}'),
-         Index = `INDEX.OF.CONSUMER.SENTIMENT`) %>% 
-  select(Day, Index) %>% 
-  slice(2:14) %>% 
-  mutate(Day = ym(Day)) %>% 
-  filter(Day >= ym(glue("{year(start_date)}-{month(start_date)}"))) %>% 
-  filter(Day < ym(glue("{year(end_date)}-{month(end_date)}")))
-
-
-# CDC Vaccination statistics 
-# (https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc)
-objective$cdc_vac <- read.csv(
-  file.path(
-    root_dir,
-    oj_data_path,
-    'COVID-19_Vaccinations_in_the_United_States_Jurisdiction.csv'
-  )
-) %>% 
-  select(
-    Date,
-    Distributed,
-    Administered,
-    Dist_Per_100K,
-    Admin_Per_100K,
-    ) %>% 
-  mutate(Day = mdy(Date)) %>% 
-  filter(
-    Day < ymd(end_date)
-    ) %>% 
-  group_by(Day) %>% 
-  summarize(
-    uptake = sum(Administered)/sum(Distributed)
-  )
+load_objective <- function(){
   
-
-
+  objective <- list()
+  
+  # S&P data from https://www.nasdaq.com/market-activity/index/spx/historical.
+  # Downloaded at:
+  objective$raw$sp500 <- read.csv(
+    file.path(
+      root_dir,
+      oj_data_path,
+      'sp500.csv'
+    )
+  ) %>% 
+    select(-Volume) %>% 
+    mutate(Day = mdy(Date),
+    ) %>% 
+    filter(Day > ymd(start_date)) %>% 
+    filter(Day < ymd(end_date)) %>% 
+    select(Day, Close.Last) %>% 
+    mutate(sp500_Close = Close.Last) %>% 
+    select(-Close.Last)
+  
+  # UoM Index of Consumer Sentiment from http://www.sca.isr.umich.edu/tables.html
+  # Downloaded at:
+  objective$raw$ics <- read.csv('http://www.sca.isr.umich.edu/files/tbcics.csv',
+                                skip = 3, 
+                                header = TRUE) %>% 
+    Filter(function(x)!all(is.na(x)), .) %>% 
+    mutate(Day = glue('{X} {DATE.OF.SURVEY}'),
+           Index = `INDEX.OF.CONSUMER.SENTIMENT`) %>% 
+    select(Day, Index) %>% 
+    slice(2:14) %>% 
+    mutate(Day = ym(Day)) %>% 
+    filter(Day >= ym(glue("{year(start_date)}-{month(start_date)}"))) %>% 
+    filter(Day < ym(glue("{year(end_date)}-{month(end_date)}")))
+  
+  
+  # CDC Vaccination statistics 
+  # (https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc)
+  objective$raw$cdc_vac <- read.csv(
+    file.path(
+      root_dir,
+      oj_data_path,
+      'COVID-19_Vaccinations_in_the_United_States_Jurisdiction.csv'
+    )
+  ) %>% 
+    select(
+      Date,
+      Distributed,
+      Administered,
+      Dist_Per_100K,
+      Admin_Per_100K,
+    ) %>% 
+    mutate(Day = mdy(Date)) %>% 
+    filter(
+      Day < ymd(end_date)
+    ) %>% 
+    group_by(Day) %>% 
+    summarize(
+      uptake = sum(Administered)/sum(Distributed)
+    )
+  
+  return(objective)
+  
+}
+  
+objective <- load_objective()
 
 ### Survey data
 
@@ -144,15 +149,13 @@ load_sp <- function(){
       Day = as.Date(seq.POSIXt(
         as.POSIXct(hps_start, tz = "UTC"),
         as.POSIXct(hps_end),
-        by = "day"))
-    )
+        by = "day")))
   
-  sp$ai <- sp$proc %>% 
+  ai_hps <- sp$proc %>% 
     mutate(
       d = sp$proc %>% select(Period) %>% duplicated(.)) %>% 
     mutate(
-      Period = ifelse(d == T, glue("{Period}b"), Period)
-    ) %>% 
+      Period = ifelse(d == T, glue("{Period}b"), Period)) %>% 
     select(Period, ai_start, ai_end) %>% 
     group_by(Period) %>% 
     summarize(
@@ -165,8 +168,20 @@ load_sp <- function(){
              as.numeric(
                str_extract(
                  Period, "[[:digit:]]+")
-             )) %>% 
-    arrange(., Period)
+             )) %>% arrange(., Period)
+  
+  ai <- sp$proc %>% 
+    mutate(ai_Period = (1:nrow(.))) %>% 
+    select(ai_Period, ai_start, ai_end) %>% 
+    group_by(ai_Period) %>% 
+    summarize(
+      Day = as.Date(seq.POSIXt(
+        as.POSIXct(ai_start, tz = "UTC"),
+        as.POSIXct(ai_end),
+        by = "day")))
+  
+  sp$ai <- ai_hps %>% 
+    left_join(ai, by = "Day")
   
   return(sp)
   
@@ -174,88 +189,129 @@ load_sp <- function(){
 
 sp <- load_sp()
 
+load_surveys <- function(){
 
-surveys <- list()
+      surveys <- list()
+      
+      surveys$ai$emp <- readRDS(
+        file.path(
+          root_dir, 
+          ai_data_path,
+          'emp.rds'
+          )
+      ) %>% 
+        select(
+          Period,
+          `18-29`,
+          `30-49`,
+          `50-64`,
+          `Male`,
+          `Female`,
+          `Total`
+               ) %>% 
+        add_column(
+          ai_Period = (1:nrow(.)), 
+          .after= "Period")
+      
+      setnames(
+        surveys$ai$emp,
+        old = c("18-29", "30-49", "50-64", "Male", "Female", "Total"),
+        new = c("ai_18-29", "ai_30-49", "ai_50-64", "ai_Male", "ai_Female", "ai_Total")
+      )
+        
+      surveys$ai$vac <- readRDS(
+        file.path(
+          root_dir, 
+          ai_data_path,
+          'vac.rds'
+        )
+      ) %>% 
+        select(
+          Period,
+          `18-29`,
+          `30-49`,
+          `50-64`,
+          `Male`,
+          `Female`,
+          `Total`
+        ) %>% 
+        add_column(
+          ai_Period = (1:nrow(.)), 
+          .after= "Period")
+      
+      setnames(
+        surveys$ai$vac,
+        old = c("18-29", "30-49", "50-64", "Male", "Female", "Total"),
+        new = c("ai_18-29", "ai_30-49", "ai_50-64", "ai_Male", "ai_Female", "ai_Total")
+      )
+      
+      surveys$hps$emp <- readRDS(
+        file.path(
+          root_dir, 
+          hps_data_path,
+          'emp.rds'
+        )
+      ) %>% 
+        mutate(Period = 
+                 as.numeric(
+                 str_extract(
+                   Period, "[[:digit:]]+"
+                   )
+                 )
+               )
+      
+      setnames(
+        surveys$hps$emp,
+        old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
+        new = c("hps_18-24", "hps_25-39", "hps_40-54", "hps_55-64", "hps_65+", "hps_Male", "hps_Female", "hps_Total"),
+      )
+      
+      surveys$hps$vac_s1 <- readRDS(
+        file.path(
+          root_dir, 
+          hps_data_path,
+          'vac_s1.rds'
+        )
+      ) %>% 
+        mutate(Period = 
+                 as.numeric(
+                   str_extract(
+                     Period, "[[:digit:]]+"
+                   )
+                 )
+        )
+      
+      setnames(
+        surveys$hps$vac_s1,
+        old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
+        new = c("hps_18-24", "hps_25-39", "hps_40-54", "hps_55-64", "hps_65+", "hps_Male", "hps_Female", "hps_Total"),
+      )
+      
+      surveys$hps$vac_s2 <- readRDS(
+        file.path(
+          root_dir, 
+          hps_data_path,
+          'vac_s2.rds'
+        )
+      ) %>% 
+        mutate(Period = 
+                 as.numeric(
+                   str_extract(
+                     Period, "[[:digit:]]+"
+                   )
+                 )
+        )
+      
+      setnames(
+        surveys$hps$vac_s2,
+        old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
+        new = c("hps_18-24", "hps_25-39", "hps_40-54", "hps_55-64", "hps_65+", "hps_Male", "hps_Female", "hps_Total"),
+      )
 
-surveys$ai$emp <- readRDS(
-  file.path(
-    root_dir, 
-    ai_data_path,
-    'emp.rds'
-    )
-) %>% 
-  select(
-    Period,
-    `18-29`,
-    `30-49`,
-    `50-64`,
-    `Male`,
-    `Female`,
-    `Total`
-         )
-  
-surveys$ai$vac <- readRDS(
-  file.path(
-    root_dir, 
-    ai_data_path,
-    'vac.rds'
-  )
-) %>% 
-  select(
-    Period,
-    `18-29`,
-    `30-49`,
-    `50-64`,
-    `Male`,
-    `Female`,
-    `Total`
-  )
+      return(surveys)
+}
 
-surveys$hps$emp <- readRDS(
-  file.path(
-    root_dir, 
-    hps_data_path,
-    'emp.rds'
-  )
-) %>% 
-  mutate(Period = 
-           as.numeric(
-           str_extract(
-             Period, "[[:digit:]]+"
-             )
-           )
-         )
-
-surveys$hps$vac_s1 <- readRDS(
-  file.path(
-    root_dir, 
-    hps_data_path,
-    'vac_s1.rds'
-  )
-) %>% 
-  mutate(Period = 
-           as.numeric(
-             str_extract(
-               Period, "[[:digit:]]+"
-             )
-           )
-  )
-
-surveys$hps$vac_s2 <- readRDS(
-  file.path(
-    root_dir, 
-    hps_data_path,
-    'vac_s2.rds'
-  )
-) %>% 
-  mutate(Period = 
-           as.numeric(
-             str_extract(
-               Period, "[[:digit:]]+"
-             )
-           )
-  )
-
+surveys <- load_surveys()
 
 ### Social media data.
 
@@ -385,7 +441,6 @@ change_scores <- function(df, source){
   
 }
 
-
 summarize_days <- function(df, source){
   
   if(source == "Reddit"){
@@ -397,6 +452,10 @@ summarize_days <- function(df, source){
           bing = mean(bing_score),
           nc_bing = sum(nc_bing),
           sc_bing = sum(sc_bing),
+          i_bing = sum(i_bing),
+          afinn = mean(afinn_score),
+          nc_afinn = sum(nc_afinn),
+          sc_afinn = sum(sc_afinn),
           i_bing = sum(i_bing),
           nrc = mean(nrc_score),
           nc_nrc = sum(nc_nrc),
@@ -430,7 +489,6 @@ summarize_days <- function(df, source){
       
   return(df)
 }
-
 
 load_all_reddit <- function(proc = F){
   
@@ -636,11 +694,10 @@ load_all_twitter <- function(proc = F){
   
 }
 
-
 sm <- list()
 
-sm$reddit <- load_all_reddit(proc = T)
-sm$twitter <- load_all_twitter(proc = T)
+sm$reddit <- load_all_reddit(proc = F)
+sm$twitter <- load_all_twitter(proc = F)
 
 # # To re-run:
 # saveRDS(
@@ -661,9 +718,9 @@ sm$twitter <- load_all_twitter(proc = T)
 
 
 
-## Descriptives ###############################
+## Pre-processing ###############################
 
-# EMPLOYMENT: Combine objective measures
+# Combine objective measures
 ts <- as.Date(seq.POSIXt(
   as.POSIXct(start_date, tz = "UTC"),
   as.POSIXct(end_date),
@@ -673,80 +730,95 @@ ts <- as.data.frame(ts) %>%
   mutate(Day = ts) %>% 
   select(Day)
 
-obj <- ts %>% 
-  full_join(objective$sp500, by = "Day") %>% 
-  full_join(objective$ics, by = "Day") %>% 
+objective$emp <- ts %>% 
+  full_join(objective$raw$sp500, by = "Day") %>% 
+  full_join(objective$raw$ics, by = "Day") %>% 
   mutate(ics = Index) %>% 
   select(-Index) %>% 
   arrange(., Day) %>% 
   fill(ics) %>% 
   fill(sp500_Close) %>% 
-  filter(Day > ymd('2020-10-22')) %>% 
-  mutate(
-    across(where(is.numeric), scale)
-  )
+  filter(Day > ymd('2020-10-22'))
 
-
-# obj %>% 
-#   ggplot(.) + 
-#   geom_line(aes(x = Date, y = sp500_Close)) +
-#   geom_line(aes(x = Date, y = ics))
-
-
-obj_t <- obj %>% 
-  mutate(Month = ym(glue("{year(Day)}-{month(Day)}"))) %>% 
-  group_by(Month) %>% 
-  summarize(
-    m_avg_sp = mean(sp500_Close),
-    m_avg_ics = mean(ics))
-
-# obj_t %>% 
-#   ggplot(.) + 
-#   geom_line(aes(x = Month, y = m_avg_sp)) +
-#   geom_line(aes(x = Month, y = m_avg_ics))
+objective$vac <- objective$raw$cdc_vac %>% 
+  left_join(ts, by = "Day")
 
 
 
-m1 <- sm$reddit$emp$c1b$set_1 %>% 
-  full_join(obj, by = "Day") %>% 
-  filter(obs > 100) %>% 
+# Combining objective measures with sm data.
+# e.g.
+eg_reddit <- list()
+eg_twitter <- list()
+
+eg_reddit$emp_obj$df <- sm$reddit$emp$c1b$set_1 %>%
+  full_join(objective$emp, by = "Day") %>%
   filter(Day > ymd(start_date))
-  
 
+eg_reddit$vac_obj$df <- sm$reddit$vac$c1b %>%
+  inner_join(objective$vac, by = "Day") %>%
+  filter()
 
-m2 <- m1 %>%
-  select(Day, contains("nrc"), obs) %>% #bing, nc_bing, sc_bing, nc_sc_bing, obs) %>% 
-  pivot_longer(., 
+eg_twitter$emp_obj$df <- sm$twitter$emp$c1b %>% 
+  inner_join(objective$emp, by = "Day") %>% 
+  filter(Day > ymd(start_date))
+
+eg_twitter$vac_obj$df <- sm$twitter$vac$c1b %>% 
+  inner_join(objective$vac, by = "Day") %>% 
+  filter(Day > ymd(start_date))
+
+View(eg_twitter$vac_obj$df)
+
+# Transformation (i.e. pivoting) for plotting.
+
+eg_reddit$emp_obj$toplot <- eg_reddit$emp_obj$df %>% 
+  select(Day, contains("nrc"), obs) %>% #bing, nc_bing, sc_bing, nc_sc_bing, obs) %>%
+  pivot_longer(.,
                cols = contains("nrc"),
                names_to = "Metric",
                values_to = "Index")
 
+eg_reddit$emp_obj$toplot %>% 
+  ggplot(.) +
+  geom_line(aes(x = Day, y = Index, color = Metric))
+  
+# Rolling average
+# geom_line(aes(x=Day, y=rollmean(bing, 5)))
+# 
+# lines(rollmean(m2$bing, 5))
+# 
+# 
+# geom_line(aes(x=Day, y = frollmean(bing, 7, align="left")), color='red') +
+# theme_classic()
+# 
+# 
+# ggplot(., aes(x = Day)) +
+# geom_line(aes(y = bing)) + 
+# geom_line(aes(y = nc_bing))
+  
+  
+  
+# Combining surveys with sm data.
 
-m2 %>% 
-  ggplot(.)+
-  geom_line(aes(x=Day, y=bing), color='blue') + 
-  geom_line(aes(x=Day, y=bing_smooth), color='red')
-  
-  # geom_line(aes(x=Day, y=rollmean(bing, 5)))
-  # 
-  # lines(rollmean(m2$bing, 5))
-  # 
-  # 
-  # geom_line(aes(x=Day, y = frollmean(bing, 7, align="left")), color='red') +
-  # theme_classic()
-  # 
-  # 
-  # ggplot(., aes(x = Day)) +
-  # geom_line(aes(y = bing)) + 
-  # geom_line(aes(y = nc_bing))
-  
-  
-  
-# EMPLOYMENT: Comparing surveys.
+eg_reddit$emp_surveys$df <- sm$reddit$emp$c1b$set_1 %>% 
+  inner_join(sp$hps, by = "Day")
 
-names(surveys$ai$emp[!(names(surveys$ai$emp) %in% "Period")]) <- paste0("ai_", names(surveys$ai$emp[!(names(surveys$ai$emp) %in% "Period")]))
-names(surveys$ai$emp) <- paste0("ai_", names(surveys$ai$vac))
 
+eg_reddit$emp_surveys$df <- eg$emp_surveys$df %>% 
+  group_by(Period) %>% 
+  summarise(
+    across(bing:i_nrc,
+           ~sum(.x*obs)/sum(obs)),
+    obs = sum(obs)
+  )
+
+View(eg_reddit$emp_surveys$df)
+colSums(is.na(eg_reddit$emp_obj$df))
+
+# Combining surveys with sm data and objective measures.
+
+
+eg_reddit$emp_obj_surveys$df <- eg_reddit$emp_surveys$df %>% 
+  
 
 t <- sm$reddit$emp$c1b$set_1 %>% 
   inner_join(sp$ai, by = "Day") %>% 
@@ -763,18 +835,52 @@ t <- sm$reddit$emp$c1b$set_1 %>%
   
 
 
+t <- objective$sp500 %>% 
+  arrange(., Day) %>% 
+  mutate(r_sp500 = sp500_Close - lag(sp500_Close),
+         r_sp500 = scale(r_sp500))
+
+
+t %>% 
+  ggplot(., aes(x = Day,y = r)) + 
+  geom_line()
+
+
+bla <- sm$reddit$emp$c1b$set_1 %>% 
+  select(Day, bing) %>% 
+  arrange(., Day) %>% 
+  mutate(r_bing = bing - lag(bing),
+         r_bing = scale(r_bing))
 
 
 
+blat <- bla %>% 
+  inner_join(t, by = "Day") %>% 
+  filter(!is.na(r_sp500)) 
 
-%>% 
-  inner_join(sp$ai, by = "Day") 
 
-%>% 
-  group_by(Period) %>% 
-  summarize(
-    bing = sum(bing)/sum(obs)
-  )
+
+blat %>% 
+  select(Day, r_bing, r_sp500) %>% 
+  pivot_longer(
+    ., 
+    cols = contains("r"),
+    names_to = "Measure",
+    values_to = "Index"
+  ) %>% 
+  ggplot(., aes(x = Day, y = Index, color = Measure)) +
+  geom_line()
+
+
+cor(blat$bing, blat$sp500_Close)
+
+cor(blat$r_bing, blat$r_sp500)
+
+mse(blat$bing, blat$sp500_Close %>% scales::rescale())
+
+mse(blat$r_bing, blat$r_sp500)
+
+
 
 
 
