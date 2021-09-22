@@ -245,6 +245,12 @@ load_surveys <- function(){
         new = c("ai_18-29", "ai_30-49", "ai_50-64", "ai_Male", "ai_Female", "ai_Total")
       )
       
+      # Changed period after data was processed.
+      # Changing the second P12 to P13 manually here
+      # instead of re-running the pre-processing of the survey data.
+      surveys$ai$emp$Period[nrow(surveys$ai$emp)] <- 13
+      surveys$ai$vac$Period[nrow(surveys$ai$vac)] <- 13
+      
       surveys$hps$emp <- readRDS(
         file.path(
           root_dir, 
@@ -266,7 +272,7 @@ load_surveys <- function(){
         new = c("hps_18-24", "hps_25-39", "hps_40-54", "hps_55-64", "hps_65+", "hps_Male", "hps_Female", "hps_Total"),
       )
       
-      surveys$hps$vac_s1 <- readRDS(
+      hps_vac_s1 <- readRDS(
         file.path(
           root_dir, 
           hps_data_path,
@@ -282,12 +288,12 @@ load_surveys <- function(){
         )
       
       setnames(
-        surveys$hps$vac_s1,
+        hps_vac_s1,
         old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
-        new = c("hps_18-24", "hps_25-39", "hps_40-54", "hps_55-64", "hps_65+", "hps_Male", "hps_Female", "hps_Total"),
+        new = c("hps_v1_18-24", "hps_v1_25-39", "hps_v1_40-54", "hps_v1_55-64", "hps_v1_65+", "hps_v1_Male", "hps_v1_Female", "hps_v1_Total"),
       )
       
-      surveys$hps$vac_s2 <- readRDS(
+      hps_vac_s2 <- readRDS(
         file.path(
           root_dir, 
           hps_data_path,
@@ -303,10 +309,15 @@ load_surveys <- function(){
         )
       
       setnames(
-        surveys$hps$vac_s2,
+        hps_vac_s2,
         old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
-        new = c("hps_18-24", "hps_25-39", "hps_40-54", "hps_55-64", "hps_65+", "hps_Male", "hps_Female", "hps_Total"),
+        new = c("hps_v2_18-24", "hps_v2_25-39", "hps_v2_40-54", "hps_v2_55-64", "hps_v2_65+", "hps_v2_Male", "hps_v2_Female", "hps_v2_Total"),
       )
+      
+      
+      surveys$hps$vac <- hps_vac_s1 %>% 
+        inner_join(hps_vac_s2, by = "Period")
+        
 
       return(surveys)
 }
@@ -498,7 +509,7 @@ load_all_reddit <- function(proc = F){
       
       # Employment
       # Set 1
-      reddit$emp$c1b$set_1 <- load_nlp_data(
+      reddit$emp$c1b_set_1 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 1,
@@ -508,7 +519,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2$set_1 <- load_nlp_data(
+      reddit$emp$c2_set_1 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 1,
@@ -519,7 +530,7 @@ load_all_reddit <- function(proc = F){
         summarize_days(., source = "Reddit")
       
       # Set 2
-      reddit$emp$c1b$set_2 <- load_nlp_data(
+      reddit$emp$c1b_set_2 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 2,
@@ -529,7 +540,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2$set_2 <- load_nlp_data(
+      reddit$emp$c2_set_2 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 2,
@@ -540,7 +551,7 @@ load_all_reddit <- function(proc = F){
         summarize_days(., source = "Reddit")
       
       # Set 3
-      reddit$emp$c1b$set_3 <- load_nlp_data(
+      reddit$emp$c1b_set_3 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 3,
@@ -550,7 +561,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2$set_3 <- load_nlp_data(
+      reddit$emp$c2_set_3 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 3,
@@ -561,7 +572,7 @@ load_all_reddit <- function(proc = F){
         summarize_days(., source = "Reddit")
       
       # Set 4
-      reddit$emp$c1b$set_4 <- load_nlp_data(
+      reddit$emp$c1b_set_4 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 4,
@@ -571,7 +582,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2$set_4 <- load_nlp_data(
+      reddit$emp$c2_set_4 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 4,
@@ -621,9 +632,6 @@ load_all_reddit <- function(proc = F){
 load_all_twitter <- function(proc = F){
   
   if(proc == F){
-  
-      twitter_emp <- list()
-      twitter_vac <- list()
       
       twitter <- list()
       
@@ -647,15 +655,15 @@ load_all_twitter <- function(proc = F){
         change_scores(., source = "Twitter") %>% 
         summarize_days(., source = "Twitter")
       
-      twitter$emp$ml <- load_nlp_data(
-        source = "Twitter",
-        topic = "Employment",
-        set = 1,
-        level = 3,
-        stage = '2'
-      ) %>% 
-        change_scores(., source = "Twitter") %>% 
-        summarize_days(., source = "Twitter")
+      # twitter$emp$ml <- load_nlp_data(
+      #   source = "Twitter",
+      #   topic = "Employment",
+      #   set = 1,
+      #   level = 3,
+      #   stage = '2'
+      # ) %>% 
+      #   change_scores(., source = "Twitter") %>% 
+      #   summarize_days(., source = "Twitter")
       
       twitter$vac$c1b <- load_nlp_data(
         source = "Twitter",
@@ -730,39 +738,78 @@ ts <- as.data.frame(ts) %>%
   mutate(Day = ts) %>%  
   select(Day)
 
-objective$emp <- ts %>% 
-  full_join(objective$raw$sp500, by = "Day") %>% 
-  full_join(objective$raw$ics, by = "Day") %>% 
-  mutate(ics = Index) %>% 
-  select(-Index) %>% 
-  arrange(., Day) %>% 
-  fill(ics) %>% 
-  fill(sp500_Close) %>% 
-  filter(Day > ymd('2020-10-22'))
 
-objective$vac <- objective$raw$cdc_vac %>% 
-  left_join(ts, by = "Day")
+c_objective <- function(objective_df){
+  objective_df$emp <- ts %>% 
+    full_join(objective$raw$sp500, by = "Day") %>% 
+    full_join(objective$raw$ics, by = "Day") %>% 
+    mutate(ics = Index) %>% 
+    select(-Index) %>% 
+    arrange(., Day) %>% 
+    fill(ics) %>% 
+    fill(sp500_Close) %>% 
+    filter(Day > ymd('2020-10-22'))
+  
+  objective_df$vac <- objective$raw$cdc_vac %>% 
+    left_join(ts, by = "Day")
+  
+  return(objective_df)
+}
 
+objective <- c_objective(objective)
 
 
 # Combining objective measures with sm data.
+
+
+c_sm_obj <- function(df){
+  
+  clean_func <- function(df){
+    
+    cdf <- df %>% 
+      full_join(objective$emp, by = "Day") %>%
+      filter(Day > ymd(start_date)) %>% 
+      filter(!is.na(bing))
+    
+    return(cdf)
+  }
+  
+  sm_obj <- list()
+  
+  sm_obj$reddit$emp <- lapply(sm$reddit$emp, clean_func) 
+  sm_obj$reddit$vac <- lapply(sm$reddit$vac, clean_func) 
+  
+  sm_obj$twitter$emp <- lapply(sm$twitter$emp, clean_func)
+  sm_obj$twitter$vac <- lapply(sm$twitter$vac, clean_func)
+  
+  return(sm_obj)
+  
+}
+
+sm_obj <- c_sm_obj()
+
+
 # e.g.
 eg_reddit <- list()
 eg_twitter <- list()
 
-eg_reddit$emp_obj$df <- sm$reddit$emp$c1b$set_1 %>%
+eg_reddit$emp_obj_df <- sm$reddit$emp_c1b_set_1 %>%
   full_join(objective$emp, by = "Day") %>%
   filter(Day > ymd(start_date))
 
-eg_reddit$vac_obj$df <- sm$reddit$vac$c1b %>%
+eg_reddit$emp_obj$df2 <-sm$reddit$emp_c1b_set_1 %>% 
+  comb_sm_obj(.)
+
+
+eg_reddit$vac_obj$df <- sm$reddit$vac_c1b %>%
   inner_join(objective$vac, by = "Day") %>%
   filter()
 
-eg_twitter$emp_obj$df <- sm$twitter$emp$c1b %>% 
+eg_twitter$emp_obj$df <- sm$twitter$emp_c1b %>% 
   inner_join(objective$emp, by = "Day") %>% 
   filter(Day > ymd(start_date))
 
-eg_twitter$vac_obj$df <- sm$twitter$vac$c1b %>% 
+eg_twitter$vac_obj$df <- sm$twitter$vac_c1b %>% 
   inner_join(objective$vac, by = "Day") %>% 
   filter(Day > ymd(start_date))
 
@@ -777,9 +824,9 @@ eg_reddit$emp_obj$toplot <- eg_reddit$emp_obj$df %>%
                names_to = "Metric",
                values_to = "Index")
 
-eg_reddit$emp_obj$toplot %>% 
-  ggplot(.) +
-  geom_line(aes(x = Day, y = Index, color = Metric))
+# eg_reddit$emp_obj$toplot %>% 
+#   ggplot(.) +
+#   geom_line(aes(x = Day, y = Index, color = Metric))
   
 # Rolling average
 # geom_line(aes(x=Day, y=rollmean(bing, 5)))
@@ -798,7 +845,7 @@ eg_reddit$emp_obj$toplot %>%
   
   
 # Combining surveys with sm data.
-eg_reddit$emp_surveys$df <- sm$reddit$emp$c1b$set_1 %>% 
+eg_reddit$emp_surveys$df <- sm$reddit$emp_c1b_set_1 %>% 
   inner_join(sp$hps, by = "Day")
 
 
@@ -810,28 +857,100 @@ eg_reddit$emp_surveys$df <- eg$emp_surveys$df %>%
     obs = sum(obs)
   )
 
-View(eg_reddit$emp_surveys$df)
-colSums(is.na(eg_reddit$emp_obj$df))
 
 # Combining surveys with sm data and objective measures.
-eg_reddit$emp_obj_surveys_hps$df <- sm$reddit$emp$c1b$set_1 %>% 
+
+c_all <- function(
+  sp_df = sp, 
+  objective_df = objective,
+  survey_df = surveys
+){
+  
+  c_all_func <- function(
+    df,
+    ss,
+    topic){
+    
+    if(ss == 'hps'){
+      cdf <- df %>% 
+        inner_join(sp_df[[ss]], by = "Day") %>% 
+        inner_join(objective_df[[topic]], by = "Day") %>% 
+        inner_join(survey_df[[ss]][[topic]], by = "Period")
+    } else if(ss == 'ai'){
+      cdf <- df %>% 
+        inner_join(sp_df[[ss]], by = "Day") %>% 
+        inner_join(objective_df[[topic]], by = "Day") %>% 
+        inner_join(survey_df[[ss]][[topic]], by = "ai_Period") %>% 
+        mutate(
+          Period = Period.x,
+          Period.x = NULL,
+          Period.y = NULL)
+    }
+    
+    return(cdf)
+  }
+  
+  sm_all <- list()
+  
+  sm_all$reddit$hps$emp <- lapply(sm$reddit$emp, c_all_func, ss='hps', topic='emp')
+  sm_all$reddit$hps$vac <- lapply(sm$reddit$vac, c_all_func, ss='hps', topic='vac')
+  sm_all$reddit$ai$emp <- lapply(sm$reddit$emp, c_all_func, ss='ai', topic='emp')
+  sm_all$reddit$ai$vac <- lapply(sm$reddit$vac, c_all_func, ss='ai', topic='vac')
+  
+  sm_all$twitter$hps$emp <- lapply(sm$twitter$emp, c_all_func, ss='hps', topic='emp')
+  sm_all$twitter$hps$vac <- lapply(sm$twitter$vac, c_all_func, ss='hps', topic='vac')
+  sm_all$twitter$ai$emp <- lapply(sm$twitter$emp, c_all_func, ss='ai', topic='emp')
+  sm_all$twitter$ai$vac <- lapply(sm$twitter$vac, c_all_func, ss='ai', topic='vac')
+  
+  return(sm_all)
+}
+
+sm_all <- c_all()
+
+
+# Combining surveys with sm data and objective measures.
+# e.g.
+eg_reddit$emp_obj_surveys_hps$df <- sm$reddit$emp$c1b_set_4 %>% 
+  inner_join(sp$hps, by = "Day") %>% 
+  inner_join(objective$emp, by = "Day") %>% 
+  inner_join(surveys$hps$emp, by = "Period") %>% 
+  left_join(surveys$ai$emp %>% inner_join(sp$hps, by = "Period"), by = "Day")%>% 
+  mutate(
+    Period = Period.x,
+    Period.x = NULL,
+    Period.y = NULL)
+  
+
+View(eg_reddit$emp_obj_surveys_hps$df)
+
+
+eg_reddit$emp_obj_surveys_ai$df <- sm$reddit$emp$c1b_set_1 %>% 
   inner_join(sp$ai, by = "Day") %>% 
   inner_join(objective$emp, by = "Day") %>% 
+  inner_join(surveys$ai$emp, by = "ai_Period")
+
+eg_twitter$emp_obj_surveys_hps$df <- sm$twitter$emp$c1b %>% 
+  inner_join(sp$hps, by = "Day") %>% 
+  inner_join(objective$emp, by = "Day") %>% 
   inner_join(surveys$hps$emp, by = "Period")
+
+
+eg_twitter$emp_obj_surveys_ai$df <- sm$twitter$emp$c2 %>% 
+  inner_join(sp$ai, by = "Day") %>% 
+  inner_join(objective$emp, by = "Day") %>% 
+  inner_join(surveys$ai$emp, by = "ai_Period")
+
+View(eg_reddit$emp_obj_surveys_hps$df)
+View(eg_reddit$emp_obj_surveys_ai$df)
+
+View(eg_twitter$emp_obj_surveys_hps$df)
+View(eg_twitter$emp_obj_surveys_ai$df)
 
 bla <- sm$reddit$emp$c1b$set_1 %>% 
   inner_join(sp$ai, by = "Day") %>% 
   inner_join(objective$emp, by = "Day") %>% 
   inner_join(surveys$hps$emp, by = "Period") 
 
-%>% 
-  inner_join(surveys$ai$emp, by = "ai_Period") 
-
-%>% 
-  mutate(
-    Period = Period.x,
-    Period.x = NULL,
-    Period.y = NULL)
 
 
 bla2 <- bla %>% 
@@ -936,10 +1055,22 @@ mse(blat$r_bing, blat$r_sp500)
 
 
 
+
+
+
+
 ##### Code Dump #######
 
 
 # # Changing score + summarizing days
+# r <- load_nlp_data(
+#   source = "Reddit",
+#   topic = "Vaccination",
+#   set = 1,
+#   level = 1,
+#   stage = '1b'
+# )
+# 
 # bla <- load_nlp_data(
 #   source = "Reddit",
 #   topic = "Employment",
