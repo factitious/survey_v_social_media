@@ -6,6 +6,12 @@ output: html_notebook
 # Objective measures
 
 ```{r}
+# Load and pre-process the data.
 source("manalysis_funcs.R", local = knitr::knit_global())
+```
+
+
+```{r}
+
 ```
 

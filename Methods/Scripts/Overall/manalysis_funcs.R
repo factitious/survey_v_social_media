@@ -853,8 +853,8 @@ t2 <- t %>%
   mutate(Period = as.factor(Period)) %>% 
   group_by(Period) %>% 
   summarise(
-    # sp500 = mean(sp500_Close),
-    # ics = mean(ics),
+    sp500 = mean(sp500_Close),
+    ics = mean(ics),
     across(
       bing:i_nrc,
       ~sum(.x*obs)/sum(obs)
@@ -869,6 +869,43 @@ t2 <- t %>%
     )
   )
 
+
+# Reddit: Bing | AFINN | NRC
+
+t2 %>% 
+  select(Period, contains("bing"), contains("nrc"), contains('nrc')) %>% 
+  pivot_longer(
+    .,
+    cols = !Period,
+    names_to = "Measure",
+    values_to = "Index"
+  ) %>% 
+  separate(
+    Measure,
+    into = c("Weighting", "Measure"),
+    fill = "left"
+  ) %>% 
+  mutate(Weighting = ifelse(Weighting == 'nc', 'comments',
+                            ifelse(Weighting == 'sc', 'score',
+                                   ifelse(Weighting == 'i', 'all_interactions', 'none'))))
+
+
+  mutate(Weighting = ifelse(is.na(Weighting), "None",
+                            ifelse(Weighting == nc, "comments", 
+                                   ifelse(Weighting == i, "all_interactions",
+                                          ifelse(Weighting == sc, "score")))))
+
+%>% 
+  ggplot(.) +
+  geom_bar(
+    aes(x=Period, y=Index, fill=Measure),
+    stat = "identity",
+    position = position_dodge(),
+    alpha = 0.7
+  ) + theme_classic()
+
+
+# AI vs HPS
 t2 %>% 
   select(Period, contains("ai_"), contains("hps_")) %>% 
   pivot_longer(
@@ -881,21 +918,29 @@ t2 %>%
   geom_bar(
     aes(x = Period, y = Index, fill = Measure),
     stat = "identity",
-    position = position_dodge()
-  ) + 
+    position = position_dodge(),
+    alpha = 0.7
+  ) +
+  geom_line(aes(x = as.numeric(Period), y = Index, color = Measure)) +
   theme_classic()
  
  
 # Within measures
 
-
 t2 %>% 
+  # select(Period, contains("ai_"), contains("hps_")) %>% 
+  pivot_longer(
+    .,
+    cols = !Period,
+    names_to = "Measure",
+    values_to = "Index"
+  ) %>% 
   ggplot(.) + 
   geom_bar(aes(x = Period, 
                y = Index, 
                fill = Measure),
            stat = "identity",
-           position=position_dodge())
+           position=position_dodge()
 
 
 
