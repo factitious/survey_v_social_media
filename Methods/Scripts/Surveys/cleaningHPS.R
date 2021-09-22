@@ -52,7 +52,7 @@ cleanEmp1 <- function(df){
   # NB: No longer using this one, so not worth aggregating.
 }
 
-cleanEmp2 <- function(df){
+cleanEmp2 <- function(df, type = 1){
   
   # Remove all rows that are completely empty:
   df <- df %>% 
@@ -71,6 +71,27 @@ cleanEmp2 <- function(df){
            unemployed = No) %>% 
     select(demog, emp_loss_total, employed, unemployed) 
   
+  #### Insert type 1 to got back to the original (full demographic data)
+  if(type == 2){
+      cDF <- as.data.frame(t(as.matrix(df)))
+      
+      colnames(cDF) <- colnames(cDF) <- cDF[1,]
+      
+      cDF <- cDF %>% 
+        slice(2:nrow(cDF))
+      
+      cDF <- cDF %>% mutate(across(.cols = everything(), as.numeric))
+      
+      cDF <- cDF %>% mutate(`18-54` = `18 - 24` + `25 - 39` + `40 - 54`) %>% 
+        select(Total, `18-54`)
+      
+      df <- as.data.frame(t(as.matrix(cDF)))
+      
+      df$demog <- rownames(df)
+      
+      rownames(df) <- NULL
+  }
+  #####
   
   df_wide <- df %>% 
     mutate(perc_employed = employed/(employed + unemployed)) %>% 
@@ -140,6 +161,26 @@ cleanVacc <- function(df, phase, type = 1){
     return(df)
   } else if(type ==2){
     
+    ### Remove this bit to got back to original (full demog) df.
+    cDF <- as.data.frame(t(as.matrix(df)))
+    
+    colnames(cDF) <- colnames(cDF) <- cDF[1,]
+    
+    cDF <- cDF %>% 
+      slice(2:nrow(cDF))
+    
+    cDF <- cDF %>% mutate(across(.cols = everything(), as.numeric))
+    
+    cDF <- cDF %>% mutate(`18-54` = `18 - 24` + `25 - 39` + `40 - 54`) %>% 
+      select(Total, `18-54`)
+    
+    df <- as.data.frame(t(as.matrix(cDF)))
+    
+    df$demog <- rownames(df)
+    
+    rownames(df) <- NULL
+    ###
+    
     df_s1 <- df %>% 
       mutate(s1 = yes_total/(yes_total + no_total)) %>% 
       select(demog, s1)
@@ -163,7 +204,7 @@ cleanVacc <- function(df, phase, type = 1){
   }
 }
 
-all_periods <- function(dataList, table, bind = "False", vac_ctype = 1){
+all_periods <- function(dataList, table, bind = "False", vac_ctype = 2, emp_ctype = 2){
   
   cleanData <- vector('list', length = length(dataList))
   
@@ -176,7 +217,7 @@ all_periods <- function(dataList, table, bind = "False", vac_ctype = 1){
     }
     
     if (table == "emp2"){
-      cleanData[[i]] <- cleanEmp2(dataList[[i]])
+      cleanData[[i]] <- cleanEmp2(dataList[[i]], type = emp_ctype)
     }
     
     if (table == "vacc"){
@@ -246,7 +287,7 @@ agg_all_periods <- function(cdl, table = 'emp'){
 }
 
 hps_cleanEmp1 <- all_periods(hps_emp1Data, "emp1")
-hps_cleanEmp2 <- all_periods(hps_emp2Data, "emp2")
+hps_cleanEmp2 <- all_periods(hps_emp2Data, "emp2", emp_ctype = 2)
 hps_cleanVacc <- all_periods(hps_vaccData, "vacc", vac_ctype = 1)
 hps_cleanVacc2 <- all_periods(hps_vaccData, "vacc", vac_ctype = 2)
 

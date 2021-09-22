@@ -196,23 +196,14 @@ load_surveys <- function(){
           'emp.rds'
           )
       ) %>% 
-        select(
-          Period,
-          `18-29`,
-          `30-49`,
-          `50-64`,
-          `Male`,
-          `Female`,
-          `Total`
-               ) %>% 
         add_column(
           ai_Period = (1:nrow(.)), 
           .after= "Period")
       
       setnames(
         surveys$ai$emp,
-        old = c("18-29", "30-49", "50-64", "Male", "Female", "Total"),
-        new = c("ai_18-29", "ai_30-49", "ai_50-64", "ai_Male", "ai_Female", "ai_Total")
+        old = c("18-49", "Total"),
+        new = c("ai_18-49", "ai_Total")
       )
         
       surveys$ai$vac <- readRDS(
@@ -222,23 +213,14 @@ load_surveys <- function(){
           'vac.rds'
         )
       ) %>% 
-        select(
-          Period,
-          `18-29`,
-          `30-49`,
-          `50-64`,
-          `Male`,
-          `Female`,
-          `Total`
-        ) %>% 
         add_column(
           ai_Period = (1:nrow(.)), 
           .after= "Period")
       
       setnames(
         surveys$ai$vac,
-        old = c("18-29", "30-49", "50-64", "Male", "Female", "Total"),
-        new = c("ai_18-29", "ai_30-49", "ai_50-64", "ai_Male", "ai_Female", "ai_Total")
+        old = c("18-49", "Total"),
+        new = c("ai_18-49", "ai_Total")
       )
       
       # Changed period after data was processed.
@@ -264,8 +246,8 @@ load_surveys <- function(){
       
       setnames(
         surveys$hps$emp,
-        old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
-        new = c("hps_18-24", "hps_25-39", "hps_40-54", "hps_55-64", "hps_65+", "hps_Male", "hps_Female", "hps_Total"),
+        old = c("18-54", "Total"),
+        new = c("hps_18-54", "hps_Total")
       )
       
       hps_vac_s1 <- readRDS(
@@ -285,8 +267,8 @@ load_surveys <- function(){
       
       setnames(
         hps_vac_s1,
-        old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
-        new = c("hps_v1_18-24", "hps_v1_25-39", "hps_v1_40-54", "hps_v1_55-64", "hps_v1_65+", "hps_v1_Male", "hps_v1_Female", "hps_v1_Total"),
+        old = c("18-54", "Total"),
+        new = c("hps_s1_18-54", "hps_s1_Total")
       )
       
       hps_vac_s2 <- readRDS(
@@ -306,8 +288,8 @@ load_surveys <- function(){
       
       setnames(
         hps_vac_s2,
-        old = c("18 - 24", "25 - 39", "40 - 54", "55 - 64", "65 and above", "Male", "Female", "Total"),
-        new = c("hps_v2_18-24", "hps_v2_25-39", "hps_v2_40-54", "hps_v2_55-64", "hps_v2_65+", "hps_v2_Male", "hps_v2_Female", "hps_v2_Total"),
+        old = c("18-54", "Total"),
+        new = c("hps_s2_18-54", "hps_s2_Total")
       )
       
       
@@ -858,6 +840,88 @@ objective <- c_objective(objective)
 sm_obj <- c_sm_obj()
 sm_all <- c_all()
 
+
+View(sm_obj$reddit$emp$c1b_set_1)
+
+
+# Comparison of trends across periods.
+View(sm_all$reddit$hps_ai$emp$c1b_set_1)
+
+t <- sm_all$reddit$hps_ai$emp$c1b_set_1
+
+t2 <- t %>% 
+  mutate(Period = as.factor(Period)) %>% 
+  group_by(Period) %>% 
+  summarise(
+    # sp500 = mean(sp500_Close),
+    # ics = mean(ics),
+    across(
+      bing:i_nrc,
+      ~sum(.x*obs)/sum(obs)
+    ),
+    across(
+      c("hps_18-54", "hps_Total"),
+      ~mean(.x)
+    ),
+    across(
+      c("ai_18-49", "ai_Total"),
+      ~mean(.x)
+    )
+  )
+
+t2 %>% 
+  select(Period, contains("ai_"), contains("hps_")) %>% 
+  pivot_longer(
+    .,
+    cols = !Period,
+    names_to = "Measure",
+    values_to = "Index"
+  ) %>% 
+  ggplot(.) +
+  geom_bar(
+    aes(x = Period, y = Index, fill = Measure),
+    stat = "identity",
+    position = position_dodge()
+  ) + 
+  theme_classic()
+ 
+ 
+# Within measures
+
+
+t2 %>% 
+  ggplot(.) + 
+  geom_bar(aes(x = Period, 
+               y = Index, 
+               fill = Measure),
+           stat = "identity",
+           position=position_dodge())
+
+
+
+
+#   select(Day, r_bing, r_sp500) %>% 
+#   pivot_longer(
+#     ., 
+#     cols = contains("r"),
+#     names_to = "Measure",
+#     values_to = "Index"
+#   ) %>% 
+  
+  
+
+
+
+
+# bla2 <- bla %>% 
+#   group_by(Period) %>% 
+#   summarise(
+#     sp500 = mean(sp500_Close),
+#     ics = mean(ics),
+#     across(
+#       bing:i_nrc,
+#       ~sum(.x*obs)/sum(obs))
+#   )
 
 
 ##### Code Dump #######
