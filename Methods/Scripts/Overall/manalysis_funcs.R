@@ -22,7 +22,7 @@ list <- structure(NA,class="result")
 }
 
 
-## Loading data ###############################
+## FUNC: Loading data ###############################
 
 root_dir <- '/Volumes/Survey_Social_Media_Compare'
 oj_data_path <- 'Methods/Data/Objective'
@@ -103,8 +103,6 @@ load_objective <- function(){
   return(objective)
   
 }
-  
-objective <- load_objective()
 
 ### Survey data
 
@@ -186,8 +184,6 @@ load_sp <- function(){
   return(sp)
   
 }
-
-sp <- load_sp()
 
 load_surveys <- function(){
 
@@ -322,16 +318,9 @@ load_surveys <- function(){
       return(surveys)
 }
 
-surveys <- load_surveys()
-
 ### Social media data.
 
-load_nlp_data <- function(
-  source, 
-  topic, 
-  set = 1, 
-  level = 0, 
-  stage = '1b'){
+load_nlp_data <- function(source, topic, set = 1, level = 0, stage = '1b'){
   
   topic_short <- substr(
     tolower(topic),
@@ -702,12 +691,11 @@ load_all_twitter <- function(proc = F){
   
 }
 
-sm <- list()
-
-sm$reddit <- load_all_reddit(proc = F)
-sm$twitter <- load_all_twitter(proc = F)
-
 # # To re-run:
+# sm <- list()
+# 
+# sm$reddit <- load_all_reddit(proc = F)
+# sm$twitter <- load_all_twitter(proc = F)
 # saveRDS(
 #   sm$reddit,
 #   file.path(
@@ -726,20 +714,19 @@ sm$twitter <- load_all_twitter(proc = F)
 
 
 
-## Pre-processing ###############################
+## FUNC: Pre-processing ###############################
 
 # Combine objective measures
-ts <- as.Date(seq.POSIXt(
-  as.POSIXct(start_date, tz = "UTC"),
-  as.POSIXct(end_date),
-  by = "day"))
-
-ts <- as.data.frame(ts) %>% 
-  mutate(Day = ts) %>%  
-  select(Day)
-
-
 c_objective <- function(objective_df){
+  ts <- as.Date(seq.POSIXt(
+    as.POSIXct(start_date, tz = "UTC"),
+    as.POSIXct(end_date),
+    by = "day"))
+  
+  ts <- as.data.frame(ts) %>% 
+    mutate(Day = ts) %>%  
+    select(Day)
+  
   objective_df$emp <- ts %>% 
     full_join(objective$raw$sp500, by = "Day") %>% 
     full_join(objective$raw$ics, by = "Day") %>% 
@@ -756,12 +743,7 @@ c_objective <- function(objective_df){
   return(objective_df)
 }
 
-objective <- c_objective(objective)
-
-
 # Combining objective measures with sm data.
-
-
 c_sm_obj <- function(df){
   
   clean_func <- function(df){
@@ -785,282 +767,100 @@ c_sm_obj <- function(df){
   return(sm_obj)
   
 }
-
-sm_obj <- c_sm_obj()
-
-
-# e.g.
-eg_reddit <- list()
-eg_twitter <- list()
-
-eg_reddit$emp_obj_df <- sm$reddit$emp_c1b_set_1 %>%
-  full_join(objective$emp, by = "Day") %>%
-  filter(Day > ymd(start_date))
-
-eg_reddit$emp_obj$df2 <-sm$reddit$emp_c1b_set_1 %>% 
-  comb_sm_obj(.)
-
-
-eg_reddit$vac_obj$df <- sm$reddit$vac_c1b %>%
-  inner_join(objective$vac, by = "Day") %>%
-  filter()
-
-eg_twitter$emp_obj$df <- sm$twitter$emp_c1b %>% 
-  inner_join(objective$emp, by = "Day") %>% 
-  filter(Day > ymd(start_date))
-
-eg_twitter$vac_obj$df <- sm$twitter$vac_c1b %>% 
-  inner_join(objective$vac, by = "Day") %>% 
-  filter(Day > ymd(start_date))
-
-View(eg_twitter$vac_obj$df)
-
-# Transformation (i.e. pivoting) for plotting.
-
-eg_reddit$emp_obj$toplot <- eg_reddit$emp_obj$df %>% 
-  select(Day, contains("nrc"), obs) %>% #bing, nc_bing, sc_bing, nc_sc_bing, obs) %>%
-  pivot_longer(.,
-               cols = contains("nrc"),
-               names_to = "Metric",
-               values_to = "Index")
-
-# eg_reddit$emp_obj$toplot %>% 
-#   ggplot(.) +
-#   geom_line(aes(x = Day, y = Index, color = Metric))
   
-# Rolling average
-# geom_line(aes(x=Day, y=rollmean(bing, 5)))
-# 
-# lines(rollmean(m2$bing, 5))
-# 
-# 
-# geom_line(aes(x=Day, y = frollmean(bing, 7, align="left")), color='red') +
-# theme_classic()
-# 
-# 
-# ggplot(., aes(x = Day)) +
-# geom_line(aes(y = bing)) + 
-# geom_line(aes(y = nc_bing))
-  
-  
-  
-# Combining surveys with sm data.
-eg_reddit$emp_surveys$df <- sm$reddit$emp_c1b_set_1 %>% 
-  inner_join(sp$hps, by = "Day")
-
-
-eg_reddit$emp_surveys$df <- eg$emp_surveys$df %>% 
-  group_by(Period) %>% 
-  summarise(
-    across(bing:i_nrc,
-           ~sum(.x*obs)/sum(obs)),
-    obs = sum(obs)
-  )
-
-
 # Combining surveys with sm data and objective measures.
-
-c_all <- function(
-  sp_df = sp, 
-  objective_df = objective,
-  survey_df = surveys
-){
+c_all <- function(sp_df = sp, objective_df = objective,survey_df = surveys){
   
   c_all_func <- function(
     df,
     ss,
     topic){
     
+    # cdf <- df %>% 
+    #   inner_join(sp_df$hps, by = "Day") %>% 
+    #   inner_join(objective_df[[topic]], by = "Day") %>% 
+    #   inner_join(survey_df$hps[[topic]], by = "Period") %>%
+    #   left_join(
+    #     surveys$ai[[topic]] %>% inner_join(sp$hps, by = "Period"), 
+    #     by = "Day") %>% 
+    #   mutate(
+    #     Period = Period.x,
+    #     Period.x = NULL,
+    #     Period.y = NULL)
+    # 
+    # return(cdf)
+    
     if(ss == 'hps'){
-      cdf <- df %>% 
-        inner_join(sp_df[[ss]], by = "Day") %>% 
-        inner_join(objective_df[[topic]], by = "Day") %>% 
+      cdf <- df %>%
+        inner_join(sp_df[[ss]], by = "Day") %>%
+        inner_join(objective_df[[topic]], by = "Day") %>%
         inner_join(survey_df[[ss]][[topic]], by = "Period")
     } else if(ss == 'ai'){
-      cdf <- df %>% 
-        inner_join(sp_df[[ss]], by = "Day") %>% 
-        inner_join(objective_df[[topic]], by = "Day") %>% 
-        inner_join(survey_df[[ss]][[topic]], by = "ai_Period") %>% 
+      cdf <- df %>%
+        inner_join(sp_df[[ss]], by = "Day") %>%
+        inner_join(objective_df[[topic]], by = "Day") %>%
+        inner_join(survey_df[[ss]][[topic]], by = "ai_Period") %>%
         mutate(
           Period = Period.x,
           Period.x = NULL,
           Period.y = NULL)
+    } else if(ss == 'hps_ai'){
+      
+      cdf <- df %>% 
+        inner_join(sp$hps, by = "Day") %>% 
+        inner_join(objective[[topic]], by = "Day") %>% 
+        inner_join(surveys$hps[[topic]], by = "Period") %>% 
+        inner_join(surveys$ai[[topic]], by = "Period") %>% 
+        select(-Day)
+      
     }
-    
+
     return(cdf)
   }
-  
+
   sm_all <- list()
-  
+
   sm_all$reddit$hps$emp <- lapply(sm$reddit$emp, c_all_func, ss='hps', topic='emp')
   sm_all$reddit$hps$vac <- lapply(sm$reddit$vac, c_all_func, ss='hps', topic='vac')
   sm_all$reddit$ai$emp <- lapply(sm$reddit$emp, c_all_func, ss='ai', topic='emp')
   sm_all$reddit$ai$vac <- lapply(sm$reddit$vac, c_all_func, ss='ai', topic='vac')
-  
+
   sm_all$twitter$hps$emp <- lapply(sm$twitter$emp, c_all_func, ss='hps', topic='emp')
   sm_all$twitter$hps$vac <- lapply(sm$twitter$vac, c_all_func, ss='hps', topic='vac')
   sm_all$twitter$ai$emp <- lapply(sm$twitter$emp, c_all_func, ss='ai', topic='emp')
   sm_all$twitter$ai$vac <- lapply(sm$twitter$vac, c_all_func, ss='ai', topic='vac')
   
+  sm_all$reddit$hps_ai$emp <- lapply(sm$reddit$emp, c_all_func, ss='hps_ai', topic = 'emp')
+  sm_all$reddit$hps_ai$vac <- lapply(sm$reddit$vac, c_all_func, ss='hps_ai', topic = 'vac')
+  sm_all$twitter$hps_ai$emp <- lapply(sm$twitter$emp, c_all_func, ss='hps_ai', topic = 'emp')
+  sm_all$twitter$hps_ai$vac <- lapply(sm$twitter$vac, c_all_func, ss='hps_ai', topic = 'vac')
+
   return(sm_all)
 }
 
+## EXEC: Loading + pre-processing #####
+
+# Load data
+# Objective
+objective <- load_objective()
+sp <- load_sp()
+
+# Surveys
+surveys <- load_surveys()
+
+# Social media data
+sm <- list()
+sm$reddit <- load_all_reddit(proc = T)
+sm$twitter <- load_all_twitter(proc = T)
+
+# Pre-process
+objective <- c_objective(objective)
+sm_obj <- c_sm_obj()
 sm_all <- c_all()
-
-
-# Combining surveys with sm data and objective measures.
-# e.g.
-eg_reddit$emp_obj_surveys_hps$df <- sm$reddit$emp$c1b_set_4 %>% 
-  inner_join(sp$hps, by = "Day") %>% 
-  inner_join(objective$emp, by = "Day") %>% 
-  inner_join(surveys$hps$emp, by = "Period") %>% 
-  left_join(surveys$ai$emp %>% inner_join(sp$hps, by = "Period"), by = "Day")%>% 
-  mutate(
-    Period = Period.x,
-    Period.x = NULL,
-    Period.y = NULL)
-  
-
-View(eg_reddit$emp_obj_surveys_hps$df)
-
-
-eg_reddit$emp_obj_surveys_ai$df <- sm$reddit$emp$c1b_set_1 %>% 
-  inner_join(sp$ai, by = "Day") %>% 
-  inner_join(objective$emp, by = "Day") %>% 
-  inner_join(surveys$ai$emp, by = "ai_Period")
-
-eg_twitter$emp_obj_surveys_hps$df <- sm$twitter$emp$c1b %>% 
-  inner_join(sp$hps, by = "Day") %>% 
-  inner_join(objective$emp, by = "Day") %>% 
-  inner_join(surveys$hps$emp, by = "Period")
-
-
-eg_twitter$emp_obj_surveys_ai$df <- sm$twitter$emp$c2 %>% 
-  inner_join(sp$ai, by = "Day") %>% 
-  inner_join(objective$emp, by = "Day") %>% 
-  inner_join(surveys$ai$emp, by = "ai_Period")
-
-View(eg_reddit$emp_obj_surveys_hps$df)
-View(eg_reddit$emp_obj_surveys_ai$df)
-
-View(eg_twitter$emp_obj_surveys_hps$df)
-View(eg_twitter$emp_obj_surveys_ai$df)
-
-bla <- sm$reddit$emp$c1b$set_1 %>% 
-  inner_join(sp$ai, by = "Day") %>% 
-  inner_join(objective$emp, by = "Day") %>% 
-  inner_join(surveys$hps$emp, by = "Period") 
-
-
-
-bla2 <- bla %>% 
-  group_by(Period) %>% 
-  summarise(
-    sp500 = mean(sp500_Close),
-    ics = mean(ics),
-    across(
-      bing:i_nrc,
-      ~sum(.x*obs)/sum(obs))
-  )
-
-
-bla3 <- bla %>% 
-  group_by(ai_Period) %>% 
-  summarise(
-    sp500 = mean(sp500_Close),
-    ics = mean(ics),
-    across(
-      bing:i_nrc,
-      ~sum(.x*obs)/sum(obs))
-  )
-
-
-View(eg_reddit$emp_obj_surveys_ai$df)
-
-eg_reddit$emp_obj_surveys$df <- eg_reddit$emp_obj_surveys$df %>% 
-  group_by(Period) %>% 
-  summarise(
-    obs = sum(obs),
-    sp500 = mean(sp500_Close),
-    ics = mean(ics),
-    across(
-      bing:i_nrc,
-      ~sum(.x*obs)/sum(obs))
-  )
-  
-View(eg_reddit$emp_obj_surveys_hps$df)
-  
-
-t <- sm$reddit$emp$c1b$set_1 %>% 
-  inner_join(sp$ai, by = "Day") %>% 
-  mutate(Period = as.character(Period),
-         obs = as.character(obs)) %>% 
-  group_by(Period) %>% 
-  summarise(
-    across(where(is.numeric), mean)
-  ) %>% 
-  mutate(Period = as.numeric(Period)) %>% 
-  inner_join(
-    surveys$ai$emp, 
-    by = "Period") 
-  
-
-
-t <- objective$sp500 %>% 
-  arrange(., Day) %>% 
-  mutate(r_sp500 = sp500_Close - lag(sp500_Close),
-         r_sp500 = scale(r_sp500))
-
-
-t %>% 
-  ggplot(., aes(x = Day,y = r)) + 
-  geom_line()
-
-
-bla <- sm$reddit$emp$c1b$set_1 %>% 
-  select(Day, bing) %>% 
-  arrange(., Day) %>% 
-  mutate(r_bing = bing - lag(bing),
-         r_bing = scale(r_bing))
-
-
-
-blat <- bla %>% 
-  inner_join(t, by = "Day") %>% 
-  filter(!is.na(r_sp500)) 
-
-
-
-blat %>% 
-  select(Day, r_bing, r_sp500) %>% 
-  pivot_longer(
-    ., 
-    cols = contains("r"),
-    names_to = "Measure",
-    values_to = "Index"
-  ) %>% 
-  ggplot(., aes(x = Day, y = Index, color = Measure)) +
-  geom_line()
-
-
-cor(blat$bing, blat$sp500_Close)
-
-cor(blat$r_bing, blat$r_sp500)
-
-mse(blat$bing, blat$sp500_Close %>% scales::rescale())
-
-mse(blat$r_bing, blat$r_sp500)
-
-
-
-
-
-
 
 
 
 ##### Code Dump #######
-
 
 # # Changing score + summarizing days
 # r <- load_nlp_data(
@@ -1198,4 +998,214 @@ mse(blat$r_bing, blat$r_sp500)
 #     i_nrc = sum(i_nrc)
 #   )
 
+# # Combining surveys with sm data and objective measures.
+# # e.g.
+# eg_reddit$emp_obj_surveys_hps$df 
+# 
+# x <- sm$reddit$emp$c1b_set_4 %>% 
+#   inner_join(sp$hps, by = "Day") %>% 
+#   inner_join(objective$emp, by = "Day") %>% 
+#   inner_join(surveys$hps$emp, by = "Period") %>% 
+#   inner_join(surveys$ai$emp, by = "Period")
+# 
+# 
+# y <- surveys$ai$emp %>% inner_join(sp$hps, by = "Period") %>% select(-Day, -ai_Period)
+# 
+# z <- x %>% inner_join(y, by = "Period")
+# 
+# View(eg_reddit$emp_obj_surveys_hps$df)
+# 
+# 
+# eg_reddit$emp_obj_surveys_ai$df <- sm$reddit$emp$c1b_set_1 %>% 
+#   inner_join(sp$ai, by = "Day") %>% 
+#   inner_join(objective$emp, by = "Day") %>% 
+#   inner_join(surveys$ai$emp, by = "ai_Period")
+# 
+# eg_twitter$emp_obj_surveys_hps$df <- sm$twitter$emp$c1b %>% 
+#   inner_join(sp$hps, by = "Day") %>% 
+#   inner_join(objective$emp, by = "Day") %>% 
+#   inner_join(surveys$hps$emp, by = "Period")
+# 
+# 
+# eg_twitter$emp_obj_surveys_ai$df <- sm$twitter$emp$c2 %>% 
+#   inner_join(sp$ai, by = "Day") %>% 
+#   inner_join(objective$emp, by = "Day") %>% 
+#   inner_join(surveys$ai$emp, by = "ai_Period")
+# 
+# View(eg_reddit$emp_obj_surveys_hps$df)
+# View(eg_reddit$emp_obj_surveys_ai$df)
+# 
+# View(eg_twitter$emp_obj_surveys_hps$df)
+# View(eg_twitter$emp_obj_surveys_ai$df)
+# 
+# bla <- sm$reddit$emp$c1b$set_1 %>% 
+#   inner_join(sp$ai, by = "Day") %>% 
+#   inner_join(objective$emp, by = "Day") %>% 
+#   inner_join(surveys$hps$emp, by = "Period") 
+# 
+# 
+# 
+# bla2 <- bla %>% 
+#   group_by(Period) %>% 
+#   summarise(
+#     sp500 = mean(sp500_Close),
+#     ics = mean(ics),
+#     across(
+#       bing:i_nrc,
+#       ~sum(.x*obs)/sum(obs))
+#   )
+# 
+# 
+# bla3 <- bla %>% 
+#   group_by(ai_Period) %>% 
+#   summarise(
+#     sp500 = mean(sp500_Close),
+#     ics = mean(ics),
+#     across(
+#       bing:i_nrc,
+#       ~sum(.x*obs)/sum(obs))
+#   )
+# 
+# 
+# View(eg_reddit$emp_obj_surveys_ai$df)
+# 
+# eg_reddit$emp_obj_surveys$df <- eg_reddit$emp_obj_surveys$df %>% 
+#   group_by(Period) %>% 
+#   summarise(
+#     obs = sum(obs),
+#     sp500 = mean(sp500_Close),
+#     ics = mean(ics),
+#     across(
+#       bing:i_nrc,
+#       ~sum(.x*obs)/sum(obs))
+#   )
+# 
+# View(eg_reddit$emp_obj_surveys_hps$df)
+# 
+# 
+# # Other
+# t <- sm$reddit$emp$c1b$set_1 %>% 
+#   inner_join(sp$ai, by = "Day") %>% 
+#   mutate(Period = as.character(Period),
+#          obs = as.character(obs)) %>% 
+#   group_by(Period) %>% 
+#   summarise(
+#     across(where(is.numeric), mean)
+#   ) %>% 
+#   mutate(Period = as.numeric(Period)) %>% 
+#   inner_join(
+#     surveys$ai$emp, 
+#     by = "Period") 
+# 
+# 
+# 
+# t <- objective$sp500 %>% 
+#   arrange(., Day) %>% 
+#   mutate(r_sp500 = sp500_Close - lag(sp500_Close),
+#          r_sp500 = scale(r_sp500))
+# 
+# 
+# t %>% 
+#   ggplot(., aes(x = Day,y = r)) + 
+#   geom_line()
+# 
+# 
+# bla <- sm$reddit$emp$c1b$set_1 %>% 
+#   select(Day, bing) %>% 
+#   arrange(., Day) %>% 
+#   mutate(r_bing = bing - lag(bing),
+#          r_bing = scale(r_bing))
+# 
+# 
+# 
+# blat <- bla %>% 
+#   inner_join(t, by = "Day") %>% 
+#   filter(!is.na(r_sp500)) 
+# 
+# 
+# 
+# blat %>% 
+#   select(Day, r_bing, r_sp500) %>% 
+#   pivot_longer(
+#     ., 
+#     cols = contains("r"),
+#     names_to = "Measure",
+#     values_to = "Index"
+#   ) %>% 
+#   ggplot(., aes(x = Day, y = Index, color = Measure)) +
+#   geom_line()
+# 
+# 
+# cor(blat$bing, blat$sp500_Close)
+# 
+# cor(blat$r_bing, blat$r_sp500)
+# 
+# mse(blat$bing, blat$sp500_Close %>% scales::rescale())
+# 
+# mse(blat$r_bing, blat$r_sp500)
 
+# # Combining objective measures with sm data.
+# # e.g.
+# eg_reddit <- list()
+# eg_twitter <- list()
+# 
+# eg_reddit$emp_obj_df <- sm$reddit$emp_c1b_set_1 %>%
+#   full_join(objective$emp, by = "Day") %>%
+#   filter(Day > ymd(start_date))
+# 
+# eg_reddit$emp_obj$df2 <-sm$reddit$emp_c1b_set_1 %>% 
+#   comb_sm_obj(.)
+# 
+# 
+# eg_reddit$vac_obj$df <- sm$reddit$vac_c1b %>%
+#   inner_join(objective$vac, by = "Day") %>%
+#   filter()
+# 
+# eg_twitter$emp_obj$df <- sm$twitter$emp_c1b %>% 
+#   inner_join(objective$emp, by = "Day") %>% 
+#   filter(Day > ymd(start_date))
+# 
+# eg_twitter$vac_obj$df <- sm$twitter$vac_c1b %>% 
+#   inner_join(objective$vac, by = "Day") %>% 
+#   filter(Day > ymd(start_date))
+# 
+# View(eg_twitter$vac_obj$df)
+# 
+# # Transformation (i.e. pivoting) for plotting.
+# eg_reddit$emp_obj$toplot <- eg_reddit$emp_obj$df %>% 
+#   select(Day, contains("nrc"), obs) %>% #bing, nc_bing, sc_bing, nc_sc_bing, obs) %>%
+#   pivot_longer(.,
+#                cols = contains("nrc"),
+#                names_to = "Metric",
+#                values_to = "Index")
+
+# eg_reddit$emp_obj$toplot %>% 
+#   ggplot(.) +
+#   geom_line(aes(x = Day, y = Index, color = Metric))
+
+# Rolling average
+# geom_line(aes(x=Day, y=rollmean(bing, 5)))
+# 
+# lines(rollmean(m2$bing, 5))
+# 
+# 
+# geom_line(aes(x=Day, y = frollmean(bing, 7, align="left")), color='red') +
+# theme_classic()
+# 
+# 
+# ggplot(., aes(x = Day)) +
+# geom_line(aes(y = bing)) + 
+# geom_line(aes(y = nc_bing))
+
+# # Combining surveys with sm data.
+# eg_reddit$emp_surveys$df <- sm$reddit$emp_c1b_set_1 %>% 
+#   inner_join(sp$hps, by = "Day")
+# 
+# 
+# eg_reddit$emp_surveys$df <- eg$emp_surveys$df %>% 
+#   group_by(Period) %>% 
+#   summarise(
+#     across(bing:i_nrc,
+#            ~sum(.x*obs)/sum(obs)),
+#     obs = sum(obs)
+#   )
