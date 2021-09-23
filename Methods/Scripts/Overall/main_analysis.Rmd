@@ -24,8 +24,33 @@ Factors to compare:
   * Twitter: none|re|rt|l|all_interactions
 
 
+# Reddit
+
+* Topic: Employment v Vaccination
+* Subset: 1|2|3|4
+* Cleaning: 1|2.
+
+## Employment.
+
+### Cleaning.
+
+
+
+### Subsets.
+
+How do subsets compare to each other?
+
+* Correlation between like-measures (i.e. daily summaries of lexicon scores).
+* Correlation between lexicon scores and objective measures. 
+
+
+```{r}
+
+
+```
 
 ```{r}
 
 ```
+
 

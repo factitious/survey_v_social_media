@@ -34,6 +34,7 @@ survey_periods_path <- 'Methods/Scripts/Surveys/table_details'
 setwd(root_dir)
 
 start_date <- '2020-10-22'
+vac_start_date <- '2021-01-07'
 end_date <- '2021-05-24'
 
 
@@ -216,7 +217,8 @@ load_surveys <- function(){
       ) %>% 
         add_column(
           ai_Period = (1:nrow(.)), 
-          .after= "Period")
+          .after= "Period") %>% 
+        filter(Period >= 5)
       
       setnames(
         surveys$ai$vac,
@@ -295,7 +297,8 @@ load_surveys <- function(){
       
       
       surveys$hps$vac <- hps_vac_s1 %>% 
-        inner_join(hps_vac_s2, by = "Period")
+        inner_join(hps_vac_s2, by = "Period") %>% 
+        filter(Period >= 5)
         
 
       return(surveys)
@@ -738,8 +741,8 @@ c_sm_obj <- function(df){
     
     if(topic == 'vac'){
       
-      cdf <- cdf %>% 
-        filter(!is.na(uptake))
+      # cdf <- cdf %>% 
+      #   filter(Day > ymd(vac_start_date))
     }
     
     return(cdf)
@@ -984,7 +987,239 @@ t2 %>%
 
 ## Employment
 
-### Cleaning
+### Correlations
+cor_matrix <- function(df_list, topic){
+  
+  
+  df_names <- names(df_list)
+  
+  obj_list <- list()
+  cov_list <- list()
+  cor_list <- list()
+  
+  
+  for(df_name in df_names){
+    
+    df <- df_list[[df_name]] %>% 
+      select(-obs, -Day)
+    
+    if(topic=='emp'){
+      
+      obj_list[[df_name]] <- df %>% 
+        cor(.) %>% 
+        as.data.frame(.) %>% 
+        select(sp500_Close, ics)
+    
+      cov_list[[df_name]] <- df %>% 
+        select(-sp500_Close, -ics) %>%
+        cov(.)
+      
+      cor_list[[df_name]] <- cov2cor(cov_list[[df_name]])
+      
+      
+      
+      } else if(topic=='vac'){
+        
+        obj_list[[df_name]] <- df %>% 
+          cor(.) %>% 
+          as.data.frame(.) %>% 
+          select(uptake)
+        
+        cov_list[[df_name]] <- df_list[[df_name]] %>% 
+          select(-obs, -Day) %>% 
+          select(-uptake) %>%
+          cov(.)
+      
+      cor_list[[df_name]] <- cov2cor(cov_list[[df_name]])
+      
+      }
+    
+    
+  }
+  
+  cor_measures <- list(cov_list = cov_list, 
+                       cor_list = cor_list, 
+                       obj_list = obj_list)
+  
+  return(cor_measures)
+  
+}
+
+reddit_emp_cor <- cor_matrix(sm_obj$reddit$emp, 'emp')
+reddit_vac_cor <- cor_matrix(sm_obj$reddit$vac, 'vac')
+
+twitter_emp_cor <- cor_matrix(sm_obj$twitter$emp, 'emp')
+twitter_vac_cor <- cor_matrix(sm_obj$twitter$vac, 'vac')
+
+reddit_emp_cor$Mantel <- MantelCor(reddit_emp_cor$cor_list, permutations = 1000)
+reddit_vac_cor$Mantel <- MantelCor(reddit_vac_cor$cor_list, permutations = 1000)
+
+twitter_emp_cor$Mantel <- MantelCor(twitter_emp_cor$cor_list, permutations = 1000)
+twitter_vac_cor$Mantel <- MantelCor(twitter_vac_cor$cor_list, permutations = 1000)
+
+
+draw_mantel <- function(cmat){
+  
+  df <- as.data.frame(round(cmat$Mantel$correlations, 3))
+  df[df==0] <- '-'
+  
+  formattable(df)
+  
+}
+
+draw_mantel(reddit_emp_cor)
+draw_mantel(reddit_vac_cor)
+draw_mantel(twitter_emp_cor)
+draw_mantel(twitter_vac_cor)
+
+
+
+te <- reddit_emp_cor_measures$obj_list
+
+full_te <- data.frame(
+  matrix(NA, 
+         nrow = nrow(te[[1]]),
+         ncol = 0
+         )
+)
+
+for(n in names(te)){
+  
+  colnames(te[[n]]) <- paste(n, colnames(te[[n]]), sep="_")
+  
+  full_te <- cbind(full_te, te[[n]])  
+  
+}
+
+
+pft_sp500_c1b <- full_te %>% 
+  mutate(Measure = rownames(full_te)) %>% 
+  filter(Measure != "sp500_Close") %>% 
+  filter(Measure != "ics") %>%
+  select(contains('c1b')) %>% 
+  select(contains("sp500_Close")) %>% 
+  mutate(
+    `Set 1` = c1b_set_1_sp500_Close,
+    `Set 2` = c1b_set_2_sp500_Close,
+    `Set 3` = c1b_set_3_sp500_Close,
+    `Set 4` = c1b_set_4_sp500_Close
+  ) %>% 
+  select(
+    `Set 1`,
+    `Set 2`,
+    `Set 3`,
+    `Set 4`
+  )
+
+pft_ics_c1b <- full_te %>% 
+  mutate(Measure = rownames(full_te)) %>% 
+  filter(Measure != "sp500_Close") %>% 
+  filter(Measure != "ics") %>%
+  select(contains('c1b')) %>% 
+  select(contains("ics")) %>% 
+  mutate(
+    `Set 1` = c1b_set_1_ics,
+    `Set 2` = c1b_set_2_ics,
+    `Set 3` = c1b_set_3_ics,
+    `Set 4` = c1b_set_4_ics
+  ) %>% 
+  select(
+    `Set 1`,
+    `Set 2`,
+    `Set 3`,
+    `Set 4`
+  )
+
+
+draw_hm <- function(cm){
+  
+  heatmap.2(
+    x = as.matrix(cm),
+    Rowv = F,
+    Colv = F,
+    dendrogram = 'none',
+    cellnote = as.matrix(cm),
+    notecol = 'black',
+    notecex = 1.8,
+    trace = 'none',
+    col = "cm.colors",
+    key = F
+    # margins = c(7,11)
+  )
+  
+}
+
+draw_hm(pft_sp500_c1b)
+draw_hm(pft_ics_c1b)
+
+
+pft_sp500_c2 <- full_te %>% 
+  mutate(Measure = rownames(full_te)) %>% 
+  filter(Measure != "sp500_Close") %>% 
+  filter(Measure != "ics") %>%
+  select(contains('c2')) %>% 
+  select(contains("sp500_Close")) %>% 
+  mutate(
+    `Set 1` = c2_set_1_sp500_Close,
+    `Set 2` = c2_set_2_sp500_Close,
+    `Set 3` = c2_set_3_sp500_Close,
+    `Set 4` = c2_set_4_sp500_Close
+  ) %>% 
+  select(
+    `Set 1`,
+    `Set 2`,
+    `Set 3`,
+    `Set 4`
+  )
+
+pft_ics_c2 <- full_te %>% 
+  mutate(Measure = rownames(full_te)) %>% 
+  filter(Measure != "sp500_Close") %>% 
+  filter(Measure != "ics") %>%
+  select(contains('c2')) %>% 
+  select(contains("ics")) %>% 
+  mutate(
+    `Set 1` = c2_set_1_ics,
+    `Set 2` = c2_set_2_ics,
+    `Set 3` = c2_set_3_ics,
+    `Set 4` = c2_set_4_ics
+  ) %>% 
+  select(
+    `Set 1`,
+    `Set 2`,
+    `Set 3`,
+    `Set 4`
+  )
+
+draw_hm(pft_sp500_c2)
+draw_hm(pft_ics_c2)
+
+
+
+
+
+
+
+
+
+full_t_long <- full_t %>% 
+  mutate(Measure = rownames(full_t)) %>%
+  pivot_longer(
+    .,
+    cols = everything(),
+    names_to = "CSet",
+    values_to = "Correlation"
+  ) %>% 
+  separate(
+    CSet,
+    into = c("Clean", "Delete1", "Set", "Measure", "Delete2"),
+    fill = "right"
+  ) %>% 
+  select(!contains("Delete"))
+
+
+full_t_long
+
 
 
 
@@ -1005,7 +1240,7 @@ MantelCor(cor.list, repeat.vector = reps)
 
 
 c1 <- cov(sm_obj$reddit$emp$c1b_set_1 %>% 
-                          select(-obs, -Day))
+                          select(-obs, -Day, -sp500_close, -ics))
 
 c2 <- cov(sm_obj$reddit$emp$c1b_set_1 %>% 
             select(-obs, -Day))
@@ -1033,15 +1268,12 @@ MantelCor(cor.list, permutations = 1000)
 
 
 
- corrplot(as.matrix(c), method = 'color')
+blab <- corrplot(as.matrix(c), method = 'color')
 
 cp <- recordPlot()
 
 c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0.99))] 
 ### Subsets.
-
-
-sm_obj$reddit$emp$
 
 ##### Code Dump #######
 
@@ -1392,3 +1624,89 @@ sm_obj$reddit$emp$
 #            ~sum(.x*obs)/sum(obs)),
 #     obs = sum(obs)
 #   )
+
+sm_obj$reddit$vac$c1b %>% 
+  select(Day,obs, bing) %>%
+  mutate(obs = scales::rescale(obs, to=c(0,1))) %>% 
+  ggplot(.) +
+  geom_line(aes(x = Day, y = obs, color = "Observations")) +
+  geom_line(aes(x = Day, y = bing, color = "Bing_score")) 
+
+
+cor(sm_obj$reddit$vac$c1b$bing, sm_obj$reddit$vac$c1b$obs)
+
+
+sm_obj$reddit$vac$c1b %>% 
+  filter(Day > ymd('2021-02-07')) %>% 
+  filter(Day < ymd('2021-02-22')) %>% 
+  select(Day,uptake) %>% 
+  ggplot(., aes(x=Day, y=uptake)) +
+  geom_line()
+
+
+h <- sm_all$reddit$hps$vac$c1b %>% 
+  group_by(Period) %>% 
+  dplyr::summarise(
+        across(
+          bing:i_nrc,
+          ~sum(.x*obs)/sum(obs)),
+        across(
+          contains('hps'),
+          ~mean(.x)
+        ),
+        uptake = mean(uptake))
+
+
+cor(h$`hps_s2_18-54`, h$uptake)
+
+h %>% 
+  select(Period,
+         contains('hps'),
+         uptake) %>% 
+  cor(.)
+  
+  
+  
+  pivot_longer(
+    .,
+    cols = !Period,
+    names_to = "Measure",
+    values_to = "Index"
+  ) %>% 
+  ggplot(.) + 
+  geom_bar(
+    aes(x=Period, y=Index, fill=Measure),
+    stat='identity',
+    position=position_dodge()
+  )
+  
+  
+  ggplot(.) +
+  geom_bar(aes(x=Period, y=uptake, color = "Uptake"),
+           stat = 'identity',
+           position = position_dodge()) +
+  geom_bar(aes(x=Period, y=`hps_s2_18-54`, color = "s2 (18-54)"), stat = 'identity',
+           position = position_dodge()) +
+  geom_bar(aes(x=Period, y=`hps_s1_18-54`, color = "s1 (18-54)"), stat = 'identity',
+           position = position_dodge()) +
+  geom_bar(aes(x=Period, y=`hps_s2_Total`, color = "s2 (Total)"), stat = 'identity',
+           position = position_dodge()) +
+  geom_bar(aes(x=Period, y=`hps_s1_Total`, color = "s1 (Total)"), stat = 'identity',
+           position = position_dodge()) 
+
+#     across(
+#       bing:i_nrc,
+#       ~sum(.x*obs)/sum(obs))
+
+
+
+  pivot_longer(
+    .,
+    cols = !Period,
+    names_to = "Measure",
+    values_to = "Index"
+  ) %>% 
+
+
+
+

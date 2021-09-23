@@ -1776,14 +1776,40 @@ source(&quot;manalysis_funcs.R&quot;, local = knitr::knit_global())</code></pre>
 <div id="analysis-outline" class="section level1">
 <h1>Analysis outline</h1>
 <p>Factors to compare: * Topic: Employment vs Vaccination * Source: Twitter vs Reddit. * Reddit: Set 1|2|3|4. * Cleaning: 1|2 * Lexicon: Bing|Afinn|NRC * Lexicon weighting : * Reddit: none|num_comments|score|all_interactions * Twitter: none|re|rt|l|all_interactions</p>
+</div>
+<div id="reddit" class="section level1">
+<h1>Reddit</h1>
+<ul>
+<li>Topic: Employment v Vaccination</li>
+<li>Subset: 1|2|3|4</li>
+<li>Cleaning: 1|2.</li>
+</ul>
+<div id="employment." class="section level2">
+<h2>Employment.</h2>
+<div id="cleaning." class="section level3">
+<h3>Cleaning.</h3>
+</div>
+<div id="subsets." class="section level3">
+<h3>Subsets.</h3>
+<p>How do subsets compare to each other?</p>
+<ul>
+<li>Correlation between like-measures (i.e. daily summaries of lexicon scores).</li>
+<li>Correlation between lexicon scores and objective measures.</li>
+</ul>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
+</div>
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiRmluYWwgYW5hbHlzaXMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCiMgT2JqZWN0aXZlIG1lYXN1cmVzCgpgYGB7cn0KIyBMb2FkIGFuZCBwcmUtcHJvY2VzcyB0aGUgZGF0YS4Kc291cmNlKCJtYW5hbHlzaXNfZnVuY3MuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCiMgQW5hbHlzaXMgb3V0bGluZQoKRmFjdG9ycyB0byBjb21wYXJlOgoqIFRvcGljOiBFbXBsb3ltZW50IHZzIFZhY2NpbmF0aW9uCiogU291cmNlOiBUd2l0dGVyIHZzIFJlZGRpdC4KKiBSZWRkaXQ6IFNldCAxfDJ8M3w0LgoqIENsZWFuaW5nOiAxfDIKKiBMZXhpY29uOiBCaW5nfEFmaW5ufE5SQwoqIExleGljb24gd2VpZ2h0aW5nIDogCiAgKiBSZWRkaXQ6IG5vbmV8bnVtX2NvbW1lbnRzfHNjb3JlfGFsbF9pbnRlcmFjdGlvbnMKICAqIFR3aXR0ZXI6IG5vbmV8cmV8cnR8bHxhbGxfaW50ZXJhY3Rpb25zCgoKCmBgYHtyfQoKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiRmluYWwgYW5hbHlzaXMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCiMgT2JqZWN0aXZlIG1lYXN1cmVzCgpgYGB7cn0KIyBMb2FkIGFuZCBwcmUtcHJvY2VzcyB0aGUgZGF0YS4Kc291cmNlKCJtYW5hbHlzaXNfZnVuY3MuUiIsIGxvY2FsID0ga25pdHI6OmtuaXRfZ2xvYmFsKCkpCmBgYAoKCiMgQW5hbHlzaXMgb3V0bGluZQoKRmFjdG9ycyB0byBjb21wYXJlOgoqIFRvcGljOiBFbXBsb3ltZW50IHZzIFZhY2NpbmF0aW9uCiogU291cmNlOiBUd2l0dGVyIHZzIFJlZGRpdC4KKiBSZWRkaXQ6IFNldCAxfDJ8M3w0LgoqIENsZWFuaW5nOiAxfDIKKiBMZXhpY29uOiBCaW5nfEFmaW5ufE5SQwoqIExleGljb24gd2VpZ2h0aW5nIDogCiAgKiBSZWRkaXQ6IG5vbmV8bnVtX2NvbW1lbnRzfHNjb3JlfGFsbF9pbnRlcmFjdGlvbnMKICAqIFR3aXR0ZXI6IG5vbmV8cmV8cnR8bHxhbGxfaW50ZXJhY3Rpb25zCgoKIyBSZWRkaXQKCiogVG9waWM6IEVtcGxveW1lbnQgdiBWYWNjaW5hdGlvbgoqIFN1YnNldDogMXwyfDN8NAoqIENsZWFuaW5nOiAxfDIuCgojIyBFbXBsb3ltZW50LgoKIyMjIENsZWFuaW5nLgoKCgojIyMgU3Vic2V0cy4KCkhvdyBkbyBzdWJzZXRzIGNvbXBhcmUgdG8gZWFjaCBvdGhlcj8KCiogQ29ycmVsYXRpb24gYmV0d2VlbiBsaWtlLW1lYXN1cmVzIChpLmUuIGRhaWx5IHN1bW1hcmllcyBvZiBsZXhpY29uIHNjb3JlcykuCiogQ29ycmVsYXRpb24gYmV0d2VlbiBsZXhpY29uIHNjb3JlcyBhbmQgb2JqZWN0aXZlIG1lYXN1cmVzLiAKCgpgYGB7cn0KCgpgYGAKCmBgYHtyfQoKYGBgCgoK</div>
 
 
 
