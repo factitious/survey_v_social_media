@@ -11,6 +11,20 @@ source("manalysis_funcs.R", local = knitr::knit_global())
 ```
 
 
+# Analysis outline
+
+Factors to compare:
+* Topic: Employment vs Vaccination
+* Source: Twitter vs Reddit.
+* Reddit: Set 1|2|3|4.
+* Cleaning: 1|2
+* Lexicon: Bing|Afinn|NRC
+* Lexicon weighting : 
+  * Reddit: none|num_comments|score|all_interactions
+  * Twitter: none|re|rt|l|all_interactions
+
+
+
 ```{r}
 
 ```

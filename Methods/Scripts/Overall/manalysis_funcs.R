@@ -8,6 +8,7 @@ library(data.table)
 library(formattable)
 library(ggplot2)
 library(readxl)
+library(evolqg)
 
 list <- structure(NA,class="result")
 "[<-.result" <- function(x,...,value) {
@@ -438,7 +439,7 @@ summarize_days <- function(df, source){
           afinn = mean(afinn_score),
           nc_afinn = sum(nc_afinn),
           sc_afinn = sum(sc_afinn),
-          i_bing = sum(i_bing),
+          i_afinn = sum(i_afinn),
           nrc = mean(nrc_score),
           nc_nrc = sum(nc_nrc),
           sc_nrc = sum(sc_nrc),
@@ -728,23 +729,29 @@ c_objective <- function(objective_df){
 # Combining objective measures with sm data.
 c_sm_obj <- function(df){
   
-  clean_func <- function(df){
+  clean_func <- function(df, topic){
     
     cdf <- df %>% 
-      full_join(objective$emp, by = "Day") %>%
+      full_join(objective[[topic]], by = "Day") %>%
       filter(Day > ymd(start_date)) %>% 
-      filter(!is.na(bing))
+      filter(!is.na(bing)) 
+    
+    if(topic == 'vac'){
+      
+      cdf <- cdf %>% 
+        filter(!is.na(uptake))
+    }
     
     return(cdf)
   }
   
   sm_obj <- list()
   
-  sm_obj$reddit$emp <- lapply(sm$reddit$emp, clean_func) 
-  sm_obj$reddit$vac <- lapply(sm$reddit$vac, clean_func) 
+  sm_obj$reddit$emp <- lapply(sm$reddit$emp, clean_func, topic = 'emp') 
+  sm_obj$reddit$vac <- lapply(sm$reddit$vac, clean_func, topic = 'vac') 
   
-  sm_obj$twitter$emp <- lapply(sm$twitter$emp, clean_func)
-  sm_obj$twitter$vac <- lapply(sm$twitter$vac, clean_func)
+  sm_obj$twitter$emp <- lapply(sm$twitter$emp, clean_func, topic = 'emp')
+  sm_obj$twitter$vac <- lapply(sm$twitter$vac, clean_func, topic = 'vac')
   
   return(sm_obj)
   
@@ -841,8 +848,7 @@ sm_obj <- c_sm_obj()
 sm_all <- c_all()
 
 
-View(sm_obj$reddit$emp$c1b_set_1)
-
+## Descriptives #######
 
 # Comparison of trends across periods.
 View(sm_all$reddit$hps_ai$emp$c1b_set_1)
@@ -869,11 +875,11 @@ t2 <- t %>%
     )
   )
 
-
+ 
 # Reddit: Bing | AFINN | NRC
 
-t2 %>% 
-  select(Period, contains("bing"), contains("nrc"), contains('nrc')) %>% 
+r_lex <- t2 %>% 
+  select(Period, contains("bing"), contains("afinn")) %>% #contains('nrc')
   pivot_longer(
     .,
     cols = !Period,
@@ -885,24 +891,24 @@ t2 %>%
     into = c("Weighting", "Measure"),
     fill = "left"
   ) %>% 
+  mutate_at(vars(Weighting), ~replace_na(., 'none')) %>% 
   mutate(Weighting = ifelse(Weighting == 'nc', 'comments',
                             ifelse(Weighting == 'sc', 'score',
                                    ifelse(Weighting == 'i', 'all_interactions', 'none'))))
 
-
-  mutate(Weighting = ifelse(is.na(Weighting), "None",
-                            ifelse(Weighting == nc, "comments", 
-                                   ifelse(Weighting == i, "all_interactions",
-                                          ifelse(Weighting == sc, "score")))))
-
-%>% 
+r_lex %>% 
   ggplot(.) +
   geom_bar(
     aes(x=Period, y=Index, fill=Measure),
     stat = "identity",
     position = position_dodge(),
-    alpha = 0.7
-  ) + theme_classic()
+    alpha = 0.8
+  ) + theme_classic() +
+  geom_line(
+    aes(x=as.numeric(Period), y=Index, color=Measure)
+  ) +
+  facet_wrap(~Weighting)
+  
 
 
 # AI vs HPS
@@ -940,7 +946,7 @@ t2 %>%
                y = Index, 
                fill = Measure),
            stat = "identity",
-           position=position_dodge()
+           position=position_dodge())
 
 
 
@@ -968,6 +974,74 @@ t2 %>%
 #       ~sum(.x*obs)/sum(obs))
 #   )
 
+
+
+
+
+## Analysis #####
+
+# Reddit
+
+## Employment
+
+### Cleaning
+
+
+
+
+c1 <- RandomMatrix(10, 1, 1, 10)
+c2 <- RandomMatrix(10, 1, 1, 10)
+c3 <- RandomMatrix(10, 1, 1, 10)
+MantelCor(cov2cor(c1), cov2cor(c2))
+
+cov.list <- list(c1, c2, c3)
+cor.list <- llply(list(c1, c2, c3), cov2cor)
+
+MantelCor(cor.list)
+
+reps <- unlist(lapply(cor.list, MonteCarloRep, 10, correlation = FALSE))
+
+MantelCor(cor.list, repeat.vector = reps)
+
+
+c1 <- cov(sm_obj$reddit$emp$c1b_set_1 %>% 
+                          select(-obs, -Day))
+
+c2 <- cov(sm_obj$reddit$emp$c1b_set_1 %>% 
+            select(-obs, -Day))
+
+c3 <- cov(sm_obj$reddit$emp$c1b_set_3 %>% 
+            select(-obs, -Day))
+
+c4 <- cov(sm_obj$reddit$emp$c1b_set_4 %>% 
+            select(-obs, -Day))
+
+
+
+
+
+c5_mat <- RandomMatrix(14, 1, 1, 14)
+c5 <- cov(c5_mat)
+
+cov.list <- list(c1, c2, c3, c4, c5)
+cor.list <- llply(list(c1, c2, c3, c4, c5), cov2cor)
+
+reps <- unlist(lapply(cov.list, MonteCarloRep, 10, MatrixCor, correlation = TRUE))
+MantelCor(cor.list, repeat.vector = reps)
+
+MantelCor(cor.list, permutations = 1000)
+
+
+
+ corrplot(as.matrix(c), method = 'color')
+
+cp <- recordPlot()
+
+c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0.99))] 
+### Subsets.
+
+
+sm_obj$reddit$emp$
 
 ##### Code Dump #######
 
