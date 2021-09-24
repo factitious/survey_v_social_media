@@ -98,7 +98,7 @@ load_objective <- function(){
       Day < ymd(end_date)
     ) %>% 
     group_by(Day) %>% 
-    summarize(
+    dplyr::summarise(
       uptake = sum(Administered)/sum(Distributed)
     )
   
@@ -145,7 +145,7 @@ load_sp <- function(){
     select(Period, hps_start, hps_end) %>% 
     distinct()%>%
     group_by(Period) %>% 
-    summarize(
+    dplyr::summarise(
       Day = as.Date(seq.POSIXt(
         as.POSIXct(hps_start, tz = "UTC"),
         as.POSIXct(hps_end),
@@ -158,7 +158,7 @@ load_sp <- function(){
       Period = ifelse(d == T, glue("{Period}b"), Period)) %>% 
     select(Period, ai_start, ai_end) %>% 
     group_by(Period) %>% 
-    summarize(
+    dplyr::summarise(
       Day = as.Date(seq.POSIXt(
         as.POSIXct(ai_start, tz = "UTC"),
         as.POSIXct(ai_end),
@@ -174,7 +174,7 @@ load_sp <- function(){
     mutate(ai_Period = (1:nrow(.))) %>% 
     select(ai_Period, ai_start, ai_end) %>% 
     group_by(ai_Period) %>% 
-    summarize(
+    dplyr::summarise(
       Day = as.Date(seq.POSIXt(
         as.POSIXct(ai_start, tz = "UTC"),
         as.POSIXct(ai_end),
@@ -433,7 +433,7 @@ summarize_days <- function(df, source){
   
       df <- df %>% 
         group_by(Day) %>%
-        summarise(
+        dplyr::summarise(
           obs = n(),
           bing = mean(bing_score),
           nc_bing = sum(nc_bing),
@@ -453,7 +453,7 @@ summarize_days <- function(df, source){
     
       df <- df %>% 
         group_by(Day) %>% 
-        summarise(
+        dplyr::summarise(
           obs = n(),
           bing = mean(bing_score),
           l_bing = sum(l_bing),
@@ -730,9 +730,9 @@ c_objective <- function(objective_df){
 }
 
 # Combining objective measures with sm data.
-c_sm_obj <- function(df){
+c_sm_obj <- function(df, do_trim = F){
   
-  clean_func <- function(df, topic){
+  clean_func <- function(df, topic, do_trim){
     
     cdf <- df %>% 
       full_join(objective[[topic]], by = "Day") %>%
@@ -741,8 +741,14 @@ c_sm_obj <- function(df){
     
     if(topic == 'vac'){
       
-      # cdf <- cdf %>% 
-      #   filter(Day > ymd(vac_start_date))
+      cdf <- cdf %>%
+        filter(!is.na(uptake))
+        # filter(Day > ymd(vac_start_date))
+    }
+    
+    if(do_trim){
+      cdf <- cdf %>% 
+        filter(obs > 100)
     }
     
     return(cdf)
@@ -750,11 +756,11 @@ c_sm_obj <- function(df){
   
   sm_obj <- list()
   
-  sm_obj$reddit$emp <- lapply(sm$reddit$emp, clean_func, topic = 'emp') 
-  sm_obj$reddit$vac <- lapply(sm$reddit$vac, clean_func, topic = 'vac') 
+  sm_obj$reddit$emp <- lapply(sm$reddit$emp, clean_func, topic = 'emp', do_trim = do_trim) 
+  sm_obj$reddit$vac <- lapply(sm$reddit$vac, clean_func, topic = 'vac', do_trim = do_trim) 
   
-  sm_obj$twitter$emp <- lapply(sm$twitter$emp, clean_func, topic = 'emp')
-  sm_obj$twitter$vac <- lapply(sm$twitter$vac, clean_func, topic = 'vac')
+  sm_obj$twitter$emp <- lapply(sm$twitter$emp, clean_func, topic = 'emp', do_trim = do_trim) 
+  sm_obj$twitter$vac <- lapply(sm$twitter$vac, clean_func, topic = 'vac', do_trim = do_trim) 
   
   return(sm_obj)
   
@@ -848,20 +854,21 @@ sm$twitter <- load_all_twitter(proc = T)
 # Pre-process
 objective <- c_objective(objective)
 sm_obj <- c_sm_obj()
+sm_obj_trim <- c_sm_obj(do_trim=T)
 sm_all <- c_all()
 
 
 ## Descriptives #######
 
 # Comparison of trends across periods.
-View(sm_all$reddit$hps_ai$emp$c1_set_1)
+View(sm_all$reddit$hps_ai$emp$c1_set1)
 
-t <- sm_all$reddit$hps_ai$emp$c1_set_1
+t <- sm_all$reddit$hps_ai$emp$c1_set1
 
 t2 <- t %>% 
   mutate(Period = as.factor(Period)) %>% 
   group_by(Period) %>% 
-  summarise(
+  dplyr::summarise(
     sp500 = mean(sp500_Close),
     ics = mean(ics),
     across(
@@ -969,7 +976,7 @@ t2 %>%
 
 # bla2 <- bla %>% 
 #   group_by(Period) %>% 
-#   summarise(
+#   dplyr::summarise(
 #     sp500 = mean(sp500_Close),
 #     ics = mean(ics),
 #     across(
@@ -982,6 +989,76 @@ t2 %>%
 
 
 ## Analysis #####
+
+n_obs <- function(sm_obj){
+  
+  source_name <- names(sm_obj)
+  reddit_df <- data.frame(
+    matrix(NA,
+           nrow = 7,
+           ncol = 0)
+  )
+  
+  twitter_df <- data.frame(
+    matrix(NA,
+           nrow = 7,
+           ncol = 0)
+  )
+  
+  for(sn in source_name){
+    
+    
+    topic_names <- names(sm_obj[[sn]])
+    
+    for(tn in topic_names){
+      
+      d_names <- names(sm_obj[[sn]][[tn]])
+      
+      for(dn in d_names){
+        
+        tvar <- summary(sm_obj[[sn]][[tn]][[dn]]$obs)
+        
+        vn <- glue("{tn}_{dn}")
+        
+        tdf <- data.frame(
+          temp_col = round(unclass(tvar),2),
+          check.names = F
+        )
+        
+        
+        tdf <- rbind(
+          Days = length(unique(sm_obj[[sn]][[tn]][[dn]]$Day)),
+          tdf)
+        
+        
+        # add_row(tdf, length(unique(sm_obj[[sn]][[tn]][[dn]]$Day)))
+        
+        names(tdf) <- vn
+        
+        if(sn=='reddit'){
+          reddit_df <- cbind(reddit_df, tdf)
+        } else if(sn=='twitter'){
+          twitter_df <- cbind(twitter_df, tdf) 
+        }
+        
+      }
+      
+    }
+    
+  }
+  
+  return(list(reddit = reddit_df, twitter = twitter_df))
+  
+  
+}
+
+n_all <- n_obs(sm_obj)
+n_all_trim <- n_obs(sm_obj_trim)
+
+formattable(n_all$reddit)
+formattable(n_all$twitter)
+formattable(n_all_trim$reddit)
+formattable(n_all_trim$twitter)
 
 # Reddit
 
@@ -1073,63 +1150,109 @@ draw_mantel(twitter_emp_cor)
 draw_mantel(twitter_vac_cor)
 
 
-
-te <- reddit_emp_cor_measures$obj_list
-
-full_te <- data.frame(
-  matrix(NA, 
-         nrow = nrow(te[[1]]),
-         ncol = 0
-         )
-)
-
-for(n in names(te)){
+cor_obj_reddit_subsets <- function(obj_list){
   
-  colnames(te[[n]]) <- paste(n, colnames(te[[n]]), sep="_")
+  rs_cor <- list()
+ 
+  te <- obj_list
   
-  full_te <- cbind(full_te, te[[n]])  
+  full_te <- data.frame(
+    matrix(NA, 
+           nrow = nrow(te[[1]]),
+           ncol = 0
+    )
+  ) 
+  
+  for(n in names(te)){
+    
+    colnames(te[[n]]) <- paste(n, colnames(te[[n]]), sep="_")
+    
+    full_te <- cbind(full_te, te[[n]])  
+    
+  }
+  
+  rs_cor$c1$sp500 <- full_te %>% 
+    mutate(Measure = rownames(full_te)) %>% 
+    filter(Measure != "sp500_Close") %>% 
+    filter(Measure != "ics") %>%
+    select(contains('c1')) %>% 
+    select(contains("sp500_Close")) %>% 
+    mutate(
+      `Set 1` = c1_set1_sp500_Close,
+      `Set 2` = c1_set2_sp500_Close,
+      `Set 3` = c1_set3_sp500_Close,
+      `Set 4` = c1_set4_sp500_Close
+    ) %>% 
+    select(
+      `Set 1`,
+      `Set 2`,
+      `Set 3`,
+      `Set 4`
+    )
+  
+  rs_cor$c1$ics <- full_te %>% 
+    mutate(Measure = rownames(full_te)) %>% 
+    filter(Measure != "sp500_Close") %>% 
+    filter(Measure != "ics") %>%
+    select(contains('c1')) %>% 
+    select(contains("ics")) %>% 
+    mutate(
+      `Set 1` = c1_set1_ics,
+      `Set 2` = c1_set2_ics,
+      `Set 3` = c1_set3_ics,
+      `Set 4` = c1_set4_ics
+    ) %>% 
+    select(
+      `Set 1`,
+      `Set 2`,
+      `Set 3`,
+      `Set 4`
+    )
+  
+  
+  rs_cor$c2$sp500 <- full_te %>% 
+    mutate(Measure = rownames(full_te)) %>% 
+    filter(Measure != "sp500_Close") %>% 
+    filter(Measure != "ics") %>%
+    select(contains('c2')) %>% 
+    select(contains("sp500_Close")) %>% 
+    mutate(
+      `Set 1` = c2_set1_sp500_Close,
+      `Set 2` = c2_set2_sp500_Close,
+      `Set 3` = c2_set3_sp500_Close,
+      `Set 4` = c2_set4_sp500_Close
+    ) %>% 
+    select(
+      `Set 1`,
+      `Set 2`,
+      `Set 3`,
+      `Set 4`
+    )
+  
+  rs_cor$c2$ics <- full_te %>% 
+    mutate(Measure = rownames(full_te)) %>% 
+    filter(Measure != "sp500_Close") %>% 
+    filter(Measure != "ics") %>%
+    select(contains('c2')) %>% 
+    select(contains("ics")) %>% 
+    mutate(
+      `Set 1` = c2_set1_ics,
+      `Set 2` = c2_set2_ics,
+      `Set 3` = c2_set3_ics,
+      `Set 4` = c2_set4_ics
+    ) %>% 
+    select(
+      `Set 1`,
+      `Set 2`,
+      `Set 3`,
+      `Set 4`
+    )
+  
+  return(rs_cor)
   
 }
 
-
-pft_sp500_c1 <- full_te %>% 
-  mutate(Measure = rownames(full_te)) %>% 
-  filter(Measure != "sp500_Close") %>% 
-  filter(Measure != "ics") %>%
-  select(contains('c1')) %>% 
-  select(contains("sp500_Close")) %>% 
-  mutate(
-    `Set 1` = c1_set1_sp500_Close,
-    `Set 2` = c1_set2_sp500_Close,
-    `Set 3` = c1_set3_sp500_Close,
-    `Set 4` = c1_set4_sp500_Close
-  ) %>% 
-  select(
-    `Set 1`,
-    `Set 2`,
-    `Set 3`,
-    `Set 4`
-  )
-
-pft_ics_c1 <- full_te %>% 
-  mutate(Measure = rownames(full_te)) %>% 
-  filter(Measure != "sp500_Close") %>% 
-  filter(Measure != "ics") %>%
-  select(contains('c1')) %>% 
-  select(contains("ics")) %>% 
-  mutate(
-    `Set 1` = c1_set1_ics,
-    `Set 2` = c1_set2_ics,
-    `Set 3` = c1_set3_ics,
-    `Set 4` = c1_set4_ics
-  ) %>% 
-  select(
-    `Set 1`,
-    `Set 2`,
-    `Set 3`,
-    `Set 4`
-  )
-
+rs_cor <- cor_obj_reddit_subsets(reddit_emp_cor$obj_list)
 
 draw_hm <- function(cm){
   
@@ -1149,53 +1272,11 @@ draw_hm <- function(cm){
   
 }
 
-draw_hm(pft_sp500_c1)
-draw_hm(pft_ics_c1)
+draw_hm(rs_cor$c1$sp500)
+draw_hm(rs_cor$c1$ics)
 
-
-pft_sp500_c2 <- full_te %>% 
-  mutate(Measure = rownames(full_te)) %>% 
-  filter(Measure != "sp500_Close") %>% 
-  filter(Measure != "ics") %>%
-  select(contains('c2')) %>% 
-  select(contains("sp500_Close")) %>% 
-  mutate(
-    `Set 1` = c2_set_1_sp500_Close,
-    `Set 2` = c2_set_2_sp500_Close,
-    `Set 3` = c2_set_3_sp500_Close,
-    `Set 4` = c2_set_4_sp500_Close
-  ) %>% 
-  select(
-    `Set 1`,
-    `Set 2`,
-    `Set 3`,
-    `Set 4`
-  )
-
-pft_ics_c2 <- full_te %>% 
-  mutate(Measure = rownames(full_te)) %>% 
-  filter(Measure != "sp500_Close") %>% 
-  filter(Measure != "ics") %>%
-  select(contains('c2')) %>% 
-  select(contains("ics")) %>% 
-  mutate(
-    `Set 1` = c2_set_1_ics,
-    `Set 2` = c2_set_2_ics,
-    `Set 3` = c2_set_3_ics,
-    `Set 4` = c2_set_4_ics
-  ) %>% 
-  select(
-    `Set 1`,
-    `Set 2`,
-    `Set 3`,
-    `Set 4`
-  )
-
-draw_hm(pft_sp500_c2)
-draw_hm(pft_ics_c2)
-
-
-
+draw_hm(rs_cor$c2$sp500)
+draw_hm(rs_cor$c2$ics)
 
 
 
@@ -1278,13 +1359,24 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 ##### Code Dump #######
 
 # # Changing score + summarizing days
-# r <- load_nlp_data(
-#   source = "Reddit",
-#   topic = "Vaccination",
-#   set = 1,
-#   level = 1,
-#   stage = '1b'
-# )
+r2 <- load_nlp_data(
+  source = "Reddit",
+  topic = "Employment",
+  set = 2,
+  level = 2,
+  stage = '1b'
+)
+
+r3 <- load_nlp_data(
+  source = "Reddit",
+  topic = "Employment",
+  set = 3,
+  level = 2,
+  stage = '1b'
+)
+
+
+
 # 
 # bla <- load_nlp_data(
 #   source = "Reddit",
@@ -1330,7 +1422,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # 
 # bla3 <- bla2 %>% 
 #   group_by(Day) %>%
-#   summarise(
+#   dplyr::summarise(
 #     bing = mean(bing_score),
 #     nc_bing = sum(nc_bing),
 #     sc_bing = sum(sc_bing),
@@ -1397,7 +1489,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # 
 # t3 <- t2 %>% 
 #   group_by(Day) %>% 
-#   summarise(
+#   dplyr::summarise(
 #     bing = mean(bing_score),
 #     l_bing = sum(l_bing),
 #     l_afinn = sum(l_afinn),
@@ -1417,7 +1509,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # # e.g.
 # eg_reddit$emp_obj_surveys_hps$df 
 # 
-# x <- sm$reddit$emp$c1b_set_4 %>% 
+# x <- sm$reddit$emp$c1b_set4 %>% 
 #   inner_join(sp$hps, by = "Day") %>% 
 #   inner_join(objective$emp, by = "Day") %>% 
 #   inner_join(surveys$hps$emp, by = "Period") %>% 
@@ -1431,7 +1523,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # View(eg_reddit$emp_obj_surveys_hps$df)
 # 
 # 
-# eg_reddit$emp_obj_surveys_ai$df <- sm$reddit$emp$c1b_set_1 %>% 
+# eg_reddit$emp_obj_surveys_ai$df <- sm$reddit$emp$c1b_set1 %>% 
 #   inner_join(sp$ai, by = "Day") %>% 
 #   inner_join(objective$emp, by = "Day") %>% 
 #   inner_join(surveys$ai$emp, by = "ai_Period")
@@ -1453,7 +1545,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # View(eg_twitter$emp_obj_surveys_hps$df)
 # View(eg_twitter$emp_obj_surveys_ai$df)
 # 
-# bla <- sm$reddit$emp$c1b$set_1 %>% 
+# bla <- sm$reddit$emp$c1b$set1 %>% 
 #   inner_join(sp$ai, by = "Day") %>% 
 #   inner_join(objective$emp, by = "Day") %>% 
 #   inner_join(surveys$hps$emp, by = "Period") 
@@ -1462,7 +1554,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # 
 # bla2 <- bla %>% 
 #   group_by(Period) %>% 
-#   summarise(
+#   dplyr::summarise(
 #     sp500 = mean(sp500_Close),
 #     ics = mean(ics),
 #     across(
@@ -1473,7 +1565,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # 
 # bla3 <- bla %>% 
 #   group_by(ai_Period) %>% 
-#   summarise(
+#   dplyr::summarise(
 #     sp500 = mean(sp500_Close),
 #     ics = mean(ics),
 #     across(
@@ -1486,7 +1578,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # 
 # eg_reddit$emp_obj_surveys$df <- eg_reddit$emp_obj_surveys$df %>% 
 #   group_by(Period) %>% 
-#   summarise(
+#   dplyr::summarise(
 #     obs = sum(obs),
 #     sp500 = mean(sp500_Close),
 #     ics = mean(ics),
@@ -1499,12 +1591,12 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # 
 # 
 # # Other
-# t <- sm$reddit$emp$c1b$set_1 %>% 
+# t <- sm$reddit$emp$c1b$set1 %>% 
 #   inner_join(sp$ai, by = "Day") %>% 
 #   mutate(Period = as.character(Period),
 #          obs = as.character(obs)) %>% 
 #   group_by(Period) %>% 
-#   summarise(
+#   dplyr::summarise(
 #     across(where(is.numeric), mean)
 #   ) %>% 
 #   mutate(Period = as.numeric(Period)) %>% 
@@ -1525,7 +1617,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 #   geom_line()
 # 
 # 
-# bla <- sm$reddit$emp$c1b$set_1 %>% 
+# bla <- sm$reddit$emp$c1b$set1 %>% 
 #   select(Day, bing) %>% 
 #   arrange(., Day) %>% 
 #   mutate(r_bing = bing - lag(bing),
@@ -1564,11 +1656,11 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # eg_reddit <- list()
 # eg_twitter <- list()
 # 
-# eg_reddit$emp_obj_df <- sm$reddit$emp_c1b_set_1 %>%
+# eg_reddit$emp_obj_df <- sm$reddit$emp_c1b_set1 %>%
 #   full_join(objective$emp, by = "Day") %>%
 #   filter(Day > ymd(start_date))
 # 
-# eg_reddit$emp_obj$df2 <-sm$reddit$emp_c1b_set_1 %>% 
+# eg_reddit$emp_obj$df2 <-sm$reddit$emp_c1b_set1 %>% 
 #   comb_sm_obj(.)
 # 
 # 
@@ -1613,13 +1705,13 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 # geom_line(aes(y = nc_bing))
 
 # # Combining surveys with sm data.
-# eg_reddit$emp_surveys$df <- sm$reddit$emp_c1b_set_1 %>% 
+# eg_reddit$emp_surveys$df <- sm$reddit$emp_c1b_set1 %>% 
 #   inner_join(sp$hps, by = "Day")
 # 
 # 
 # eg_reddit$emp_surveys$df <- eg$emp_surveys$df %>% 
 #   group_by(Period) %>% 
-#   summarise(
+#   dplyr::summarise(
 #     across(bing:i_nrc,
 #            ~sum(.x*obs)/sum(obs)),
 #     obs = sum(obs)

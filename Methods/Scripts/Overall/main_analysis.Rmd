@@ -24,11 +24,29 @@ Factors to compare:
   * Twitter: none|re|rt|l|all_interactions
 
 
+
 # Reddit
 
 * Topic: Employment v Vaccination
 * Subset: 1|2|3|4
 * Cleaning: 1|2.
+* Lexicon:
+  * Bing|Afinn|NRC x r (none|num_comments|score|all_interactions)
+
+```{r}
+formattable(n_all$reddit)
+formattable(n_all_trim$reddit)
+```
+
+
+Out of a total of 214 days (2020-10-23 to 2021-05-24), Reddit scraping provided usable data for 196 days. Days in which fewer than 100 posts resulting from the query were then removed. 
+
+First, the number of observations is nearly identical across cleaning stages. This is as expected, as the only additional step in stage 2 is stemming. 
+
+Across the employment datasets the mean number of observations for all the available dates 
+
+
+
 
 ## Employment.
 
