@@ -34,8 +34,6 @@ Factors to compare:
 
 ### Cleaning.
 
-
-
 ### Subsets.
 
 How do subsets compare to each other?

@@ -484,7 +484,7 @@ load_all_reddit <- function(proc = F){
       
       # Employment
       # Set 1
-      reddit$emp$c1b_set_1 <- load_nlp_data(
+      reddit$emp$c1_set1 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 1,
@@ -494,7 +494,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2_set_1 <- load_nlp_data(
+      reddit$emp$c2_set1 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 1,
@@ -505,7 +505,7 @@ load_all_reddit <- function(proc = F){
         summarize_days(., source = "Reddit")
       
       # Set 2
-      reddit$emp$c1b_set_2 <- load_nlp_data(
+      reddit$emp$c1_set2 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 2,
@@ -515,7 +515,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2_set_2 <- load_nlp_data(
+      reddit$emp$c2_set2 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 2,
@@ -526,7 +526,7 @@ load_all_reddit <- function(proc = F){
         summarize_days(., source = "Reddit")
       
       # Set 3
-      reddit$emp$c1b_set_3 <- load_nlp_data(
+      reddit$emp$c1_set3 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 3,
@@ -536,7 +536,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2_set_3 <- load_nlp_data(
+      reddit$emp$c2_set3 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 3,
@@ -547,7 +547,7 @@ load_all_reddit <- function(proc = F){
         summarize_days(., source = "Reddit")
       
       # Set 4
-      reddit$emp$c1b_set_4 <- load_nlp_data(
+      reddit$emp$c1_set4 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 4,
@@ -557,7 +557,7 @@ load_all_reddit <- function(proc = F){
         change_scores(., source = "Reddit") %>% 
         summarize_days(., source = "Reddit")
       
-      reddit$emp$c2_set_4 <- load_nlp_data(
+      reddit$emp$c2_set4 <- load_nlp_data(
         source = "Reddit",
         topic = "Employment",
         set = 4,
@@ -568,7 +568,7 @@ load_all_reddit <- function(proc = F){
         summarize_days(., source = "Reddit")
       
       # Vaccination
-      reddit$vac$c1b <- load_nlp_data(
+      reddit$vac$c1 <- load_nlp_data(
         source = "Reddit",
         topic = "Vaccination",
         set = 1,
@@ -610,7 +610,7 @@ load_all_twitter <- function(proc = F){
       
       twitter <- list()
       
-      twitter$emp$c1b <- load_nlp_data(
+      twitter$emp$c1 <- load_nlp_data(
         source = "Twitter",
         topic = "Employment",
         set = 1,
@@ -640,7 +640,7 @@ load_all_twitter <- function(proc = F){
       #   change_scores(., source = "Twitter") %>% 
       #   summarize_days(., source = "Twitter")
       
-      twitter$vac$c1b <- load_nlp_data(
+      twitter$vac$c1 <- load_nlp_data(
         source = "Twitter",
         topic = "Vaccination",
         set = 1,
@@ -854,9 +854,9 @@ sm_all <- c_all()
 ## Descriptives #######
 
 # Comparison of trends across periods.
-View(sm_all$reddit$hps_ai$emp$c1b_set_1)
+View(sm_all$reddit$hps_ai$emp$c1_set_1)
 
-t <- sm_all$reddit$hps_ai$emp$c1b_set_1
+t <- sm_all$reddit$hps_ai$emp$c1_set_1
 
 t2 <- t %>% 
   mutate(Period = as.factor(Period)) %>% 
@@ -1092,17 +1092,17 @@ for(n in names(te)){
 }
 
 
-pft_sp500_c1b <- full_te %>% 
+pft_sp500_c1 <- full_te %>% 
   mutate(Measure = rownames(full_te)) %>% 
   filter(Measure != "sp500_Close") %>% 
   filter(Measure != "ics") %>%
-  select(contains('c1b')) %>% 
+  select(contains('c1')) %>% 
   select(contains("sp500_Close")) %>% 
   mutate(
-    `Set 1` = c1b_set_1_sp500_Close,
-    `Set 2` = c1b_set_2_sp500_Close,
-    `Set 3` = c1b_set_3_sp500_Close,
-    `Set 4` = c1b_set_4_sp500_Close
+    `Set 1` = c1_set1_sp500_Close,
+    `Set 2` = c1_set2_sp500_Close,
+    `Set 3` = c1_set3_sp500_Close,
+    `Set 4` = c1_set4_sp500_Close
   ) %>% 
   select(
     `Set 1`,
@@ -1111,17 +1111,17 @@ pft_sp500_c1b <- full_te %>%
     `Set 4`
   )
 
-pft_ics_c1b <- full_te %>% 
+pft_ics_c1 <- full_te %>% 
   mutate(Measure = rownames(full_te)) %>% 
   filter(Measure != "sp500_Close") %>% 
   filter(Measure != "ics") %>%
-  select(contains('c1b')) %>% 
+  select(contains('c1')) %>% 
   select(contains("ics")) %>% 
   mutate(
-    `Set 1` = c1b_set_1_ics,
-    `Set 2` = c1b_set_2_ics,
-    `Set 3` = c1b_set_3_ics,
-    `Set 4` = c1b_set_4_ics
+    `Set 1` = c1_set1_ics,
+    `Set 2` = c1_set2_ics,
+    `Set 3` = c1_set3_ics,
+    `Set 4` = c1_set4_ics
   ) %>% 
   select(
     `Set 1`,
@@ -1149,8 +1149,8 @@ draw_hm <- function(cm){
   
 }
 
-draw_hm(pft_sp500_c1b)
-draw_hm(pft_ics_c1b)
+draw_hm(pft_sp500_c1)
+draw_hm(pft_ics_c1)
 
 
 pft_sp500_c2 <- full_te %>% 
@@ -1239,16 +1239,16 @@ reps <- unlist(lapply(cor.list, MonteCarloRep, 10, correlation = FALSE))
 MantelCor(cor.list, repeat.vector = reps)
 
 
-c1 <- cov(sm_obj$reddit$emp$c1b_set_1 %>% 
+c1 <- cov(sm_obj$reddit$emp$c1_set1 %>% 
                           select(-obs, -Day, -sp500_close, -ics))
 
-c2 <- cov(sm_obj$reddit$emp$c1b_set_1 %>% 
+c2 <- cov(sm_obj$reddit$emp$c1_set1 %>% 
             select(-obs, -Day))
 
-c3 <- cov(sm_obj$reddit$emp$c1b_set_3 %>% 
+c3 <- cov(sm_obj$reddit$emp$c1_set3 %>% 
             select(-obs, -Day))
 
-c4 <- cov(sm_obj$reddit$emp$c1b_set_4 %>% 
+c4 <- cov(sm_obj$reddit$emp$c1_set4 %>% 
             select(-obs, -Day))
 
 
@@ -1625,7 +1625,7 @@ c <- c[apply(c, 1, function(x) any(x > 0.99)), apply(c, 1, function(x) any(x > 0
 #     obs = sum(obs)
 #   )
 
-sm_obj$reddit$vac$c1b %>% 
+sm_obj$reddit$vac$c1 %>% 
   select(Day,obs, bing) %>%
   mutate(obs = scales::rescale(obs, to=c(0,1))) %>% 
   ggplot(.) +
@@ -1633,10 +1633,10 @@ sm_obj$reddit$vac$c1b %>%
   geom_line(aes(x = Day, y = bing, color = "Bing_score")) 
 
 
-cor(sm_obj$reddit$vac$c1b$bing, sm_obj$reddit$vac$c1b$obs)
+cor(sm_obj$reddit$vac$c1$bing, sm_obj$reddit$vac$c1$obs)
 
 
-sm_obj$reddit$vac$c1b %>% 
+sm_obj$reddit$vac$c1 %>% 
   filter(Day > ymd('2021-02-07')) %>% 
   filter(Day < ymd('2021-02-22')) %>% 
   select(Day,uptake) %>% 
@@ -1644,7 +1644,7 @@ sm_obj$reddit$vac$c1b %>%
   geom_line()
 
 
-h <- sm_all$reddit$hps$vac$c1b %>% 
+h <- sm_all$reddit$hps$vac$c1 %>% 
   group_by(Period) %>% 
   dplyr::summarise(
         across(
