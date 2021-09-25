@@ -99,7 +99,8 @@ load_objective <- function(){
     ) %>% 
     group_by(Day) %>% 
     dplyr::summarise(
-      uptake = sum(Administered)/sum(Distributed)
+      uptake = sum(Administered)/sum(Distributed),
+      administered = sum(Administered)
     )
   
   return(objective)
@@ -476,7 +477,7 @@ summarize_days <- function(df, source){
   return(df)
 }
 
-load_all_reddit <- function(proc = F){
+load_all_reddit <- function(proc = F, summ = T){
   
   if(proc == F){
   
@@ -490,9 +491,7 @@ load_all_reddit <- function(proc = F){
         set = 1,
         level = 2,
         stage = '1b'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      ) 
       
       reddit$emp$c2_set1 <- load_nlp_data(
         source = "Reddit",
@@ -500,9 +499,8 @@ load_all_reddit <- function(proc = F){
         set = 1,
         level = 2,
         stage = '2'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      )       
+    
       
       # Set 2
       reddit$emp$c1_set2 <- load_nlp_data(
@@ -511,9 +509,7 @@ load_all_reddit <- function(proc = F){
         set = 2,
         level = 2,
         stage = '1b'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      )
       
       reddit$emp$c2_set2 <- load_nlp_data(
         source = "Reddit",
@@ -521,9 +517,8 @@ load_all_reddit <- function(proc = F){
         set = 2,
         level = 2,
         stage = '2'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      )
+      
       
       # Set 3
       reddit$emp$c1_set3 <- load_nlp_data(
@@ -532,9 +527,7 @@ load_all_reddit <- function(proc = F){
         set = 3,
         level = 2,
         stage = '1b'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      ) 
       
       reddit$emp$c2_set3 <- load_nlp_data(
         source = "Reddit",
@@ -542,9 +535,7 @@ load_all_reddit <- function(proc = F){
         set = 3,
         level = 2,
         stage = '2'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      ) 
       
       # Set 4
       reddit$emp$c1_set4 <- load_nlp_data(
@@ -553,9 +544,7 @@ load_all_reddit <- function(proc = F){
         set = 4,
         level = 2,
         stage = '1b'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      ) 
       
       reddit$emp$c2_set4 <- load_nlp_data(
         source = "Reddit",
@@ -563,10 +552,8 @@ load_all_reddit <- function(proc = F){
         set = 4,
         level = 2,
         stage = '2'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
-      
+      ) 
+
       # Vaccination
       reddit$vac$c1 <- load_nlp_data(
         source = "Reddit",
@@ -574,9 +561,7 @@ load_all_reddit <- function(proc = F){
         set = 1,
         level = 2,
         stage = '1b'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      ) 
       
       # Vaccination
       reddit$vac$c2 <- load_nlp_data(
@@ -585,9 +570,54 @@ load_all_reddit <- function(proc = F){
         set = 1,
         level = 2,
         stage = '2'
-      ) %>% 
-        change_scores(., source = "Reddit") %>% 
-        summarize_days(., source = "Reddit")
+      ) 
+      
+      
+      if(summ){
+        
+        reddit$emp$c1_set1 <- reddit$emp$c1_set1%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$emp$c1_set2 <- reddit$emp$c1_set2%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$emp$c1_set3 <- reddit$emp$c1_set3%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$emp$c1_set4 <- reddit$emp$c1_set4%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$emp$c2_set1 <- reddit$emp$c2_set1%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$emp$c2_set2 <- reddit$emp$c2_set2%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$emp$c2_set3 <- reddit$emp$c2_set3%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        
+        reddit$emp$c2_set4 <- reddit$emp$c2_set4%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$vac$c1 <- reddit$vac$c1%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+        
+        reddit$vac$c2 <- reddit$vac$c2%>% 
+          change_scores(., source = "Reddit") %>% 
+          summarize_days(., source = "Reddit")
+      
+      }
+
       
   } else if(proc == T){
     
@@ -604,7 +634,7 @@ load_all_reddit <- function(proc = F){
   return(reddit)
 }
 
-load_all_twitter <- function(proc = F){
+load_all_twitter <- function(proc = F, summ = T){
   
   if(proc == F){
       
@@ -616,29 +646,15 @@ load_all_twitter <- function(proc = F){
         set = 1,
         level = 2,
         stage = '1b'
-      ) %>% 
-        change_scores(., source = "Twitter") %>% 
-        summarize_days(., source = "Twitter")
-      
+      ) 
+
       twitter$emp$c2 <- load_nlp_data(
         source = "Twitter",
         topic = "Employment",
         set = 1,
         level = 2,
         stage = '2'
-      ) %>% 
-        change_scores(., source = "Twitter") %>% 
-        summarize_days(., source = "Twitter")
-      
-      # twitter$emp$ml <- load_nlp_data(
-      #   source = "Twitter",
-      #   topic = "Employment",
-      #   set = 1,
-      #   level = 3,
-      #   stage = '2'
-      # ) %>% 
-      #   change_scores(., source = "Twitter") %>% 
-      #   summarize_days(., source = "Twitter")
+      )
       
       twitter$vac$c1 <- load_nlp_data(
         source = "Twitter",
@@ -646,10 +662,7 @@ load_all_twitter <- function(proc = F){
         set = 1,
         level = 2,
         stage = '1b'
-      ) %>% 
-        mutate(like_count = as.numeric(like_count)) %>% 
-        change_scores(., source = "Twitter") %>% 
-        summarize_days(., source = "Twitter")
+      ) 
       
       twitter$vac$c2 <- load_nlp_data(
         source = "Twitter",
@@ -657,10 +670,32 @@ load_all_twitter <- function(proc = F){
         set = 1,
         level = 2,
         stage = '2'
-      ) %>% 
-        mutate(like_count = as.numeric(like_count)) %>% 
-        change_scores(., source = "Twitter") %>% 
-        summarize_days(., source = "Twitter")
+      ) 
+      
+      if(summ){
+        
+        twitter$emp$c1 <- twitter$emp$c1 %>% 
+          change_scores(., source = "Twitter") %>% 
+          summarize_days(., source = "Twitter")
+        
+        twitter$emp$c2 <- twitter$emp$c2 %>% 
+          change_scores(., source = "Twitter") %>% 
+          summarize_days(., source = "Twitter")
+        
+        twitter$vac$c1 <- twitter$vac$c1 %>% 
+          mutate(like_count = as.numeric(like_count)) %>% 
+          change_scores(., source = "Twitter") %>% 
+          summarize_days(., source = "Twitter")
+        
+        twitter$vac$c2 <- twitter$vac$c2 %>% 
+          mutate(like_count = as.numeric(like_count)) %>% 
+          change_scores(., source = "Twitter") %>% 
+          summarize_days(., source = "Twitter")
+          
+        
+        
+      }
+      
   } else if(proc == T){
       
       twitter <- readRDS(
@@ -848,8 +883,12 @@ surveys <- load_surveys()
 
 # Social media data
 sm <- list()
+sm_full <- list()
 sm$reddit <- load_all_reddit(proc = T)
 sm$twitter <- load_all_twitter(proc = T)
+
+sm_full$reddit <- load_all_reddit(proc = F, summ = F)
+sm_full$twitter <- load_all_twitter(proc = F, summ = F)
 
 # Pre-process
 objective <- c_objective(objective)
@@ -986,10 +1025,190 @@ t2 %>%
 
 
 
+fdf <- data.frame(
+  matrix(NA,
+         nrow = 12,
+         ncol = 0),
+  row.names = 
+    c(
+      'n',
+      'Subreddits',
+      'Comments (Mean)',
+      'Comments (% == 0)',
+      'Score (Mean)',
+      'Score (% == 0)',
+      'BING score (Mean)',
+      'BING score (% == 0)',
+      'AFINN score (Mean)',
+      'AFINN score (% == 0)',
+      'NRC score (Mean)',
+      'NRC score (% == 0)'
+    )
+)
 
 
 ## Analysis #####
 
+# Summary of number of observations in all datasets (after pre-processing)
+summ_full <- function(sm_full){
+  
+  source_name <- names(sm_obj)
+  
+  reddit_df <- data.frame(
+    matrix(NA,
+           nrow = 12,
+           ncol = 0),
+    row.names = 
+      c(
+        'n',
+        'Subreddits',
+        'Comments (Mean)',
+        'Comments (% == 0)',
+        'Score (Mean)',
+        'Score (% == 0)',
+        'BING score (Mean)',
+        'BING score (% == 0)',
+        'AFINN score (Mean)',
+        'AFINN score (% == 0)',
+        'NRC score (Mean)',
+        'NRC score (% == 0)'
+      )
+  )
+  
+  twitter_df <- data.frame(
+    matrix(NA,
+           nrow = 13,
+           ncol = 0),
+    row.names = 
+      c(
+        'n',
+        'RT (Mean)',
+        'RT (% == 0)',
+        'Likes (Mean)',
+        'Likes (% == 0)',
+        'Replies (Mean)',
+        'Replies (% == 0)',
+        'BING score (Mean)',
+        'BING score (% == 0)',
+        'AFINN score (Mean)',
+        'AFINN score (% == 0)',
+        'NRC score (Mean)',
+        'NRC score (% == 0)'
+      )
+  )
+  
+  
+  for(sn in source_name){
+    
+    
+    topic_names <- names(sm_obj[[sn]])
+    
+    for(tn in topic_names){
+      
+      d_names <- names(sm_obj[[sn]][[tn]])
+      
+      for(dn in d_names){
+        
+        tdf <- sm_full[[sn]][[tn]][[dn]]
+        
+        n_obs <- as.numeric(nrow(tdf))
+        
+        bing_avg <- mean(tdf$bing_score)
+        bing_perc_zero <- nrow(tdf[tdf$bing_score == 0,])/nrow(tdf)
+        
+        afinn_avg<- mean(tdf$afinn_score)
+        afinn_perc_zero <- nrow(tdf[tdf$afinn_score == 0,])/nrow(tdf)
+        
+        nrc_avg <- mean(tdf$nrc_score)
+        nrc_perc_zero <- nrow(tdf[tdf$nrc_score == 0,])/nrow(tdf)
+        
+        vn <- glue("{tn}_{dn}")
+        
+        if(sn=='reddit'){
+            
+            n_obs <- as.numeric(nrow(tdf))
+            
+            n_sr <- as.numeric(length(unique(tdf)))
+            
+            nc_avg_comm <- mean(tdf$num_comments)
+            nc_perc_zero <- nrow(tdf[tdf$num_comments == 0,])/nrow(tdf)
+            
+            sc_avg_comm <- mean(tdf$score)
+            sc_perc_zero <- nrow(tdf[tdf$score == 1,])/nrow(tdf)
+            
+            m_list <- c(
+              n_obs, 
+              n_sr, 
+              nc_avg_comm, 
+              nc_perc_zero, 
+              sc_avg_comm, 
+              sc_perc_zero,
+              bing_avg, 
+              bing_perc_zero,
+              afinn_avg, 
+              afinn_perc_zero,
+              nrc_avg, 
+              nrc_perc_zero
+            )
+        
+        
+          reddit_df <- reddit_df %>% 
+            add_column(bla = m_list)
+          
+          names(reddit_df)[names(reddit_df)=='bla'] <- vn
+            
+        } else if(sn=='twitter'){
+          
+          rt_avg_comm <- mean(tdf$retweet_count + tdf$quote_count)
+          rt_perc_zero <- nrow(tdf[tdf$retweet_count == 0,])/nrow(tdf)
+          
+          l_avg_comm <- mean(tdf$like_count)
+          l_perc_zero <- nrow(tdf[tdf$like_count == 0,])/nrow(tdf)
+          
+          re_avg_comm <- mean(tdf$reply_count)
+          re_perc_zero <- nrow(tdf[tdf$reply_count == 0,])/nrow(tdf)
+          
+          m_list <- c(
+            n_obs, 
+            rt_avg_comm, 
+            rt_perc_zero, 
+            l_avg_comm, 
+            l_perc_zero,
+            re_avg_comm, 
+            re_perc_zero,
+            bing_avg, 
+            bing_perc_zero,
+            afinn_avg, 
+            afinn_perc_zero,
+            nrc_avg, 
+            nrc_perc_zero
+          )
+          
+          
+          twitter_df <- twitter_df %>% 
+            add_column(bla = m_list)
+          
+          names(twitter_df)[names(twitter_df)=='bla'] <- vn
+        }
+        
+      }}}
+  
+  reddit_df <- round(reddit_df,1)
+  twitter_df <- round(twitter_df,1)
+  
+  return(list(
+    reddit = reddit_df,
+    twitter = twitter_df
+  ))
+  
+}
+
+full_desc <- summ_full(sm_full)
+
+
+
+
+# Summary of number of observations in all datasets (after pre-processing) 
 n_obs <- function(sm_obj){
   
   source_name <- names(sm_obj)
@@ -1791,14 +2010,40 @@ h %>%
 #       ~sum(.x*obs)/sum(obs))
 
 
-
-  pivot_longer(
-    .,
-    cols = !Period,
-    names_to = "Measure",
-    values_to = "Index"
+cdv_p <- read.csv(
+  file.path(
+    root_dir,
+    oj_data_path,
+    'COVID-19_Vaccinations_in_the_United_States_Jurisdiction.csv'
+  )
+) %>% 
+  select(
+    Date,
+    Distributed,
+    Administered,
+    Dist_Per_100K,
+    Admin_Per_100K,
   ) %>% 
+  mutate(Day = mdy(Date)) %>% 
+  filter(
+    Day < ymd(end_date)
+  ) %>% 
+  filter(
+    Day > ymd(vac_start_date)
+  ) %>% 
+  group_by(Day) %>% 
+  dplyr::summarise(
+    uptake = sum(Administered)/sum(Distributed),
+    administered = sum(Administered)
+  ) %>% 
+  mutate(admin_lag = administered - lag(administered),
+         dow = wday(Day)) 
 
-
-
+cdv_p %>% 
+  mutate(admin_lag = scales::rescale(admin_lag, to = c(0,1))) %>% 
+  filter(dow != 6) %>%
+  filter(dow != 7) %>%
+  ggplot(.) + 
+  geom_line(aes(x=Day, y=admin_lag))
+  
 
