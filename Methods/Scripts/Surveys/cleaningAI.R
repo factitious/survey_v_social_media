@@ -10,6 +10,7 @@ if(!exists('empData') && !exists('vaccData')){
   
 }
 
+names(vaccData)[15] <- "P13_vacc_1"
 
 cleanEmp <- function(df, period){
   #' Clean employment dataframe (for one A/I week).
@@ -216,7 +217,7 @@ cleanVacc2 <- function(df, period){
   
   
   cDF <- as.data.frame(t(as.matrix(df)))
-  # colnames(cDF) <- cNames
+  colnames(cDF) <- cNames
   cDF <- cDF %>% 
     select(!contains(c("Mentions", "Skipped", "Top", "Base", "(net)")))
   
@@ -225,17 +226,18 @@ cleanVacc2 <- function(df, period){
   
   rownames(cDF) <- NULL
   
+  # return(cDF)
   
   if('Received vaccine' %in% names(cDF)){
     cDF_wide <- cDF %>%
       mutate(across(`Received vaccine`:`Not at all likely`, as.double)) %>% 
       mutate(
         s = (
-          1  * `Received vaccine` +
+          # 1  * `Received vaccine` +
             1  * `Very likely` +
-            0.5 * `Somewhat likely` +
-            -0.5 * `Not very likely` +
-            -1  * `Not at all likely`
+            0.75 * `Somewhat likely` +
+            0.25 * `Not very likely` +
+            0  * `Not at all likely`
         ) /  rowSums(cDF %>% select(-demog)) 
       ) %>% 
       select(demog, s)
@@ -245,9 +247,9 @@ cleanVacc2 <- function(df, period){
       mutate(
         s = (
           1  * `Very likely` +
-            0.5 * `Somewhat likely` +
-            -0.5 * `Not very likely` +
-            -1  * `Not at all likely`
+            0.75 * `Somewhat likely` +
+            0.25 * `Not very likely` +
+            0  * `Not at all likely`
         ) /  rowSums(cDF %>% select(-demog))
       ) %>% 
       select(demog, s)

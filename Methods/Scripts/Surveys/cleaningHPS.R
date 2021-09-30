@@ -154,6 +154,8 @@ cleanVacc <- function(df, phase, type = 1){
              total_nr = `Did not report`
       ) %>% 
       mutate(across(r_total:total_nr, as.double))
+    
+    
       
   }      
   
@@ -182,20 +184,20 @@ cleanVacc <- function(df, phase, type = 1){
     ###
     
     df_s1 <- df %>% 
-      mutate(s1 = yes_total/(yes_total + no_total)) %>% 
+      mutate(
+        s1 = (
+          1  *  no_def_will +
+         0.75 * no_prob_will +
+        0.25 * no_prob_not +
+         0 * no_def_not)/( no_def_will + no_prob_not + no_def_not)
+      ) %>% 
       select(demog, s1)
     
     
     df_s2 <- df %>% 
       mutate(
-        s2 = (
-          1  * (yes_all + no_def_will) + 
-            0.5 * (yes_some + no_prob_will) + 
-            # 0  * (yes_nr + no_nr) +
-            -0.5 * no_prob_not + 
-            -1  * no_def_not)/
-          r_total
-      ) %>% 
+        s2 = yes_total/(yes_total + no_total)
+        ) %>% 
       select(demog, s2)
     
     df_s1 <- spread(df_s1, demog, s1)
