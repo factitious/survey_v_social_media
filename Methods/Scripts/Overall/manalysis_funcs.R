@@ -9,6 +9,7 @@ library(formattable)
 library(ggplot2)
 library(readxl)
 library(evolqg)
+library(ggcorrplot)
 
 list <- structure(NA,class="result")
 "[<-.result" <- function(x,...,value) {
@@ -61,7 +62,7 @@ load_objective <- function(){
     filter(Day >= ymd(start_date)) %>% 
     filter(Day < ymd(end_date)) %>% 
     select(Day, Close.Last) %>% 
-    dplyr::mutate(sp500_Close = Close.Last) %>% 
+    dplyr::mutate(sp500_Close = scale(Close.Last)) %>% 
     select(-Close.Last)
   
   # UoM Index of Consumer Sentiment from http://www.sca.isr.umich.edu/tables.html
@@ -106,7 +107,7 @@ load_objective <- function(){
     dplyr::summarise(
       administered = sum(Administered)
     ) %>% 
-    dplyr::mutate(administered = administered - lag(administered)) %>% 
+    dplyr::mutate(administered = scale(administered - lag(administered))) %>% 
     filter(!is.na(administered))
   
   return(objective)
@@ -808,7 +809,6 @@ c_sm_obj <- function(df, do_trim = F){
     if(topic == 'vac'){
       
       cdf <- cdf %>%
-        filter(!is.na(uptake)) %>% 
         filter(Day > ymd(vac_start_date))
     }
     
@@ -1372,13 +1372,6 @@ twitter_alldata_after_agg <- pptable(obj_desc$twitter)
 save_viz('comparisons', reddit_alldata_after_agg)
 save_viz('comparisons', twitter_alldata_after_agg)
 
-
-# Summary of objective measures
-
-objective$emp %>% 
-  ggplot(.) +
-  geom_line(aes(x=Day, y=sp500_Close))
-
 ### SM v Survey ####
 
 cor_ss <- function(sm_all, topic){
@@ -1531,15 +1524,22 @@ save_sm_survey_plot <- function(folder, df, topic){
     as.matrix(df$sm_survey$c1$cor),
     p.mat = as.matrix(df$sm_survey$c1$pmat),
     sig.level = 0.05,
-    lab = T
-  )
+    lab = T,
+    show.legend = F
+  ) +
+    theme(axis.text.y = element_text(size = 14)) +
+    theme(axis.text.x = element_text(size = 14))
+    # theme(axis.text = element_text(size = 20))
   
   c2 <- ggcorrplot(
     as.matrix(df$sm_survey$c2$cor),
     p.mat = as.matrix(df$sm_survey$c2$pmat),
     sig.level = 0.05,
-    lab = T
-  )
+    lab = T,
+    show.legend = F
+  ) +
+    theme(axis.text.y = element_text(size = 14)) +
+    theme(axis.text.x = element_text(size = 14))
   
   n <- glue("sm_survey_{topic}.png")
   
@@ -1552,13 +1552,15 @@ save_sm_survey_plot <- function(folder, df, topic){
   ggsave(
     fpath,
     arrangeGrob(c1, c2),
-    width = 15,
-    height = 10,
+    width = 7,
+    height = 5,
     units = 'in',
     dpi = 'retina'
   )
   
 }
+
+grid.arrange(c1, c2)
 
 save_sm_survey_plot('comparisons', ss_all$emp, 'emp')
 save_sm_survey_plot('comparisons', ss_all$vac, 'vac')
@@ -1773,7 +1775,10 @@ save_mantel_plot <- function(folder, df){
   ggcorrplot(df$Mantel$correlations,
              p.mat = df$Mantel$probabilities,
              lab = T,
-             type = 'lower')
+             type = 'lower') +
+    +
+    theme(axis.text.y = element_text(size = 12)) +
+    theme(axis.text.x = element_text(size = 12))
   
   ggsave(
     file.path(
@@ -1950,6 +1955,130 @@ save_allcor_plot(all_cor, 'vac', 'c2')
 
 # Objective measures
 
+p_emp <- sm_obj$reddit$emp$c1_set1 %>% 
+  mutate(
+    sp500 = scales::rescale(sp500_Close, to=c(0,1))) %>% 
+  select(Day, sp500)
+
+
+p_emp %>%
+  ggplot(.) +
+  geom_line(aes(x=Day, y=sp500)) +
+  theme_minimal() +
+  scale_x_date(breaks = function(x) seq.Date(from = min(x), 
+                                             to = max(x), 
+                                             by = "1 month"),
+               date_labels = "%m-%Y") +
+  theme(
+    axis.text.x=element_text(angle=60, hjust=1),
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0))
+    )
+
+
+ggsave(
+  file.path(
+    viz_path,
+    'comparisons',
+    'sp500.png'
+  ),
+  dpi = 'retina'
+)
+
+
+p_vac <- sm_obj$reddit$vac$c1 %>% 
+  mutate(
+    Doses = scales::rescale(administered, to=c(0,1))
+  ) %>% 
+  select(Day, Doses)
+
+
+
+p_vac %>% 
+  ggplot(.)+
+  geom_line(aes(x=Day, y=Index, color=Doses)) +
+  theme_classic()+
+  scale_x_date(breaks = function(x) seq.Date(from = min(x), 
+                                             to = max(x), 
+                                             by = "1 month"),
+               date_labels = "%m-%Y") +
+  theme(
+    axis.text.x=element_text(angle=60, hjust=1),
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0))
+  )
+
+ggsave(
+  file.path(
+    viz_path,
+    'comparisons',
+    'doses.png'
+  ),
+  dpi = 'retina'
+)
+
+
+p <- p_emp %>% 
+  full_join(p_vac) 
+
+p %>% 
+  pivot_longer(col=!Day, names_to="Measure", values_to="Index") %>% 
+  ggplot(.) +
+  geom_line(aes(x=Day,y=Index,color=Measure)) +
+  theme_minimal()+
+  scale_x_date(breaks = function(x) seq.Date(from = min(x), 
+                                             to = max(x), 
+                                             by = "1 month"),
+               date_labels = "%m-%Y") +
+  theme(
+    axis.text.x=element_text(angle=60, hjust=1),
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0))
+  )  +
+  theme(axis.text.y = element_text(size = 12)) +
+  theme(axis.text.x = element_text(size = 12)) +
+  theme(legend.text = element_text(size = 12)) +
+  theme(legend.title = element_text(size = 14))
+
+
+ggsave(
+  file.path(
+    viz_path,
+    'comparisons',
+    'objective.png'
+  ),
+  dpi = 'retina'
+)
+
+mean(p_emp$sp500) #0.5848342
+sd(p_emp$sp500) #0.2458853
+
+mean(p_vac$Doses) #0.3717237
+sd(p_vac$Doses) #0.215651
+
+p %>% 
+  pivot_longer(col=!Day, names_to="Measure", values_to="Index") %>% 
+  ggplot(.) +
+  geom_density(aes(x=Index, color=Measure)) +
+  theme_classic()+
+  theme(
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0))
+  ) +
+  theme(axis.text.y = element_text(size = 12)) +
+  theme(axis.text.x = element_text(size = 12)) +
+  theme(legend.text = element_text(size = 12)) +
+  theme(legend.title = element_text(size = 14))
+
+ggsave(
+  file.path(
+    viz_path,
+    'appendix',
+    'objective_density.png'
+  ),
+  dpi = 'retina'
+)
+
 
 # Twitter and reddit against objective measures (daily aggregation)
 cor_obj_all <- function(allcor, rm_last_row = F){
@@ -2013,24 +2142,32 @@ fpath <- file.path(
 all_daily_plot <- ggcorrplot(
   as.matrix(all_per$cor),
   p.mat = as.matrix(all_per$pmat),
-  lab = T
-)
+  lab = T,
+  show.legend = F
+) +
+  theme(axis.text.y = element_text(size = 14)) +
+  theme(axis.text.x = element_text(size = 14))
 
-ggsave(
-  file.path(
-    fpath,
-    'against_objective_daily.png'),
-    width = 15,
-    height = 12,
-    units = 'in',
-    dpi = 'retina'
-  )
+# ggsave(
+#   file.path(
+#     fpath,
+#     'against_objective_daily.png'),
+#     width = 15,
+#     height = 12,
+#     units = 'in',
+#     dpi = 'retina'
+#   )
 
 all_per_plot <- ggcorrplot(
   as.matrix(all_daily$cor),
   p.mat = as.matrix(all_daily$pmat),
-  lab = T
-)
+  lab = T,
+  show.legend = F
+) +
+  theme(axis.text.y = element_text(size = 14)) +
+  theme(axis.text.x = element_text(size = 14))
+
+grid.arrange(all_daily_plot, all_per_plot)
 
 ggsave(
   file.path(
@@ -2041,6 +2178,8 @@ ggsave(
     units = 'in',
     dpi = 'retina'
   )
+
+
 
 ggsave(
   file.path(
@@ -2056,7 +2195,6 @@ ggsave(
 
 
 ### Twitter + Reddit v Objective
-
 merge_sm <- function(obj_nss){
   
   merge_one <- function(obj_nss, topic, c){
@@ -2108,6 +2246,16 @@ fit_tr_obj_models <- function(sm_merged) {
     aic_r <- list()
     aic_tr <- list()
     
+    rsq_t <- list()
+    rsq_r <- list()
+    rsq_tr <- list()
+    
+    mse_t <- list()
+    mse_r <- list()
+    mse_tr <- list()
+    
+    
+    
     for (c in c('c1', 'c2')) {
       for (score in c('bing', 'afinn', 'nrc')) {
         if (topic == 'emp') {
@@ -2127,6 +2275,15 @@ fit_tr_obj_models <- function(sm_merged) {
         aic_t <- append(aic_t, AIC(m[[c]][[score]]$t))
         aic_r <- append(aic_r, AIC(m[[c]][[score]]$r))
         aic_tr <- append(aic_tr, AIC(m[[c]][[score]]$tr))
+        
+        mse_t <- append(mse_t, MSE(predict(m[[c]][[score]]$t), sm_merged[[topic]][[c]][[dv]]))
+        mse_r <- append(mse_r, MSE(predict(m[[c]][[score]]$r), sm_merged[[topic]][[c]][[dv]]))
+        mse_tr <- append(mse_tr, MSE(predict(m[[c]][[score]]$tr), sm_merged[[topic]][[c]][[dv]]))
+        
+        rsq_t <- append(rsq_t, summary(m[[c]][[score]]$t)$adj.r.squared)
+        rsq_r <- append(rsq_r, summary(m[[c]][[score]]$r)$adj.r.squared)
+        rsq_tr <- append(rsq_tr, summary(m[[c]][[score]]$tr)$adj.r.squared)
+        
   
       }
     }
@@ -2144,9 +2301,52 @@ fit_tr_obj_models <- function(sm_merged) {
           "c2_afinn",
           "c2_nrc"
         )
-    ) %>% mutate(Twitter = aic_t, Reddit = aic_r, Both = aic_tr,
-                 X1 = NULL, X2 = NULL, X3 = NULL)
+    ) %>% mutate(
+      Twitter = as.numeric(aic_t), 
+      Reddit = as.numeric(aic_r), 
+      Both = as.numeric(aic_tr),
+                 X1 = NULL, X2 = NULL, X3 = NULL) %>% 
+      round(., 2)
     
+    m$mse_df <- data.frame(
+      matrix(NA,
+             nrow = 6,
+             ncol = 3),
+      row.names = 
+        c(
+          "c1_bing",
+          "c1_afinn",
+          "c1_nrc",
+          "c2_bing",
+          "c2_afinn",
+          "c2_nrc"
+        )
+    ) %>% mutate(
+      Twitter = as.numeric(mse_t), 
+      Reddit = as.numeric(mse_r), 
+      Both = as.numeric(mse_tr),
+      X1 = NULL, X2 = NULL, X3 = NULL) %>% 
+      round(., 2)
+    
+    m$rsq_df <- data.frame(
+      matrix(NA,
+             nrow = 6,
+             ncol = 4),
+      row.names = 
+        c(
+          "c1_bing",
+          "c1_afinn",
+          "c1_nrc",
+          "c2_bing",
+          "c2_afinn",
+          "c2_nrc"
+        )
+    ) %>% mutate(
+      Twitter = as.numeric(rsq_t),
+      Reddit = as.numeric(rsq_r), 
+      Both = as.numeric(rsq_tr),
+      X1 = NULL, X2 = NULL, X3 = NULL) %>% 
+      round(., 2)
     
     
     return(m)
@@ -2160,19 +2360,18 @@ fit_tr_obj_models <- function(sm_merged) {
   
 }
 
-
 tr_obj_models <- fit_tr_obj_models(sm_tr)
 
-# Export tr_obj_models$emp$aic_df and tr_obj_models$vac$aic_df to create kable tables.
 
-
-fit_tr_sm_obj_models <- function(sm_merged, agg) {
+fit_tr_sm_obj_models_per <- function(sm_merged, agg) {
   models <- list()
   
   fit_one <- function(sm_merged, topic) {
     m <- list()
-    
     aic <- list()
+    rsq <- list()
+    mse <- list()
+    f <- list()
     
     n <- c('t', 'r', 'tr',
            'hps', 'ai', 
@@ -2183,6 +2382,7 @@ fit_tr_sm_obj_models <- function(sm_merged, agg) {
     for(i in c('df_c1', 'df_c2')){
       
       aic[[i]] <- list()
+      rsq[[i]] <- list()
       
     }
     
@@ -2194,19 +2394,19 @@ fit_tr_sm_obj_models <- function(sm_merged, agg) {
     }
     
     f$t <- as.formula(paste(dv, '~ nrc_t'))
-    f$r <- as.formula(paste(dv, '~ nrc_r'))
-    f$tr <-as.formula(paste(dv, '~ nrc_t + nrc_r'))
+    f$r <- as.formula(paste(dv, '~ afinn_r'))
+    f$tr <-as.formula(paste(dv, '~ nrc_t + afinn_r'))
     f$hps <- as.formula(paste(dv, '~ hps_SMA'))
     f$ai <- as.formula(paste(dv, '~ ai_SMA'))
     f$hps_t <- as.formula(paste(dv, '~ hps_SMA + nrc_t'))
-    f$hps_r <- as.formula(paste(dv, '~ hps_SMA + nrc_r'))
-    f$hps_tr <- as.formula(paste(dv, '~ hps_SMA + nrc_t + nrc_r'))
+    f$hps_r <- as.formula(paste(dv, '~ hps_SMA + afinn_r'))
+    f$hps_tr <- as.formula(paste(dv, '~ hps_SMA + nrc_t + afinn_r'))
     f$ai_t <- as.formula(paste(dv, '~ ai_SMA + nrc_t'))
-    f$ai_r <- as.formula(paste(dv, '~ ai_SMA + nrc_r'))
-    f$ai_tr <- as.formula(paste(dv, '~ ai_SMA + nrc_t + nrc_r'))
-    f$hps_ai_t <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + nrc_t'))
-    f$hps_ai_r <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + nrc_r'))
-    f$hps_ai_tr <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + nrc_t + nrc_r'))
+    f$ai_r <- as.formula(paste(dv, '~ ai_SMA + afinn_r'))
+    f$ai_tr <- as.formula(paste(dv, '~ ai_SMA + nrc_t + afinn_r'))
+    f$hps_ai_t <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + afinn_r'))
+    f$hps_ai_r <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + afinn_r'))
+    f$hps_ai_tr <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + nrc_t + afinn_r'))
     
     
     for (c in c('df_c1', 'df_c2')) {
@@ -2217,22 +2417,9 @@ fit_tr_sm_obj_models <- function(sm_merged, agg) {
         
         aic[[c]] <- append(aic[[c]], AIC(m[[c]][[i]]))
         
+        rsq[[c]] <- append(rsq[[c]], summary(m[[c]][[i]])$adj.r.squared)
         
-        # m[[c]]$t <- lm(f_t, data = sm_merged[[topic]][[c]])
-        # m[[c]]$r <- lm(f_r, data = sm_merged[[topic]][[c]])
-        # m[[c]]$tr <-lm(f_tr, data = sm_merged[[topic]][[c]])
-        # m[[c]]$hps <-lm(f_hps, data = sm_merged[[topic]][[c]])
-        # m[[c]]$ai <-lm(f_ai, data = sm_merged[[topic]][[c]])
-        # m[[c]]$hps_t <-lm(f_hps_t, data = sm_merged[[topic]][[c]])
-        # m[[c]]$hps_r <-lm(f_hps_r, data = sm_merged[[topic]][[c]])
-        # m[[c]]$hps_tr <-lm(f_hps_tr, data = sm_merged[[topic]][[c]])
-        # m[[c]]$ai_t <-lm(f_ai_t, data = sm_merged[[topic]][[c]])
-        # m[[c]]$ai_r <-lm(f_ai_r, data = sm_merged[[topic]][[c]])
-        # m[[c]]$ai_tr <-lm(f_ai_tr, data = sm_merged[[topic]][[c]])
-        # m[[c]]$hps_ai_t <-lm(f_hps_ai_t, data = sm_merged[[topic]][[c]])
-        # m[[c]]$hps_ai_r <-lm(f_hps_ai_r, data = sm_merged[[topic]][[c]])
-        # m[[c]]$hps_ai_tt <-lm(f_hps_ai_t, data = sm_merged[[topic]][[c]])
-        
+        mse[[c]] <- append(mse[[c]], MSE(predict(m[[c]][[i]]) , sm_merged[[topic]][[c]][[dv]]))
         
       }
       
@@ -2251,9 +2438,46 @@ fit_tr_sm_obj_models <- function(sm_merged, agg) {
           'hps_ai_t', 'hps_ai_r', 'hps_ai_tr'
         )
     ) %>% mutate(
-      c1 = aic$df_c1, 
-      c2 = aic$df_c2, 
-      X1 = NULL, X2 = NULL)
+      c1 = as.numeric(aic$df_c1), 
+      c2 = as.numeric(aic$df_c2), 
+      X1 = NULL, X2 = NULL) %>% 
+      round(., 2)
+    
+    m$mse_df <- data.frame(
+      matrix(NA,
+             nrow = 14,
+             ncol = 2),
+      row.names = 
+        c(
+          't', 'r', 'tr',
+          'hps', 'ai', 
+          'hps_t','hps_r', 'hps_tr',
+          'ai_t', 'ai_r', 'ai_tr',
+          'hps_ai_t', 'hps_ai_r', 'hps_ai_tr'
+        )
+    ) %>% mutate(
+      c1 = as.numeric(mse$df_c1), 
+      c2 = as.numeric(mse$df_c2), 
+      X1 = NULL, X2 = NULL) %>% 
+      round(., 2)
+    
+    m$rsq_df <- data.frame(
+      matrix(NA,
+             nrow = 14,
+             ncol = 2),
+      row.names = 
+        c(
+          't', 'r', 'tr',
+          'hps', 'ai', 
+          'hps_t','hps_r', 'hps_tr',
+          'ai_t', 'ai_r', 'ai_tr',
+          'hps_ai_t', 'hps_ai_r', 'hps_ai_tr'
+        )
+    ) %>% mutate(
+      c1 = as.numeric(rsq$df_c1), 
+      c2 = as.numeric(rsq$df_c2), 
+      X1 = NULL, X2 = NULL) %>% 
+      round(., 2)
     
     
     
@@ -2268,9 +2492,220 @@ fit_tr_sm_obj_models <- function(sm_merged, agg) {
   
 }
 
-tr_obj_models_per <- fit_tr_sm_obj_models(ss_all)
+tr_obj_models_per <- fit_tr_sm_obj_models_per(ss_all)
 
 
+ppmodels <- function(df, agg){
+  
+  
+  if(agg=="daily"){
+    
+    emp <- df$emp$mse_df %>% 
+      merge(df$emp$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+      merge(df$emp$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+      mutate(Twitter_aic = Twitter,
+             Reddit_aic = Reddit,
+             Both_aic = Both,
+             Both = NULL, Twitter = NULL, Reddit = NULL)
+    
+    rownames(emp) <- emp$Row.names
+    
+    emp$Row.names <- NULL
+    
+    emp <- emp[c(2,5,1,4,3,6),c(1,4,7,2,5,8,3,6,9)] #c(2,6,1,4,3,5)
+    
+    
+    vac <- df$vac$mse_df %>% 
+      merge(df$vac$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+      merge(df$vac$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+      mutate(Twitter_aic = Twitter,
+             Reddit_aic = Reddit,
+             Both_aic = Both,
+             Both = NULL, Twitter = NULL, Reddit = NULL)
+    
+    rownames(vac) <- vac$Row.names
+    vac$Row.names <- NULL
+    
+    vac <- vac[c(2,5,1,4,3,6),c(1,4,7,2,5,8,3,6,9)]
+    
+    am <- emp %>% 
+      merge(vac, by = 'row.names', suffixes = c('_emp', '_vac'))
+    
+    rownames(am) <- am$Row.names
+    
+    am$Row.names <- NULL
+    
+    
+    emp$M <- rownames(emp)
+  
+    rownames(emp) <- NULL
+    
+    emp <- emp %>% 
+      separate(M, into=c("Pipeline", "Score"))
+    
+    emp <- emp[,c(11,10,1,2,3,4,5,6,7,8,9)]
+    
+    vac$M <- rownames(vac)
+    
+    rownames(vac) <- NULL
+    
+    vac <- vac %>% 
+      separate(M, into=c("Pipeline", "Score"))
+    
+    vac <- vac[,c(11,10,1,2,3,4,5,6,7,8,9)]
+    
+    
+  } else if(agg=="per"){
+    
+    emp <- df$emp$mse_df %>% 
+      merge(df$emp$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+      merge(df$emp$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+      mutate(c1_aic = c1,
+             c2_aic = c2,
+             c1 = NULL, c2 = NULL)
+    
+    rownames(emp) <- emp$Row.names
+    
+    emp$Row.names <- NULL
+    
+    emp <- emp[c(13,12,14,5,1,10,9,11,3,2,4,7,6,8), c(1,3,5,2,4,6)] #c(13,12,14,5,9,10,11,2,3,4,6,7,8)
+    
+    vac <- df$vac$mse_df %>% 
+      merge(df$vac$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+      merge(df$vac$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+      mutate(c1_aic = c1,
+             c2_aic = c2,
+             c1 = NULL, c2 = NULL)
+    
+    rownames(vac) <- vac$Row.names
+    
+    vac$Row.names <- NULL
+    
+    vac <- vac[c(13,12,14,5,1,10,9,11,3,2,4,7,6,8), c(1,3,5,2,4,6)] #c(13,12,14,5,9,10,11,2,3,4,6,7,8)
+    
+    
+    vac <- df$vac$mse_df %>% 
+      merge(df$vac$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+      merge(df$vac$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+      mutate(c1_aic = c1,
+             c2_aic = c2,
+             c1 = NULL, c2 = NULL)
+    
+    rownames(vac) <- vac$Row.names
+    
+    vac$Row.names <- NULL
+    
+    
+    am <- emp %>% 
+      merge(vac, by = 'row.names', suffixes = c('_emp', '_vac'))
+    
+    rownames(am) <- am$Row.names
+    
+    am$Row.names <- NULL
+    
+    am <- am[c(13,12,14,5,1,10,9,11,3,2,4,7,6,8),c(1,2,3,4,5,6,7,9,11,8,10,12) ] #c(13,12,14,5,9,10,11,2,3,4,6,7,8)
+    
+    
+  }
+  
+  m <- list(emp=emp, vac=vac, am=am)
+  
+  return(m)
+  
+}
+
+daily_m <- ppmodels(tr_obj_models, 'daily')
+per_m <- ppmodels(tr_obj_models_per, 'per')
+
+
+saveRDS(
+  daily_m,
+  file.path(
+    viz_path,
+    'comparisons',
+    'm_daily.rds'
+  )
+)
+
+saveRDS(
+  per_m,
+  file.path(
+    viz_path,
+    'comparisons',
+    'm_per.rds'
+  )
+)
+
+
+
+per_m_names <- c(
+  't', 'r', 'tr',
+  'hps', 'ai', 
+  'hps_t','hps_r', 'hps_tr',
+  'ai_t', 'ai_r', 'ai_tr',
+  'hps_ai_t', 'hps_ai_r', 'hps_ai_tr'
+)
+
+per_m_spec <- c(
+  '$obj_p ~ nrc_{twitter_p}$',
+  '$obj_p ~ afinn_{reddit_p}$',
+  '$obj_p ~ nrc_{twitter_p} + afinn_{reddit_p}$',
+  '$obj_p ~ hps_{SMA_p}$',
+  '$obj_p ~ ai_{SMA_p}$',
+  '$obj_p ~ hps_{SMA_p} + nrc_{twitter_p}$',
+  '$obj_p ~ hps_{SMA_p} + afinn_{reddit_p}$',
+  '$obj_p ~ hps_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$',
+  '$obj_p ~ ai_{SMA_p} + nrc_{twitter_p}$',
+  '$obj_p ~ ai_{SMA_p} + afinn_{reddit_p}$',
+  '$obj_p ~ ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$',
+  '$obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p}$',
+  '$obj_p ~ hps_{SMA_p} + ai_{SMA_p} + afinn_{reddit_p}$',
+  '$obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$'
+)
+  
+  
+  
+  
+  $t = obj_p ~ nrc_{twitter_p}$
+  $r = obj_p ~ afinn_{reddit_p}$
+  $tr = obj_p ~ nrc_{twitter_p} + afinn_{reddit_p}$
+  
+  $hps = obj_p ~ hps_{SMA_p}$
+  $ai = obj_p ~ ai_{SMA_p}$
+  
+  $hps_t = obj_p ~ hps_{SMA_p} + nrc_{twitter_p}$
+  $hps_r = obj_p ~ hps_{SMA_p} + afinn_{reddit_p}$
+  $hps_tr = obj_p ~ hps_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$
+  
+  $ai_t = obj_p ~ ai_{SMA_p} + nrc_{twitter_p}$
+  $ai_t = obj_p ~ ai_{SMA_p} + afinn_{reddit_p}$
+  $ai_tr = obj_p ~ ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$
+  
+  $hps_ai_t = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p}$
+  $hps_ai_r = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + afinn_{reddit_p}$
+  $hps_ai_tr = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$
+  
+  
+  
+  
+  $$t = obj_p ~ nrc_{twitter_p}$$
+  $$r = obj_p ~ afinn_{reddit_p}$$
+  $$tr = obj_p ~ nrc_{twitter_p} + afinn_{reddit_p}$$
+  
+  $$hps = obj_p ~ hps_{SMA_p}$$
+  $$ai = obj_p ~ ai_{SMA_p}$$
+  
+  $$hps_t = obj_p ~ hps_{SMA_p} + nrc_{twitter_p}$$
+  $$hps_r = obj_p ~ hps_{SMA_p} + afinn_{reddit_p}$$
+  $$hps_tr = obj_p ~ hps_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$$
+  
+  $$ai_t = obj_p ~ ai_{SMA_p} + nrc_{twitter_p}$$
+  $$ai_t = obj_p ~ ai_{SMA_p} + afinn_{reddit_p}$$
+  $$ai_tr = obj_p ~ ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$$
+  
+  $$hps_ai_t = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p}$$
+  $$hps_ai_r = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + afinn_{reddit_p}$$
+  $$hps_ai_tr = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$$
 
 ##### Code Dump #######
 
@@ -2728,195 +3163,242 @@ tr_obj_models_per <- fit_tr_sm_obj_models(ss_all)
 
 
 ## WIP ####
-
-sm_obj$reddit$vac$c1 %>% 
-  select(Day,obs, bing) %>%
-  dplyr::mutate(obs = scales::rescale(obs, to=c(0,1))) %>% 
-  ggplot(.) +
-  geom_line(aes(x = Day, y = obs, color = "Observations")) +
-  geom_line(aes(x = Day, y = bing, color = "Bing_score")) 
-
-
-cor(sm_obj$reddit$vac$c1$bing, sm_obj$reddit$vac$c1$obs)
-
-
-sm_obj$reddit$vac$c1 %>% 
-  filter(Day > ymd('2021-02-07')) %>% 
-  filter(Day < ymd('2021-02-22')) %>% 
-  select(Day,uptake) %>% 
-  ggplot(., aes(x=Day, y=uptake)) +
-  geom_line()
-
-
-h <- sm_all$reddit$hps$vac$c1 %>% 
-  group_by(Period) %>% 
-  dplyr::summarise(
-    across(
-      bing:i_nrc,
-      ~sum(.x*obs)/sum(obs)),
-    across(
-      contains('hps'),
-      ~mean(.x)
-    ),
-    uptake = mean(uptake))
-
-
-cor(h$`hps_s2_18-54`, h$uptake)
-
-h %>% 
-  select(Period,
-         contains('hps'),
-         uptake) %>% 
-  cor(.)
-
-
-
-pivot_longer(
-  .,
-  cols = !Period,
-  names_to = "Measure",
-  values_to = "Index"
-) %>% 
-  ggplot(.) + 
-  geom_bar(
-    aes(x=Period, y=Index, fill=Measure),
-    stat='identity',
-    position=position_dodge()
-  )
-
-
-ggplot(.) +
-  geom_bar(aes(x=Period, y=uptake, color = "Uptake"),
-           stat = 'identity',
-           position = position_dodge()) +
-  geom_bar(aes(x=Period, y=`hps_s2_18-54`, color = "s2 (18-54)"), stat = 'identity',
-           position = position_dodge()) +
-  geom_bar(aes(x=Period, y=`hps_s1_18-54`, color = "s1 (18-54)"), stat = 'identity',
-           position = position_dodge()) +
-  geom_bar(aes(x=Period, y=`hps_s2_Total`, color = "s2 (Total)"), stat = 'identity',
-           position = position_dodge()) +
-  geom_bar(aes(x=Period, y=`hps_s1_Total`, color = "s1 (Total)"), stat = 'identity',
-           position = position_dodge()) 
-
+# 
+# sm_obj$reddit$vac$c1 %>% 
+#   select(Day,obs, bing) %>%
+#   dplyr::mutate(obs = scales::rescale(obs, to=c(0,1))) %>% 
+#   ggplot(.) +
+#   geom_line(aes(x = Day, y = obs, color = "Observations")) +
+#   geom_line(aes(x = Day, y = bing, color = "Bing_score")) 
+# 
+# 
+# cor(sm_obj$reddit$vac$c1$bing, sm_obj$reddit$vac$c1$obs)
+# 
+# 
+# sm_obj$reddit$vac$c1 %>% 
+#   filter(Day > ymd('2021-02-07')) %>% 
+#   filter(Day < ymd('2021-02-22')) %>% 
+#   select(Day,uptake) %>% 
+#   ggplot(., aes(x=Day, y=uptake)) +
+#   geom_line()
+# 
+# 
+# h <- sm_all$reddit$hps$vac$c1 %>% 
+#   group_by(Period) %>% 
+#   dplyr::summarise(
 #     across(
 #       bing:i_nrc,
-#       ~sum(.x*obs)/sum(obs))
-
-
-c %>% 
-  dplyr::mutate(admin_lag = scales::rescale(admin_lag, to = c(0,1))) %>% 
-  filter(dow != 6) %>%
-  filter(dow != 7) %>%
-  ggplot(.) + 
-  geom_line(aes(x=Day, y=admin_lag))
-
-
-# Comparison of trends across periods.
-View(sm_all$reddit$hps_ai$emp$c1_set1)
-
-t <- sm_all$reddit$hps_ai$emp$c1_set1
-
-t2 <- t %>% 
-  dplyr::mutate(Period = as.factor(Period)) %>% 
-  group_by(Period) %>% 
-  dplyr::summarise(
-    sp500 = mean(sp500_Close),
-    ics = mean(ics),
-    across(
-      bing:i_nrc,
-      ~sum(.x*obs)/sum(obs)
-    ),
-    across(
-      c("hps_18-54", "hps_Total"),
-      ~mean(.x)
-    ),
-    across(
-      c("ai_18-49", "ai_Total"),
-      ~mean(.x)
-    )
-  )
-
-
-# Reddit: Bing | AFINN | NRC
-
-r_lex <- t2 %>% 
-  select(Period, contains("bing"), contains("afinn")) %>% #contains('nrc')
-  pivot_longer(
-    .,
-    cols = !Period,
-    names_to = "Measure",
-    values_to = "Index"
-  ) %>% 
-  separate(
-    Measure,
-    into = c("Weighting", "Measure"),
-    fill = "left"
-  ) %>% 
-  dplyr::mutate_at(vars(Weighting), ~replace_na(., 'none')) %>% 
-  dplyr::mutate(Weighting = ifelse(Weighting == 'nc', 'comments',
-                                   ifelse(Weighting == 'sc', 'score',
-                                          ifelse(Weighting == 'i', 'all_interactions', 'none'))))
-
-r_lex %>% 
-  ggplot(.) +
-  geom_bar(
-    aes(x=Period, y=Index, fill=Measure),
-    stat = "identity",
-    position = position_dodge(),
-    alpha = 0.8
-  ) + theme_classic() +
-  geom_line(
-    aes(x=as.numeric(Period), y=Index, color=Measure)
-  ) +
-  facet_wrap(~Weighting)
-
-
-
-# AI vs HPS
-t2 %>% 
-  select(Period, contains("ai_"), contains("hps_")) %>% 
-  pivot_longer(
-    .,
-    cols = !Period,
-    names_to = "Measure",
-    values_to = "Index"
-  ) %>% 
-  ggplot(.) +
-  geom_bar(
-    aes(x = Period, y = Index, fill = Measure),
-    stat = "identity",
-    position = position_dodge(),
-    alpha = 0.7
-  ) +
-  geom_line(aes(x = as.numeric(Period), y = Index, color = Measure)) +
-  theme_classic()
-
-
-# Within measures
-
-t2 %>% 
-  # select(Period, contains("ai_"), contains("hps_")) %>% 
-  pivot_longer(
-    .,
-    cols = !Period,
-    names_to = "Measure",
-    values_to = "Index"
-  ) %>% 
-  ggplot(.) + 
-  geom_bar(aes(x = Period, 
-               y = Index, 
-               fill = Measure),
-           stat = "identity",
-           position=position_dodge())
-
-
-
-
-t2 <- t %>% 
-  group_by(Period) %>% 
-  dplyr::summarize(
-    hps = mean(`hps_s1_18-54`), ai = mean(`ai_18-49`),admin = mean(administered),
-    bing = mean(bing)
-  )
-
-
+#       ~sum(.x*obs)/sum(obs)),
+#     across(
+#       contains('hps'),
+#       ~mean(.x)
+#     ),
+#     uptake = mean(uptake))
+# 
+# 
+# cor(h$`hps_s2_18-54`, h$uptake)
+# 
+# h %>% 
+#   select(Period,
+#          contains('hps'),
+#          uptake) %>% 
+#   cor(.)
+# 
+# 
+# 
+# pivot_longer(
+#   .,
+#   cols = !Period,
+#   names_to = "Measure",
+#   values_to = "Index"
+# ) %>% 
+#   ggplot(.) + 
+#   geom_bar(
+#     aes(x=Period, y=Index, fill=Measure),
+#     stat='identity',
+#     position=position_dodge()
+#   )
+# 
+# 
+# ggplot(.) +
+#   geom_bar(aes(x=Period, y=uptake, color = "Uptake"),
+#            stat = 'identity',
+#            position = position_dodge()) +
+#   geom_bar(aes(x=Period, y=`hps_s2_18-54`, color = "s2 (18-54)"), stat = 'identity',
+#            position = position_dodge()) +
+#   geom_bar(aes(x=Period, y=`hps_s1_18-54`, color = "s1 (18-54)"), stat = 'identity',
+#            position = position_dodge()) +
+#   geom_bar(aes(x=Period, y=`hps_s2_Total`, color = "s2 (Total)"), stat = 'identity',
+#            position = position_dodge()) +
+#   geom_bar(aes(x=Period, y=`hps_s1_Total`, color = "s1 (Total)"), stat = 'identity',
+#            position = position_dodge()) 
+# 
+# #     across(
+# #       bing:i_nrc,
+# #       ~sum(.x*obs)/sum(obs))
+# 
+# 
+# c %>% 
+#   dplyr::mutate(admin_lag = scales::rescale(admin_lag, to = c(0,1))) %>% 
+#   filter(dow != 6) %>%
+#   filter(dow != 7) %>%
+#   ggplot(.) + 
+#   geom_line(aes(x=Day, y=admin_lag))
+# 
+# 
+# # Comparison of trends across periods.
+# View(sm_all$reddit$hps_ai$emp$c1_set1)
+# 
+# t <- sm_all$reddit$hps_ai$emp$c1_set1
+# 
+# t2 <- t %>% 
+#   dplyr::mutate(Period = as.factor(Period)) %>% 
+#   group_by(Period) %>% 
+#   dplyr::summarise(
+#     sp500 = mean(sp500_Close),
+#     ics = mean(ics),
+#     across(
+#       bing:i_nrc,
+#       ~sum(.x*obs)/sum(obs)
+#     ),
+#     across(
+#       c("hps_18-54", "hps_Total"),
+#       ~mean(.x)
+#     ),
+#     across(
+#       c("ai_18-49", "ai_Total"),
+#       ~mean(.x)
+#     )
+#   )
+# 
+# 
+# # Reddit: Bing | AFINN | NRC
+# 
+# r_lex <- t2 %>% 
+#   select(Period, contains("bing"), contains("afinn")) %>% #contains('nrc')
+#   pivot_longer(
+#     .,
+#     cols = !Period,
+#     names_to = "Measure",
+#     values_to = "Index"
+#   ) %>% 
+#   separate(
+#     Measure,
+#     into = c("Weighting", "Measure"),
+#     fill = "left"
+#   ) %>% 
+#   dplyr::mutate_at(vars(Weighting), ~replace_na(., 'none')) %>% 
+#   dplyr::mutate(Weighting = ifelse(Weighting == 'nc', 'comments',
+#                                    ifelse(Weighting == 'sc', 'score',
+#                                           ifelse(Weighting == 'i', 'all_interactions', 'none'))))
+# 
+# r_lex %>% 
+#   ggplot(.) +
+#   geom_bar(
+#     aes(x=Period, y=Index, fill=Measure),
+#     stat = "identity",
+#     position = position_dodge(),
+#     alpha = 0.8
+#   ) + theme_classic() +
+#   geom_line(
+#     aes(x=as.numeric(Period), y=Index, color=Measure)
+#   ) +
+#   facet_wrap(~Weighting)
+# 
+# 
+# 
+# # AI vs HPS
+# t2 %>% 
+#   select(Period, contains("ai_"), contains("hps_")) %>% 
+#   pivot_longer(
+#     .,
+#     cols = !Period,
+#     names_to = "Measure",
+#     values_to = "Index"
+#   ) %>% 
+#   ggplot(.) +
+#   geom_bar(
+#     aes(x = Period, y = Index, fill = Measure),
+#     stat = "identity",
+#     position = position_dodge(),
+#     alpha = 0.7
+#   ) +
+#   geom_line(aes(x = as.numeric(Period), y = Index, color = Measure)) +
+#   theme_classic()
+# 
+# 
+# # Within measures
+# 
+# t2 %>% 
+#   # select(Period, contains("ai_"), contains("hps_")) %>% 
+#   pivot_longer(
+#     .,
+#     cols = !Period,
+#     names_to = "Measure",
+#     values_to = "Index"
+#   ) %>% 
+#   ggplot(.) + 
+#   geom_bar(aes(x = Period, 
+#                y = Index, 
+#                fill = Measure),
+#            stat = "identity",
+#            position=position_dodge())
+# 
+# 
+# 
+# 
+# t2 <- t %>% 
+#   group_by(Period) %>% 
+#   dplyr::summarize(
+#     hps = mean(`hps_s1_18-54`), ai = mean(`ai_18-49`),admin = mean(administered),
+#     bing = mean(bing)
+#   )
+# 
+# emp <- tr_obj_models_per$emp$mse_df %>% 
+#   merge(tr_obj_models_per$emp$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+#   merge(tr_obj_models_per$emp$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+#   mutate(c1_aic = c1,
+#          c2_aic = c2,
+#          c1 = NULL, c2 = NULL)
+# 
+# rownames(emp) <- emp$Row.names
+# 
+# emp$Row.names <- NULL
+# 
+# emp <- emp[, c(1,3,5,2,4,6)]
+# 
+# vac <- tr_obj_models_per$vac$mse_df %>% 
+#   merge(tr_obj_models_per$vac$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+#   merge(tr_obj_models_per$vac$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+#   mutate(c1_aic = c1,
+#          c2_aic = c2,
+#          c1 = NULL, c2 = NULL)
+# 
+# rownames(vac) <- vac$Row.names
+# 
+# vac$Row.names <- NULL
+# 
+# vac <- vac[, c(1,3,5,2,4,6)]
+# 
+# 
+# 
+# vac <- tr_obj_models$vac$mse_df %>% 
+#   merge(tr_obj_models$vac$rsq_df, by = "row.names", suffixes = c('_mse', '_rsq')) %>% 
+#   merge(tr_obj_models$vac$aic_df %>% mutate(Row.names = rownames(.))) %>% 
+#   mutate(Twitter_aic = Twitter,
+#          Reddit_aic = Reddit,
+#          Both_aic = Both,
+#          Both = NULL, Twitter = NULL, Reddit = NULL)
+# 
+# rownames(vac) <- vac$Row.names
+# 
+# vac$Row.names <- NULL
+# 
+# 
+# am <- emp %>% 
+#   merge(vac, by = 'row.names', suffixes = c('_emp', '_vac'))
+# 
+# rownames(am) <- am$Row.names
+# 
+# am$Row.names <- NULL
+# 
