@@ -1573,6 +1573,15 @@ save_survey_desc_plot <- function(){
     select(Period, 
            contains('hps'),
            contains('ai')) %>% 
+    mutate(
+      HPS_Total = hps_Total,
+      HPS_SMA = hps_SMA,
+      AI_Total = ai_Total,
+      AI_SMA = ai_SMA,
+      hps_Total = NULL,
+      ai_Total = NULL,
+      hps_SMA = NULL,
+      ai_SMA = NULL) %>% 
     pivot_longer(
       cols= !Period,
       names_to = "M", 
@@ -1592,7 +1601,7 @@ save_survey_desc_plot <- function(){
       position = position_dodge()
     ) + theme_classic() + 
     facet_wrap(~Age) +
-    labs(y = "Attitudes towards employment (hps_emp and ai_emp)")
+    labs(y = "Attitudes towards employment")
   
   
   ggsave(
@@ -1610,6 +1619,15 @@ save_survey_desc_plot <- function(){
     select(Period, 
            contains('hps'),
            contains('ai')) %>% 
+    mutate(
+      HPS_Total = hps_Total,
+      HPS_SMA = hps_SMA,
+      AI_Total = ai_Total,
+      AI_SMA = ai_SMA,
+      hps_Total = NULL,
+      ai_Total = NULL,
+      hps_SMA = NULL,
+      ai_SMA = NULL) %>% 
     pivot_longer(
       cols= !Period,
       names_to = "M", 
@@ -1629,7 +1647,7 @@ save_survey_desc_plot <- function(){
       position = position_dodge()
     ) + theme_classic() + 
     facet_wrap(~Age) +
-    labs(y = "Attitudes towards vaccination (hps_vac and ai_vac)")
+    labs(y = "Attitudes towards vaccination")
   
   ggsave(
     file.path(
@@ -1643,6 +1661,8 @@ save_survey_desc_plot <- function(){
   )
   
 } 
+
+save_survey_desc_plot()
 
 vac_period_summaries_c1 <- round(ss_all$vac$df_c1,2)
 vac_period_summaries_c2 <- round(ss_all$vac$df_c2,2)
@@ -1776,9 +1796,8 @@ save_mantel_plot <- function(folder, df){
              p.mat = df$Mantel$probabilities,
              lab = T,
              type = 'lower') +
-    +
-    theme(axis.text.y = element_text(size = 12)) +
-    theme(axis.text.x = element_text(size = 12))
+    theme(axis.text.y = element_text(size = 14)) +
+    theme(axis.text.x = element_text(size = 14))
   
   ggsave(
     file.path(
@@ -1850,7 +1869,9 @@ ggcorrplot(
   as.matrix(r$cor),
   p.mat = as.matrix(r$p),
   lab = T
-)
+) +
+  theme(axis.text.y = element_text(size = 14)) +
+  theme(axis.text.x = element_text(size = 14))
 
 cor_sm <- function(sm_obj, topic){
   
@@ -2099,7 +2120,7 @@ cor_obj_all <- function(allcor, rm_last_row = F){
       dfc <- allcor[[topic]]$obj[[c]]$cor
       names(dfc) <- glue("{topic}_{c}")
       
-      dfp <- allcor[[topic]]$obj[[c]]$cor
+      dfp <- allcor[[topic]]$obj[[c]]$pmat
       names(dfp) <- glue("{topic}_{c}")
       
       cor <- cbind(cor, dfc)
@@ -2140,8 +2161,8 @@ fpath <- file.path(
 
 
 all_daily_plot <- ggcorrplot(
-  as.matrix(all_per$cor),
-  p.mat = as.matrix(all_per$pmat),
+  as.matrix(all_daily$cor),
+  p.mat = as.matrix(all_daily$pmat),
   lab = T,
   show.legend = F
 ) +
@@ -2159,8 +2180,8 @@ all_daily_plot <- ggcorrplot(
 #   )
 
 all_per_plot <- ggcorrplot(
-  as.matrix(all_daily$cor),
-  p.mat = as.matrix(all_daily$pmat),
+  as.matrix(all_per$cor),
+  p.mat = as.matrix(all_per$pmat),
   lab = T,
   show.legend = F
 ) +
@@ -2377,7 +2398,7 @@ fit_tr_sm_obj_models_per <- function(sm_merged, agg) {
            'hps', 'ai', 
            'hps_t','hps_r', 'hps_tr',
            'ai_t', 'ai_r', 'ai_tr',
-           'hps_ai_t', 'hps_ai_r', 'hps_tr')
+           'hps_ai_t', 'hps_ai_r', 'hps_ai_tr')
     
     for(i in c('df_c1', 'df_c2')){
       
@@ -2404,7 +2425,7 @@ fit_tr_sm_obj_models_per <- function(sm_merged, agg) {
     f$ai_t <- as.formula(paste(dv, '~ ai_SMA + nrc_t'))
     f$ai_r <- as.formula(paste(dv, '~ ai_SMA + afinn_r'))
     f$ai_tr <- as.formula(paste(dv, '~ ai_SMA + nrc_t + afinn_r'))
-    f$hps_ai_t <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + afinn_r'))
+    f$hps_ai_t <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + nrc_t'))
     f$hps_ai_r <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + afinn_r'))
     f$hps_ai_tr <- as.formula(paste(dv, '~ hps_SMA + ai_SMA + nrc_t + afinn_r'))
     
@@ -2637,75 +2658,6 @@ saveRDS(
 )
 
 
-
-per_m_names <- c(
-  't', 'r', 'tr',
-  'hps', 'ai', 
-  'hps_t','hps_r', 'hps_tr',
-  'ai_t', 'ai_r', 'ai_tr',
-  'hps_ai_t', 'hps_ai_r', 'hps_ai_tr'
-)
-
-per_m_spec <- c(
-  '$obj_p ~ nrc_{twitter_p}$',
-  '$obj_p ~ afinn_{reddit_p}$',
-  '$obj_p ~ nrc_{twitter_p} + afinn_{reddit_p}$',
-  '$obj_p ~ hps_{SMA_p}$',
-  '$obj_p ~ ai_{SMA_p}$',
-  '$obj_p ~ hps_{SMA_p} + nrc_{twitter_p}$',
-  '$obj_p ~ hps_{SMA_p} + afinn_{reddit_p}$',
-  '$obj_p ~ hps_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$',
-  '$obj_p ~ ai_{SMA_p} + nrc_{twitter_p}$',
-  '$obj_p ~ ai_{SMA_p} + afinn_{reddit_p}$',
-  '$obj_p ~ ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$',
-  '$obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p}$',
-  '$obj_p ~ hps_{SMA_p} + ai_{SMA_p} + afinn_{reddit_p}$',
-  '$obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$'
-)
-  
-  
-  
-  
-  $t = obj_p ~ nrc_{twitter_p}$
-  $r = obj_p ~ afinn_{reddit_p}$
-  $tr = obj_p ~ nrc_{twitter_p} + afinn_{reddit_p}$
-  
-  $hps = obj_p ~ hps_{SMA_p}$
-  $ai = obj_p ~ ai_{SMA_p}$
-  
-  $hps_t = obj_p ~ hps_{SMA_p} + nrc_{twitter_p}$
-  $hps_r = obj_p ~ hps_{SMA_p} + afinn_{reddit_p}$
-  $hps_tr = obj_p ~ hps_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$
-  
-  $ai_t = obj_p ~ ai_{SMA_p} + nrc_{twitter_p}$
-  $ai_t = obj_p ~ ai_{SMA_p} + afinn_{reddit_p}$
-  $ai_tr = obj_p ~ ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$
-  
-  $hps_ai_t = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p}$
-  $hps_ai_r = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + afinn_{reddit_p}$
-  $hps_ai_tr = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$
-  
-  
-  
-  
-  $$t = obj_p ~ nrc_{twitter_p}$$
-  $$r = obj_p ~ afinn_{reddit_p}$$
-  $$tr = obj_p ~ nrc_{twitter_p} + afinn_{reddit_p}$$
-  
-  $$hps = obj_p ~ hps_{SMA_p}$$
-  $$ai = obj_p ~ ai_{SMA_p}$$
-  
-  $$hps_t = obj_p ~ hps_{SMA_p} + nrc_{twitter_p}$$
-  $$hps_r = obj_p ~ hps_{SMA_p} + afinn_{reddit_p}$$
-  $$hps_tr = obj_p ~ hps_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$$
-  
-  $$ai_t = obj_p ~ ai_{SMA_p} + nrc_{twitter_p}$$
-  $$ai_t = obj_p ~ ai_{SMA_p} + afinn_{reddit_p}$$
-  $$ai_tr = obj_p ~ ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$$
-  
-  $$hps_ai_t = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p}$$
-  $$hps_ai_r = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + afinn_{reddit_p}$$
-  $$hps_ai_tr = obj_p ~ hps_{SMA_p} + ai_{SMA_p} + nrc_{twitter_p} + afinn_{reddit_p}$$
 
 ##### Code Dump #######
 
